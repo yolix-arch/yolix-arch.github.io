@@ -1793,19 +1793,13 @@ async function obtenerHistorialChat(clienteId) {
       try {
 
         const res = await apiPost({
-
           accion: 'guardarComentario',
-
           productoId: productoActual.id,
-
+          nombreProducto: productoActual.nombre || '',
           cedula: cli.cedula,
-
           telefono: cli.telefono,
-
           calificacion: calificacionSeleccionada,
-
           comentario: txt
-
         });
 
         btn.disabled = false;
