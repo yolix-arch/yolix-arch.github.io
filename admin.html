@@ -386,7 +386,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           </button>
 
-          <a id="btnVerTienda" href="https://script.google.com/macros/s/AKfycbyDNwrX4Q4yZ1IQAL_xN1m4l-sauRXpe-cqpZAChMMb89S9NuGAJpg_EgXsi0i3w2meug/exec" target="_blank" rel="noopener noreferrer"
+          <a id="btnVerTienda" href="./" target="_blank" rel="noopener noreferrer"
              class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Tienda
           </a>
@@ -410,90 +410,6 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
     <div class="max-w-7xl mx-auto px-4 py-6 w-full flex-1 space-y-6">
 
       
-
-      <!-- MÉTRICAS GENERALES -->
-
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow flex items-center gap-3 hover:-translate-y-1 hover:border-indigo-500/40 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-300">
-
-          <div class="p-3 bg-indigo-500/20 text-indigo-400 rounded-xl">
-
-            <i class="fa-solid fa-boxes-stacked text-xl"></i>
-
-          </div>
-
-          <div>
-
-            <span class="text-[11px] text-slate-400 font-semibold block">Productos</span>
-
-            <strong id="metricTotalProd" class="text-xl font-black text-white">0</strong>
-
-          </div>
-
-        </div>
-
-
-
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow flex items-center gap-3 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-emerald-500/10 transition-all duration-300">
-
-          <div class="p-3 bg-emerald-500/20 text-emerald-400 rounded-xl">
-
-            <i class="fa-solid fa-dollar-sign text-xl"></i>
-
-          </div>
-
-          <div>
-
-            <span class="text-[11px] text-slate-400 font-semibold block">Ventas Registradas</span>
-
-            <strong id="metricTotalVentas" class="text-xl font-black text-emerald-400">$0.00</strong>
-
-          </div>
-
-        </div>
-
-
-
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow flex items-center gap-3 hover:-translate-y-1 hover:border-purple-500/40 hover:shadow-xl hover:shadow-purple-500/10 transition-all duration-300">
-
-          <div class="p-3 bg-purple-500/20 text-purple-400 rounded-xl">
-
-            <i class="fa-solid fa-cart-shopping text-xl"></i>
-
-          </div>
-
-          <div>
-
-            <span class="text-[11px] text-slate-400 font-semibold block">Pedidos Realizados</span>
-
-            <strong id="metricTotalPedidos" class="text-xl font-black text-white">0</strong>
-
-          </div>
-
-        </div>
-
-
-
-        <div class="bg-slate-900 border border-slate-800 p-4 rounded-2xl shadow flex items-center gap-3 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300">
-
-          <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl">
-
-            <i class="fa-solid fa-users text-xl"></i>
-
-          </div>
-
-          <div>
-
-            <span class="text-[11px] text-slate-400 font-semibold block">Clientes Registrados</span>
-
-            <strong id="metricTotalClientes" class="text-xl font-black text-white">0</strong>
-
-          </div>
-
-        </div>
-
-      </div>
 
 
 
@@ -1762,15 +1678,15 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
 
-      // Actualizar metricas
-
-      document.getElementById('metricTotalProd').textContent = datosAdmin.metricas.totalProductos || 0;
-
-      document.getElementById('metricTotalVentas').textContent = '$' + (datosAdmin.metricas.totalVentas || 0).toFixed(2);
-
-      document.getElementById('metricTotalPedidos').textContent = datosAdmin.metricas.totalPedidos || 0;
-
-      document.getElementById('metricTotalClientes').textContent = datosAdmin.metricas.totalClientes || 0;
+      // Actualizar metricas (si existen elementos)
+      var elP = document.getElementById('metricTotalProd');
+      if (elP) elP.textContent = datosAdmin.metricas.totalProductos || 0;
+      var elV = document.getElementById('metricTotalVentas');
+      if (elV) elV.textContent = '$' + (datosAdmin.metricas.totalVentas || 0).toFixed(2);
+      var elPed = document.getElementById('metricTotalPedidos');
+      if (elPed) elPed.textContent = datosAdmin.metricas.totalPedidos || 0;
+      var elCli = document.getElementById('metricTotalClientes');
+      if (elCli) elCli.textContent = datosAdmin.metricas.totalClientes || 0;
 
 
 
