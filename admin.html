@@ -604,32 +604,39 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
       <!-- ========================================== -->
 
-      <div id="modalProducto" class="hidden">
-      <div id="seccionFormularioProducto">
-
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl max-w-4xl mx-auto space-y-6">
-
-          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-
-            <div>
-
-              <h2 id="formProductoTitulo" class="text-base font-bold text-white flex items-center gap-2">
-
-                <i class="fa-solid fa-box-open text-indigo-400"></i> Agregar Nuevo Producto
-
-              </h2>
-
-              <p class="text-[11px] text-slate-400 mt-0.5">Se guardar&aacute; directamente en la hoja 'Productos' y en Google Drive</p>
-
+      <div id="modalProducto" onclick="if(event.target === this) cerrarModalProducto()" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hidden animate-fade-in">
+        <div id="seccionFormularioProducto" class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+          
+          <!-- CABECERA FLOTANTE DE LA VENTANA MODAL -->
+          <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4 bg-slate-950/60 flex-shrink-0">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
+                <i class="fa-solid fa-pen-to-square text-lg"></i>
+              </div>
+              <div>
+                <h2 id="formProductoTitulo" class="text-base font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-box-open text-indigo-400"></i> Agregar Nuevo Producto
+                </h2>
+                <p class="text-[11px] text-slate-400">Sincronización directa en vivo con la hoja 'Productos' y Google Drive</p>
+              </div>
             </div>
 
-            <button type="button" id="btnCerrarModalProducto" onclick="cambiarPestana('productos')" class="text-xs text-slate-400 hover:text-white bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700">
-
-              <i class="fa-solid fa-arrow-left mr-1"></i> Cancelar
-
-            </button>
-
+            <div class="flex items-center gap-2">
+              <a id="btnVerEnSheetsDirecto" href="#" target="_blank" rel="noopener noreferrer" 
+                 class="hidden sm:inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl transition font-semibold" 
+                 title="Abrir hoja de cálculo completa en Google Sheets">
+                <i class="fa-solid fa-table text-xs"></i> Ver en Excel / Sheets
+              </a>
+              <button type="button" id="btnCerrarModalProducto" onclick="cerrarModalProducto()" 
+                      class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 w-8 h-8 rounded-xl flex items-center justify-center transition border border-slate-700" 
+                      title="Cerrar ventana (Esc)">
+                <i class="fa-solid fa-xmark text-sm"></i>
+              </button>
+            </div>
           </div>
+
+          <!-- CUERPO SCROLLABLE -->
+          <div class="overflow-y-auto p-6 space-y-6 flex-1">
 
 
 
@@ -872,30 +879,37 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
 
-            <!-- Botón Guardar -->
-
-            <div class="border-t border-slate-800 pt-4 flex justify-end gap-3">
-
-              <button type="button" onclick="cambiarPestana('productos')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-xs transition">
-
-                Cancelar
-
-              </button>
-
-              <button type="button" onclick="guardarFormularioProducto()" id="btnGuardarProd" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center gap-2">
-
-                <i class="fa-solid fa-floppy-disk"></i> Guardar en Google Sheets
-
-              </button>
-
+            <!-- NUEVA SECCIÓN: COMENTARIOS Y RESEÑAS DE ESTE PRODUCTO EN EXCEL -->
+            <div class="border-t border-slate-800 pt-5 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                  <i class="fa-solid fa-comments text-amber-400"></i>
+                  Opiniones y Reseñas de Clientes (<span id="modalProdTotalComentarios" class="text-amber-400 font-bold">0</span>)
+                </h3>
+                <span class="text-[10px] text-slate-500">Sincronizado con la hoja 'Comentarios' en Google Sheets</span>
+              </div>
+              
+              <div id="modalProdListaComentarios" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+                <div class="text-center py-3 text-slate-500 text-xs">
+                  <i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando comentarios desde Excel...
+                </div>
+              </div>
             </div>
 
           </div>
 
+          <!-- FOOTER FLOTANTE -->
+          <div class="border-t border-slate-800 px-6 py-4 bg-slate-950/70 flex items-center justify-between flex-shrink-0">
+            <button type="button" onclick="cerrarModalProducto()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-xs transition">
+              Cancelar
+            </button>
+
+            <button type="button" onclick="guardarFormularioProducto()" id="btnGuardarProd" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center gap-2">
+              <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Google Sheets
+            </button>
+          </div>
+
         </div>
-
-      </div>
-
       </div>
 
 
@@ -2714,53 +2728,112 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
 
-    // 6. FORMULARIO PRODUCTO
+    // 6. VENTANA MODAL FLOTANTE Y FORMULARIO PRODUCTO
 
-    function nuevoProducto() {
-
-      document.getElementById('formProductoTitulo').innerHTML = '<i class="fa-solid fa-box-open text-indigo-400"></i> Agregar Nuevo Producto';
-
-      document.getElementById('formProdId').value = '';
-
-      document.getElementById('formProdNombre').value = '';
-
-      document.getElementById('formProdCategoria').value = 'Zapatos';
-
-      document.getElementById('formProdSubcat').value = '';
-
-      document.getElementById('formProdGenero').value = 'Unisex';
-
-      document.getElementById('formProdPrecio').value = '';
-
-      document.getElementById('formProdStock').value = '10';
-
-      document.getElementById('formProdEstado').value = 'Disponible';
-
-      document.getElementById('formProdDescripcion').value = '';
-
-
-
-      document.getElementById('formProdFoto1').value = '';
-
-      document.getElementById('formProdFoto2').value = '';
-
-      document.getElementById('formProdFoto3').value = '';
-
-
-
-      actualizarPreview(1);
-
-      actualizarPreview(2);
-
-      actualizarPreview(3);
-
-
-
-      cambiarPestana('nuevo');
-
+    function abrirModalProducto() {
+      var m = document.getElementById('modalProducto');
+      if (m) m.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
     }
 
+    function cerrarModalProducto() {
+      var m = document.getElementById('modalProducto');
+      if (m) m.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
 
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        cerrarModalProducto();
+      }
+    });
+
+    async function cargarComentariosProductoModal(idProducto) {
+      const cont = document.getElementById('modalProdListaComentarios');
+      const badgeTotal = document.getElementById('modalProdTotalComentarios');
+      if (!cont || !badgeTotal) return;
+
+      cont.innerHTML = '<div class="text-center py-3 text-slate-500 text-xs"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando comentarios desde Excel...</div>';
+      badgeTotal.textContent = '0';
+
+      try {
+        const catRes = await apiGet({ accion: 'obtenerCatalogo' });
+        const prod = (catRes && catRes.productos) ? catRes.productos.find(function(p) { return String(p.id).trim() === String(idProducto).trim(); }) : null;
+        const comentarios = (prod && prod.comentarios) ? prod.comentarios : [];
+
+        badgeTotal.textContent = comentarios.length;
+
+        if (comentarios.length === 0) {
+          cont.innerHTML = '<div class="p-3 bg-slate-950/50 rounded-xl border border-slate-800 text-center text-xs text-slate-500 italic"><i class="fa-regular fa-comment-dots mr-1"></i> No hay opiniones registradas para este producto todavía en Google Sheets.</div>';
+          return;
+        }
+
+        let html = '';
+        comentarios.forEach(function(c) {
+          let estrellas = '';
+          const pts = c.puntos || 5;
+          for (let i = 1; i <= 5; i++) {
+            estrellas += '<i class="fa-solid fa-star ' + (i <= pts ? 'text-amber-400' : 'text-slate-700') + ' text-[10px]"></i>';
+          }
+
+          html += 
+            '<div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col gap-1">' +
+              '<div class="flex items-center justify-between text-xs">' +
+                '<strong class="text-slate-200 font-bold">' + (c.cliente || 'Cliente') + '</strong>' +
+                '<div class="flex items-center gap-2">' +
+                  '<div class="flex items-center gap-0.5">' + estrellas + '</div>' +
+                  '<span class="text-[10px] text-slate-500">' + (c.fecha || '') + '</span>' +
+                '</div>' +
+              '</div>' +
+              '<p class="text-xs text-slate-300 mt-0.5">' + (c.texto || '') + '</p>' +
+            '</div>';
+        });
+
+        cont.innerHTML = html;
+      } catch (err) {
+        cont.innerHTML = '<div class="text-xs text-rose-400 p-2 text-center">No se pudieron cargar los comentarios en este momento.</div>';
+      }
+    }
+
+    function nuevoProducto() {
+      var elTitulo = document.getElementById('formProductoTitulo');
+      if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-box-open text-indigo-400"></i> Agregar Nuevo Producto';
+
+      var linkSheet = document.getElementById('btnVerEnSheetsDirecto');
+      if (linkSheet && datosAdmin && datosAdmin.urlSheet) {
+        linkSheet.href = datosAdmin.urlSheet;
+      }
+
+      var setVal = function(elemId, val) {
+        var el = document.getElementById(elemId);
+        if (el) el.value = (val !== undefined && val !== null) ? val : '';
+      };
+
+      setVal('formProdId', '');
+      setVal('formProdNombre', '');
+      setVal('formProdCategoria', 'Zapatos');
+      setVal('formProdSubcat', '');
+      setVal('formProdGenero', 'Unisex');
+      setVal('formProdPrecio', '');
+      setVal('formProdStock', '10');
+      setVal('formProdEstado', 'Disponible');
+      setVal('formProdDescripcion', '');
+
+      setVal('formProdFoto1', '');
+      setVal('formProdFoto2', '');
+      setVal('formProdFoto3', '');
+
+      actualizarPreview(1);
+      actualizarPreview(2);
+      actualizarPreview(3);
+
+      var cont = document.getElementById('modalProdListaComentarios');
+      if (cont) cont.innerHTML = '<div class="p-3 bg-slate-950/50 rounded-xl border border-slate-800 text-center text-xs text-slate-500 italic"><i class="fa-solid fa-info-circle mr-1"></i> Producto nuevo (aún no tiene opiniones de clientes).</div>';
+      var badgeTotal = document.getElementById('modalProdTotalComentarios');
+      if (badgeTotal) badgeTotal.textContent = '0';
+
+      abrirModalProducto();
+    }
 
     function editarProducto(id) {
       if (!datosAdmin || !datosAdmin.productos) {
@@ -2779,6 +2852,11 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
       var elTitulo = document.getElementById('formProductoTitulo');
       if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-pen text-indigo-400"></i> Editar Producto (' + p.id + ')';
+
+      var linkSheet = document.getElementById('btnVerEnSheetsDirecto');
+      if (linkSheet && datosAdmin && datosAdmin.urlSheet) {
+        linkSheet.href = datosAdmin.urlSheet;
+      }
 
       var setVal = function(elemId, val) {
         var el = document.getElementById(elemId);
@@ -2803,8 +2881,11 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       actualizarPreview(2);
       actualizarPreview(3);
 
-      cambiarPestana('nuevo');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Cargar comentarios en vivo desde Google Sheets
+      cargarComentariosProductoModal(p.id);
+
+      // Abrir ventana modal grande flotante
+      abrirModalProducto();
     }
 
 
@@ -2905,15 +2986,15 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           btn.disabled = false;
 
-          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar en Google Sheets';
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Google Sheets';
 
         }
 
         if (res && res.exito) {
 
-          alert(res.mensaje);
+          cerrarModalProducto();
 
-          cambiarPestana('productos');
+          mostrarToastAdmin(res.mensaje || 'Producto guardado en Google Sheets con éxito', 'check', 'emerald');
 
           cargarDatosCompletosAdmin();
 
@@ -2929,7 +3010,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           btn.disabled = false;
 
-          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar en Google Sheets';
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Google Sheets';
 
         }
 
