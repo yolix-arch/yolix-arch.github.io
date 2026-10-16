@@ -1095,6 +1095,8 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
                   <th class="p-3">Nombre Completo</th>
 
+                  <th class="p-3">Contacto / Correo</th>
+
                   <th class="p-3">Ciudad / Dirección</th>
 
                   <th class="p-3">Total Pedidos</th>
@@ -1111,7 +1113,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
                 <tr>
 
-                  <td colspan="7" class="p-8 text-center text-slate-500 italic">No hay clientes registrados aún.</td>
+                  <td colspan="8" class="p-8 text-center text-slate-500 italic">No hay clientes registrados aún.</td>
 
                 </tr>
 
@@ -3356,7 +3358,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
 
       if (!clientes || clientes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-500 italic">No hay clientes registrados aún.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-500 italic">No hay clientes registrados aún.</td></tr>';
         return;
       }
 
@@ -3374,7 +3376,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
 
       if (listaFiltrada.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-500 italic">No hay clientes con estado "' + filtroClientesEstadoActual + '".</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-500 italic">No hay clientes con estado "' + filtroClientesEstadoActual + '".</td></tr>';
         return;
       }
 
@@ -3393,12 +3395,22 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
         var btnBorrarHtml = '<button type="button" onclick="eliminarClienteCascadaDesdeAdmin(\'' + (cli.id || cli.cedula) + '\', \'' + (cli.cedula || '') + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 px-2 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Borrar cliente y TODOS sus comentarios en cascada"><i class="fa-solid fa-trash-can"></i> Borrar</button>';
 
-        var btnWaHtml = '<a href="https://wa.me/' + (cli.telefono || '').replace(/\D/g, '') + '?text=¡Hola%20' + encodeURIComponent(cli.nombre || '') + ',%20te%20escribimos%20de%20la%20tienda%20online" target="_blank" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp"></i> ' + (cli.telefono || '') + '</a>';
+        var btnWaHtml = '<a href="https://wa.me/' + (cli.telefono || '').replace(/\D/g, '') + '?text=¡Hola%20' + encodeURIComponent(cli.nombre || '') + ',%20te%20escribimos%20de%20la%20tienda%20online" target="_blank" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>';
+
+        var correoHtml = cli.correo 
+          ? '<a href="mailto:' + cli.correo + '" class="text-[11px] text-indigo-300 hover:text-indigo-200 flex items-center gap-1 font-medium transition" title="Enviar correo a ' + cli.correo + '"><i class="fa-regular fa-envelope text-indigo-400"></i> ' + cli.correo + '</a>'
+          : '<span class="text-[10px] text-slate-500 italic flex items-center gap-1"><i class="fa-regular fa-envelope text-slate-600"></i> Sin correo</span>';
 
         tr.innerHTML = 
           '<td class="p-3 text-[10px] text-slate-500 whitespace-nowrap">' + (cli.fecha || '') + '</td>' +
           '<td class="p-3 font-mono text-indigo-400 text-xs font-semibold">' + (cli.cedula || '') + '</td>' +
           '<td class="p-3 font-bold text-white text-xs">' + (cli.nombre || '') + '</td>' +
+          '<td class="p-3">' +
+            '<div class="space-y-1">' +
+              correoHtml +
+              '<span class="text-[11px] text-slate-400 flex items-center gap-1"><i class="fa-brands fa-whatsapp text-emerald-400 text-xs"></i> ' + (cli.telefono || 'Sin teléfono') + '</span>' +
+            '</div>' +
+          '</td>' +
           '<td class="p-3">' +
             '<span class="text-xs text-slate-300 block">' + (cli.ciudad || 'No especificada') + '</span>' +
             '<span class="text-[10px] text-slate-500 block">' + (cli.direccion || '') + '</span>' +
