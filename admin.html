@@ -552,36 +552,82 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
       <div id="seccionProductos" class="space-y-4">
 
-        <!-- Barra de Búsqueda y Acción -->
-
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900 p-4 rounded-2xl border border-slate-800">
-
-          <div class="relative w-full sm:w-96">
-
-            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-
-            <input type="text" id="filtroAdminProductos" oninput="filtrarProductosAdmin()" placeholder="Buscar producto por nombre, código o categoría..." 
-
-                   class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
+        <!-- Barra de Búsqueda, Filtros y Acciones -->
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-md">
+          <!-- Fila Superior: Búsqueda y Botones de Acción -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="relative w-full sm:w-96">
+              <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+              <input type="text" id="filtroAdminProductos" oninput="filtrarProductosAdmin()" placeholder="Buscar producto por nombre, código o categoría..." 
+                     class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+              <button type="button" id="btnActualizar" onclick="cargarDatosCompletosAdmin()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-700">
+                <i class="fa-solid fa-rotate"></i> Actualizar
+              </button>
+              <button type="button" id="btnNuevoProducto" onclick="nuevoProducto()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Nuevo Producto
+              </button>
+            </div>
           </div>
 
-          <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <!-- Fila Inferior: Filtros de Categoría, Estado, Precio y Conteo -->
+          <div class="flex flex-wrap items-center justify-between gap-2.5 pt-2.5 border-t border-slate-800/80">
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- Filtro por Categoría -->
+              <div class="flex items-center gap-1.5">
+                <label for="filtroAdminCategoria" class="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                  <i class="fa-solid fa-tag text-indigo-400"></i> Categoría:
+                </label>
+                <select id="filtroAdminCategoria" onchange="filtrarProductosAdmin()" 
+                        class="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-medium">
+                  <option value="todas">🏷️ Todas las Categorías</option>
+                </select>
+              </div>
 
-            <button type="button" id="btnActualizar" onclick="cargarDatosCompletosAdmin()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-700">
+              <!-- Filtro por Estado -->
+              <div class="flex items-center gap-1.5">
+                <label for="filtroAdminEstado" class="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                  <i class="fa-solid fa-toggle-on text-emerald-400"></i> Estado:
+                </label>
+                <select id="filtroAdminEstado" onchange="filtrarProductosAdmin()" 
+                        class="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-medium">
+                  <option value="todos">Todos los Estados</option>
+                  <option value="Disponible">🟢 Disponible</option>
+                  <option value="Agotado">🔴 Agotado</option>
+                  <option value="Pausado">⏸️ Pausado</option>
+                </select>
+              </div>
 
-              <i class="fa-solid fa-rotate"></i> Actualizar
+              <!-- Ordenar por Precio / Stock / Nombre -->
+              <div class="flex items-center gap-1.5">
+                <label for="filtroAdminOrdenPrecio" class="text-[10px] uppercase font-bold text-slate-400 flex items-center gap-1">
+                  <i class="fa-solid fa-arrow-down-short-wide text-amber-400"></i> Ordenar:
+                </label>
+                <select id="filtroAdminOrdenPrecio" onchange="filtrarProductosAdmin()" 
+                        class="bg-slate-950 border border-slate-800 rounded-xl px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500 font-medium">
+                  <option value="defecto">Por defecto</option>
+                  <option value="precio-asc">💵 Precio: Menor a Mayor</option>
+                  <option value="precio-desc">💵 Precio: Mayor a Menor</option>
+                  <option value="stock-asc">📦 Stock: Menor a Mayor</option>
+                  <option value="stock-desc">📦 Stock: Mayor a Menor</option>
+                  <option value="nombre-asc">🔤 Nombre: A - Z</option>
+                </select>
+              </div>
 
-            </button>
+              <!-- Botón Limpiar Filtros -->
+              <button type="button" onclick="limpiarFiltrosProductosAdmin()" title="Restablecer todos los filtros" 
+                      class="px-2.5 py-1.5 bg-slate-800/80 hover:bg-slate-700 text-slate-400 hover:text-white rounded-xl text-xs transition flex items-center gap-1 border border-slate-700/60 font-semibold">
+                <i class="fa-solid fa-filter-circle-xmark text-rose-400"></i> Limpiar
+              </button>
+            </div>
 
-            <button type="button" id="btnNuevoProducto" onclick="nuevoProducto()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow flex items-center gap-1.5">
-
-              <i class="fa-solid fa-plus"></i> Nuevo Producto
-
-            </button>
-
+            <!-- Contador Dinámico de Productos Filtrados -->
+            <div id="contadorProductosFiltrados" class="text-[11px] font-semibold text-slate-400 bg-slate-950/80 px-3 py-1 rounded-xl border border-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-boxes-stacked text-indigo-400 text-xs"></i>
+              <span>Cargando productos...</span>
+            </div>
           </div>
-
         </div>
 
 
@@ -595,25 +641,25 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
             <table class="w-full text-left text-xs">
 
               <thead class="bg-slate-950/70 text-slate-400 uppercase font-semibold text-[10px] tracking-wider border-b border-slate-800">
-
                 <tr>
-
                   <th class="p-3 w-16">Foto</th>
-
-                  <th class="p-3">Nombre &amp; ID</th>
-
-                  <th class="p-3">Categor&iacute;a</th>
-
-                  <th class="p-3">Precio ($)</th>
-
-                  <th class="p-3">Stock</th>
-
-                  <th class="p-3">Estado</th>
-
+                  <th class="p-3 cursor-pointer hover:text-white transition select-none" onclick="ordenarPorColumnaAdmin('nombre')" title="Ordenar por Nombre">
+                    Nombre &amp; ID <i id="sortIcon-nombre" class="fa-solid fa-sort text-[9px] text-slate-600 ml-1"></i>
+                  </th>
+                  <th class="p-3 cursor-pointer hover:text-white transition select-none" onclick="ordenarPorColumnaAdmin('categoria')" title="Ordenar por Categoría">
+                    Categor&iacute;a <i id="sortIcon-categoria" class="fa-solid fa-sort text-[9px] text-slate-600 ml-1"></i>
+                  </th>
+                  <th class="p-3 cursor-pointer hover:text-white transition select-none" onclick="ordenarPorColumnaAdmin('precio')" title="Ordenar por Precio">
+                    Precio ($) <i id="sortIcon-precio" class="fa-solid fa-sort text-[9px] text-slate-600 ml-1"></i>
+                  </th>
+                  <th class="p-3 cursor-pointer hover:text-white transition select-none" onclick="ordenarPorColumnaAdmin('stock')" title="Ordenar por Stock">
+                    Stock <i id="sortIcon-stock" class="fa-solid fa-sort text-[9px] text-slate-600 ml-1"></i>
+                  </th>
+                  <th class="p-3 cursor-pointer hover:text-white transition select-none" onclick="ordenarPorColumnaAdmin('estado')" title="Ordenar por Estado">
+                    Estado <i id="sortIcon-estado" class="fa-solid fa-sort text-[9px] text-slate-600 ml-1"></i>
+                  </th>
                   <th class="p-3 text-right">Acciones</th>
-
                 </tr>
-
               </thead>
 
               <tbody id="tablaBodyProductos" class="divide-y divide-slate-800/60 font-medium text-slate-200">
@@ -1741,11 +1787,9 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
       document.getElementById('clientesCountBadge').textContent = datosAdmin.clientes.length;
 
-      renderizarTablaProductos(datosAdmin.productos);
-
-      renderizarTablaCategorias(datosAdmin.categorias || []);
-
       actualizarSelectCategorias(datosAdmin.categorias || []);
+      filtrarProductosAdmin();
+      renderizarTablaCategorias(datosAdmin.categorias || []);
 
       renderizarTablaPedidos(datosAdmin.pedidos);
 
@@ -2112,11 +2156,8 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
           '</td>' +
 
           '<td class="p-3">' +
-
-            '<span class="bg-slate-800 px-2 py-0.5 rounded text-[11px] font-semibold text-slate-300">' + p.categoria + '</span>' +
-
+            '<span onclick="filtrarPorCategoriaRapida(\'' + p.categoria + '\')" class="bg-slate-800 hover:bg-indigo-600 active:scale-95 cursor-pointer px-2 py-0.5 rounded text-[11px] font-semibold text-slate-300 hover:text-white transition inline-block" title="Hacer clic para filtrar por ' + p.categoria + '">' + p.categoria + '</span>' +
             '<span class="text-[10px] text-slate-500 block mt-0.5">' + (p.subcategoria || p.genero) + '</span>' +
-
           '</td>' +
 
           '<td class="p-3">' +
@@ -2342,19 +2383,27 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
       catsFiltradas.forEach(function(c) {
-
         var opt = document.createElement('option');
-
         opt.value = c.categoria;
-
         opt.textContent = c.categoria;
-
         if (c.categoria === valorActual) opt.selected = true;
-
         select.appendChild(opt);
-
       });
 
+      // Actualizar también el selector de filtro en la tabla de productos
+      var selectFiltro = document.getElementById('filtroAdminCategoria');
+      if (selectFiltro) {
+        var valFiltro = selectFiltro.value || 'todas';
+        selectFiltro.innerHTML = '<option value="todas">🏷️ Todas las Categorías</option>';
+        catsFiltradas.forEach(function(c) {
+          var optF = document.createElement('option');
+          optF.value = c.categoria;
+          optF.textContent = c.categoria;
+          if (c.categoria === valFiltro) optF.selected = true;
+          selectFiltro.appendChild(optF);
+        });
+        if (valFiltro) selectFiltro.value = valFiltro;
+      }
     }
 
 
@@ -2613,32 +2662,138 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
 
+    var ordenColumnaActual = { columna: null, asc: true };
+
     function filtrarProductosAdmin() {
+      if (!datosAdmin || !datosAdmin.productos) return;
 
-      var query = document.getElementById('filtroAdminProductos').value.toLowerCase().trim();
+      var query = (document.getElementById('filtroAdminProductos') ? document.getElementById('filtroAdminProductos').value : '').toLowerCase().trim();
+      var cat = document.getElementById('filtroAdminCategoria') ? document.getElementById('filtroAdminCategoria').value : 'todas';
+      var estado = document.getElementById('filtroAdminEstado') ? document.getElementById('filtroAdminEstado').value : 'todos';
+      var orden = document.getElementById('filtroAdminOrdenPrecio') ? document.getElementById('filtroAdminOrdenPrecio').value : 'defecto';
 
-      if (!query) {
-
-        renderizarTablaProductos(datosAdmin.productos);
-
-        return;
-
-      }
-
+      // 1. Filtrado combinado (Texto + Categoría + Estado)
       var filtrados = datosAdmin.productos.filter(function(p) {
+        var matchQuery = !query || (
+          (p.nombre && p.nombre.toLowerCase().includes(query)) ||
+          (p.id && p.id.toLowerCase().includes(query)) ||
+          (p.categoria && p.categoria.toLowerCase().includes(query)) ||
+          (p.subcategoria && p.subcategoria.toLowerCase().includes(query))
+        );
 
-        return p.nombre.toLowerCase().includes(query) ||
+        var matchCat = (cat === 'todas') || (p.categoria === cat);
+        var matchEstado = (estado === 'todos') || (p.estado && p.estado.toLowerCase() === estado.toLowerCase());
 
-               p.id.toLowerCase().includes(query) ||
-
-               p.categoria.toLowerCase().includes(query) ||
-
-               (p.subcategoria && p.subcategoria.toLowerCase().includes(query));
-
+        return matchQuery && matchCat && matchEstado;
       });
 
-      renderizarTablaProductos(filtrados);
+      // 2. Ordenamiento si aplica
+      if (orden === 'precio-asc') {
+        filtrados.sort(function(a, b) { return (Number(a.precio) || 0) - (Number(b.precio) || 0); });
+      } else if (orden === 'precio-desc') {
+        filtrados.sort(function(a, b) { return (Number(b.precio) || 0) - (Number(a.precio) || 0); });
+      } else if (orden === 'stock-asc') {
+        filtrados.sort(function(a, b) { return (Number(a.stock) || 0) - (Number(b.stock) || 0); });
+      } else if (orden === 'stock-desc') {
+        filtrados.sort(function(a, b) { return (Number(b.stock) || 0) - (Number(a.stock) || 0); });
+      } else if (orden === 'nombre-asc') {
+        filtrados.sort(function(a, b) { return (a.nombre || '').localeCompare(b.nombre || ''); });
+      }
 
+      // 3. Actualizar iconos de cabecera de tabla
+      actualizarIconosOrdenTabla();
+
+      // 4. Actualizar contador dinámico de productos
+      var contadorEl = document.getElementById('contadorProductosFiltrados');
+      if (contadorEl) {
+        var total = datosAdmin.productos.length;
+        var mostrados = filtrados.length;
+        if (mostrados === total) {
+          contadorEl.innerHTML = '<i class="fa-solid fa-boxes-stacked text-indigo-400 text-xs"></i> <span>' + total + ' productos</span>';
+        } else {
+          contadorEl.innerHTML = '<i class="fa-solid fa-filter text-amber-400 text-xs"></i> <span>Mostrando ' + mostrados + ' de ' + total + '</span>';
+        }
+      }
+
+      // 5. Renderizar lista en la tabla
+      renderizarTablaProductos(filtrados);
+    }
+
+    function ordenarPorColumnaAdmin(columna) {
+      if (ordenColumnaActual.columna === columna) {
+        ordenColumnaActual.asc = !ordenColumnaActual.asc;
+      } else {
+        ordenColumnaActual.columna = columna;
+        ordenColumnaActual.asc = true;
+      }
+
+      var selectOrden = document.getElementById('filtroAdminOrdenPrecio');
+      if (selectOrden) {
+        if (columna === 'precio') {
+          selectOrden.value = ordenColumnaActual.asc ? 'precio-asc' : 'precio-desc';
+        } else if (columna === 'stock') {
+          selectOrden.value = ordenColumnaActual.asc ? 'stock-asc' : 'stock-desc';
+        } else if (columna === 'nombre') {
+          selectOrden.value = ordenColumnaActual.asc ? 'nombre-asc' : 'defecto';
+        } else if (columna === 'categoria') {
+          selectOrden.value = 'defecto';
+          if (datosAdmin && datosAdmin.productos) {
+            datosAdmin.productos.sort(function(a, b) {
+              return ordenColumnaActual.asc 
+                ? (a.categoria || '').localeCompare(b.categoria || '')
+                : (b.categoria || '').localeCompare(a.categoria || '');
+            });
+          }
+        } else if (columna === 'estado') {
+          selectOrden.value = 'defecto';
+          if (datosAdmin && datosAdmin.productos) {
+            datosAdmin.productos.sort(function(a, b) {
+              return ordenColumnaActual.asc 
+                ? (a.estado || '').localeCompare(b.estado || '')
+                : (b.estado || '').localeCompare(a.estado || '');
+            });
+          }
+        }
+      }
+
+      filtrarProductosAdmin();
+    }
+
+    function actualizarIconosOrdenTabla() {
+      ['nombre', 'categoria', 'precio', 'stock', 'estado'].forEach(function(col) {
+        var icon = document.getElementById('sortIcon-' + col);
+        if (!icon) return;
+        if (ordenColumnaActual.columna === col) {
+          icon.className = ordenColumnaActual.asc 
+            ? 'fa-solid fa-sort-up text-indigo-400 ml-1 text-xs' 
+            : 'fa-solid fa-sort-down text-indigo-400 ml-1 text-xs';
+        } else {
+          icon.className = 'fa-solid fa-sort text-[9px] text-slate-600 ml-1';
+        }
+      });
+    }
+
+    function filtrarPorCategoriaRapida(catNombre) {
+      var selectCat = document.getElementById('filtroAdminCategoria');
+      if (selectCat) {
+        selectCat.value = catNombre;
+        filtrarProductosAdmin();
+        mostrarToastAdmin('Filtrando por categoría: ' + catNombre, 'tag', 'indigo');
+      }
+    }
+
+    function limpiarFiltrosProductosAdmin() {
+      var q = document.getElementById('filtroAdminProductos');
+      var c = document.getElementById('filtroAdminCategoria');
+      var e = document.getElementById('filtroAdminEstado');
+      var o = document.getElementById('filtroAdminOrdenPrecio');
+      if (q) q.value = '';
+      if (c) c.value = 'todas';
+      if (e) e.value = 'todos';
+      if (o) o.value = 'defecto';
+      ordenColumnaActual = { columna: null, asc: true };
+      filtrarProductosAdmin();
+      mostrarToastAdmin('Filtros restablecidos', 'rotate-left', 'slate');
     }
 
 
