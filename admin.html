@@ -1582,57 +1582,35 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
     function cerrarSesionAdmin(forzar) {
-
       if (!forzar && !confirm('¿Estás seguro de que deseas cerrar sesión?')) return;
-
       sessionStorage.removeItem('admin_tienda_clave');
-
       claveActual = '';
-
+      if (timerPollingChatsAdmin) {
+        clearInterval(timerPollingChatsAdmin);
+        timerPollingChatsAdmin = null;
+      }
       document.getElementById('pantallaLogin').classList.remove('hidden');
-
       document.getElementById('panelPrincipal').classList.add('hidden');
-
     }
-
-
 
     // 2. CARGA DE DATOS DE LA TIENDA (VIA REST API)
-
     async function cargarDatosCompletosAdmin() {
-
       try {
-
         const res = await apiGet({ accion: 'obtenerDatosAdmin', clave: claveActual });
-
         if (res && res.exito) {
-
           datosAdmin = res;
-
           mostrarPanelPrincipal();
-
         } else {
-
           alert((res && res.mensaje) ? res.mensaje : 'Acceso denegado');
-
           cerrarSesionAdmin();
-
         }
-
       } catch (err) {
-
         alert('Error cargando datos: ' + (err.message || err));
-
       }
-
     }
 
-
-
     function mostrarPanelPrincipal() {
-
       document.getElementById('pantallaLogin').classList.add('hidden');
-
       document.getElementById('panelPrincipal').classList.remove('hidden');
       if (datosAdmin.categorias) {
         var catActivos = datosAdmin.categorias.find(function(c) { return c.id === 'CAT-00' || c.categoria === 'Activos Web'; });
@@ -1646,8 +1624,6 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
         }
       }
 
-
-
       // Actualizar metricas (si existen elementos)
       var elP = document.getElementById('metricTotalProd');
       if (elP) elP.textContent = datosAdmin.metricas.totalProductos || 0;
@@ -1658,29 +1634,28 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       var elCli = document.getElementById('metricTotalClientes');
       if (elCli) elCli.textContent = datosAdmin.metricas.totalClientes || 0;
 
-
-
       document.getElementById('countPestanaProd').textContent = datosAdmin.productos.length;
-
       document.getElementById('countPestanaPed').textContent = datosAdmin.pedidos.length;
-
       document.getElementById('countPestanaCli').textContent = datosAdmin.clientes.length;
 
       var elCountCat = document.getElementById('countPestanaCat');
       if (elCountCat) elCountCat.textContent = (datosAdmin.categorias || []).length;
 
       document.getElementById('pedidosCountBadge').textContent = datosAdmin.pedidos.length;
-
       document.getElementById('clientesCountBadge').textContent = datosAdmin.clientes.length;
 
       actualizarSelectCategorias(datosAdmin.categorias || []);
       filtrarProductosAdmin();
       renderizarTablaCategorias(datosAdmin.categorias || []);
-
       renderizarTablaPedidos(datosAdmin.pedidos);
-
       renderizarTablaClientes(datosAdmin.clientes);
 
+      // Cargar chats y activar polling automático en tiempo real
+      cargarChatsAdminUI(true);
+      if (timerPollingChatsAdmin) clearInterval(timerPollingChatsAdmin);
+      timerPollingChatsAdmin = setInterval(function() {
+        cargarChatsAdminUI(true);
+      }, 5000);
     }
 
 
@@ -1769,10 +1744,26 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
     // ==========================================
     let listaChatsAdminGlobal = [];
     let chatActivoSeleccionado = null;
+    let timerPollingChatsAdmin = null;
 
-    async function cargarChatsAdminUI() {
+    async function marcarLeidoChatAdmin(claveAdmin, clienteId) {
       try {
-        const chats = await obtenerTodosChatsAdmin(claveAdminActual);
+        return await apiPost({
+          accion: 'marcarLeidoChatAdmin',
+          clave: claveAdmin,
+          clienteId: clienteId
+        });
+      } catch (e) {
+        return { exito: true };
+      }
+    }
+
+    async function cargarChatsAdminUI(silencioso) {
+      const clave = claveActual || sessionStorage.getItem('admin_tienda_clave');
+      if (!clave) return;
+
+      try {
+        const chats = await obtenerTodosChatsAdmin(clave);
         listaChatsAdminGlobal = chats || [];
         renderizarListaChatsAdmin(listaChatsAdminGlobal);
 
@@ -1780,15 +1771,27 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
         let totalNoLeidos = 0;
         listaChatsAdminGlobal.forEach(c => { totalNoLeidos += (c.noLeidos || 0); });
         const b = document.getElementById('countPestanaMensajes');
-        if (b) b.textContent = totalNoLeidos;
+        if (b) {
+          b.textContent = totalNoLeidos;
+          if (totalNoLeidos > 0) {
+            b.className = 'bg-rose-500 text-white font-black px-1.5 py-0.5 text-[9px] rounded-full animate-bounce';
+          } else {
+            b.className = '';
+          }
+        }
         const b2 = document.getElementById('countChatsBadge');
         if (b2) b2.textContent = listaChatsAdminGlobal.length;
 
+        // Si hay un chat activo, actualizar sus mensajes sin perder foco ni scroll abrupto
         if (chatActivoSeleccionado) {
-          seleccionarChatAdmin(chatActivoSeleccionado.clienteId);
+          const chatActualizado = listaChatsAdminGlobal.find(item => item.clienteId === chatActivoSeleccionado.clienteId);
+          if (chatActualizado) {
+            chatActivoSeleccionado = chatActualizado;
+            renderizarMensajesConversacionActivaAdmin(chatActualizado.mensajes || [], true);
+          }
         }
       } catch (err) {
-        console.warn('Error al cargar chats:', err);
+        if (!silencioso) console.warn('Error al cargar chats:', err);
       }
     }
 
@@ -1803,21 +1806,36 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
       let html = '';
       chats.forEach(c => {
-        const nombre = c.nombre || 'Cliente Anónimo';
-        const tlf = c.telefono || c.clienteId || '';
+        const nombre = c.nombre || 'Cliente';
+        const tlf = c.telefono || c.cedula || c.clienteId || '';
         const ultimoMsg = c.ultimoMensaje || 'Sin mensajes';
         const noLeidos = c.noLeidos || 0;
         const esSeleccionado = chatActivoSeleccionado && chatActivoSeleccionado.clienteId === c.clienteId;
 
+        let horaUltimo = '';
+        const fRaw = c.ultimaFecha || '';
+        if (fRaw) {
+          if (fRaw.includes(' ')) {
+            horaUltimo = fRaw.split(' ')[1].slice(0, 5);
+          } else {
+            try { horaUltimo = new Date(fRaw).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch(e) {}
+          }
+        }
+
         html += `
           <div onclick="seleccionarChatAdmin('${c.clienteId}')" 
-               class="p-3 cursor-pointer transition ${esSeleccionado ? 'bg-indigo-600/20 border-l-4 border-indigo-500' : 'hover:bg-slate-900/60'}">
-            <div class="flex items-center justify-between mb-1">
-              <strong class="text-xs text-white truncate max-w-[160px]">${nombre}</strong>
-              ${noLeidos > 0 ? `<span class="bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full">${noLeidos}</span>` : ''}
+               class="p-3 cursor-pointer transition flex items-center justify-between gap-2 ${esSeleccionado ? 'bg-indigo-600/20 border-l-4 border-indigo-500' : 'hover:bg-slate-900/60'}">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between mb-0.5">
+                <strong class="text-xs text-white truncate max-w-[140px]">${nombre}</strong>
+                <span class="text-[9px] text-slate-500 font-mono">${horaUltimo}</span>
+              </div>
+              <p class="text-[11px] text-slate-400 truncate mb-1">${ultimoMsg}</p>
+              <span class="text-[9px] text-indigo-400 font-mono flex items-center gap-1">
+                <i class="fa-solid fa-address-card text-[8px]"></i> ${tlf}
+              </span>
             </div>
-            <p class="text-[11px] text-slate-400 truncate mb-1">${ultimoMsg}</p>
-            <span class="text-[9px] text-slate-500 font-mono">${tlf}</span>
+            ${noLeidos > 0 ? `<span class="bg-rose-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0 animate-pulse">${noLeidos}</span>` : ''}
           </div>
         `;
       });
@@ -1833,30 +1851,33 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
       const filtrados = listaChatsAdminGlobal.filter(c => 
         (c.nombre && c.nombre.toLowerCase().includes(q)) || 
-        (c.telefono && c.telefono.includes(q)) || 
+        (c.telefono && String(c.telefono).includes(q)) || 
+        (c.cedula && String(c.cedula).toLowerCase().includes(q)) ||
+        (c.clienteId && String(c.clienteId).toLowerCase().includes(q)) ||
         (c.ultimoMensaje && c.ultimoMensaje.toLowerCase().includes(q))
       );
       renderizarListaChatsAdmin(filtrados);
     }
 
-    function seleccionarChatAdmin(clienteId) {
+    async function seleccionarChatAdmin(clienteId) {
       const c = listaChatsAdminGlobal.find(item => item.clienteId === clienteId);
       if (!c) return;
 
       chatActivoSeleccionado = c;
+      const noLeidosAntes = c.noLeidos;
       c.noLeidos = 0;
 
       document.getElementById('chatAdminVacio').classList.add('hidden');
       document.getElementById('chatAdminActivo').classList.remove('hidden');
 
       document.getElementById('chatAdminNombreCliente').textContent = c.nombre || 'Cliente';
-      document.getElementById('chatAdminTelefonoCliente').textContent = 'WhatsApp / ID: ' + (c.telefono || c.clienteId);
+      document.getElementById('chatAdminTelefonoCliente').textContent = 'WhatsApp / Cédula / ID: ' + (c.telefono || c.cedula || c.clienteId);
 
       const btnWA = document.getElementById('btnChatAdminAbrirWA');
       if (btnWA) {
         const telLimpio = String(c.telefono || '').replace(/\D/g, '');
-        if (telLimpio) {
-          btnWA.href = 'https://wa.me/' + telLimpio;
+        if (telLimpio && telLimpio.length >= 8) {
+          btnWA.href = 'https://wa.me/' + (telLimpio.startsWith('58') ? telLimpio : ('58' + telLimpio.replace(/^0+/, '')));
           btnWA.classList.remove('hidden');
         } else {
           btnWA.classList.add('hidden');
@@ -1865,22 +1886,38 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
       renderizarMensajesConversacionActivaAdmin(c.mensajes || []);
       renderizarListaChatsAdmin(listaChatsAdminGlobal);
+
+      // Notificar al backend que se leyeron los mensajes si habían pendientes
+      if (noLeidosAntes > 0) {
+        const clave = claveActual || sessionStorage.getItem('admin_tienda_clave');
+        marcarLeidoChatAdmin(clave, c.clienteId);
+      }
     }
 
-    function renderizarMensajesConversacionActivaAdmin(mensajes) {
+    function renderizarMensajesConversacionActivaAdmin(mensajes, preservarScroll) {
       const contenedor = document.getElementById('chatAdminMensajesHistorial');
       if (!contenedor) return;
 
+      const estabaAlFinal = contenedor.scrollHeight - contenedor.scrollTop <= contenedor.clientHeight + 50;
+
       let html = '';
       mensajes.forEach(m => {
-        const esAdmin = m.remitente === 'admin';
-        const hora = m.fecha ? new Date(m.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+        const esAdmin = String(m.remitente || '').toLowerCase() === 'admin';
+        const fRaw = m.fechaHora || m.fecha || '';
+        let hora = '';
+        if (fRaw) {
+          if (fRaw.includes(' ')) {
+            hora = fRaw.split(' ')[1].slice(0, 5);
+          } else {
+            try { hora = new Date(fRaw).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch(e) {}
+          }
+        }
 
         if (esAdmin) {
           html += `
             <div class="flex items-start justify-end gap-2">
               <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] space-y-1 shadow shadow-indigo-600/20">
-                <p class="break-words">${m.mensaje}</p>
+                <p class="break-words leading-relaxed">${m.mensaje}</p>
                 <span class="text-[9px] text-indigo-200 block text-right">${hora} • Tú (Admin)</span>
               </div>
             </div>
@@ -1892,7 +1929,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
                 <i class="fa-solid fa-user"></i>
               </div>
               <div class="bg-slate-800 border border-slate-700 text-slate-100 p-3 rounded-2xl rounded-tl-none max-w-[80%] space-y-1">
-                <p class="break-words">${m.mensaje}</p>
+                <p class="break-words leading-relaxed">${m.mensaje}</p>
                 <span class="text-[9px] text-slate-400 block text-right">${hora}</span>
               </div>
             </div>
@@ -1901,7 +1938,9 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       });
 
       contenedor.innerHTML = html;
-      contenedor.scrollTop = contenedor.scrollHeight;
+      if (!preservarScroll || estabaAlFinal) {
+        contenedor.scrollTop = contenedor.scrollHeight;
+      }
     }
 
     async function enviarRespuestaAdminUI() {
@@ -1909,24 +1948,45 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       const texto = input.value.trim();
       if (!texto || !chatActivoSeleccionado) return;
 
+      const clave = claveActual || sessionStorage.getItem('admin_tienda_clave');
+      if (!clave) {
+        alert('Debes iniciar sesión para responder.');
+        return;
+      }
+
       input.value = '';
       const clienteId = chatActivoSeleccionado.clienteId;
 
-      await responderChatAdmin(claveAdminActual, clienteId, texto);
-
       if (!chatActivoSeleccionado.mensajes) chatActivoSeleccionado.mensajes = [];
+      const fechaActualIso = new Date().toISOString();
+      const horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
       chatActivoSeleccionado.mensajes.push({
         id: 'MSG-' + Date.now(),
-        fecha: new Date().toISOString(),
+        fecha: fechaActualIso,
+        fechaHora: fechaActualIso.replace('T', ' ').slice(0, 19),
         clienteId: clienteId,
         remitente: 'admin',
         mensaje: texto,
-        leido: true
+        leido: 'SI'
       });
       chatActivoSeleccionado.ultimoMensaje = texto;
+      chatActivoSeleccionado.ultimoRemitente = 'admin';
 
       renderizarMensajesConversacionActivaAdmin(chatActivoSeleccionado.mensajes);
       renderizarListaChatsAdmin(listaChatsAdminGlobal);
+
+      const btn = document.getElementById('btnAdminEnviarChat');
+      if (btn) btn.disabled = true;
+
+      try {
+        await responderChatAdmin(clave, clienteId, texto);
+      } catch (err) {
+        console.warn('Error enviando respuesta:', err);
+      } finally {
+        if (btn) btn.disabled = false;
+        cargarChatsAdminUI(true);
+      }
     }
 
     // ==========================================

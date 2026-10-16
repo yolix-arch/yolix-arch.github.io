@@ -213,11 +213,12 @@ async function enviarMensajeChat(mensajeData) {
     id: 'MSG-' + Date.now(),
     fecha: new Date().toISOString(),
     clienteId: String(mensajeData.clienteId || 'ANON').trim(),
+    clienteCedula: String(mensajeData.clienteCedula || mensajeData.cedula || '').trim(),
     clienteNombre: String(mensajeData.clienteNombre || 'Cliente').trim(),
     clienteTelefono: String(mensajeData.clienteTelefono || '').trim(),
     remitente: mensajeData.remitente || 'cliente',
     mensaje: String(mensajeData.mensaje || '').trim(),
-    leido: false
+    leido: 'NO'
   };
 
   try {
@@ -2137,6 +2138,9 @@ async function obtenerHistorialChat(clienteId) {
       if (data) {
         try {
           clienteChatActual = JSON.parse(data);
+          if (!clienteChatActual.id) {
+            clienteChatActual.id = clienteChatActual.cedula || clienteChatActual.telefono || ('CLI-' + Date.now().toString().slice(-6));
+          }
         } catch(e) {}
       }
     }
@@ -2160,11 +2164,15 @@ async function obtenerHistorialChat(clienteId) {
           icono.classList.remove('fa-xmark');
           icono.classList.add('fa-comments');
         }
-        if (chatIntervalo) clearInterval(chatIntervalo);
+        if (chatIntervalo) {
+          clearInterval(chatIntervalo);
+          chatIntervalo = null;
+        }
       }
     }
 
     function abrirFlujoChat() {
+      inicializarChatCliente();
       const pasoId = document.getElementById('chatPasoIdentificacion');
       const pasoMsg = document.getElementById('chatPasoMensajes');
 
@@ -2176,7 +2184,7 @@ async function obtenerHistorialChat(clienteId) {
         pasoMsg.classList.remove('hidden');
         cargarHistorialChatCliente();
         if (chatIntervalo) clearInterval(chatIntervalo);
-        chatIntervalo = setInterval(cargarHistorialChatCliente, 5000);
+        chatIntervalo = setInterval(cargarHistorialChatCliente, 4000);
       }
     }
 
@@ -2187,22 +2195,31 @@ async function obtenerHistorialChat(clienteId) {
         alert('Por favor ingresa tu nombre para continuar.');
         return;
       }
+      const tlfLimpio = tlf.replace(/\D/g, '');
+      const idGen = 'CLI-' + (tlfLimpio || Date.now().toString().slice(-6));
       clienteChatActual = {
+        id: idGen,
         nombre: nombre,
         telefono: tlf,
-        cedula: tlf || 'V-CHAT-' + Date.now().toString().slice(-6)
+        cedula: tlf || idGen
       };
       localStorage.setItem('cliente_catalogo', JSON.stringify(clienteChatActual));
-      actualizarUIClienteIdentificado(clienteChatActual);
+      if (typeof actualizarUIClienteIdentificado === 'function') {
+        actualizarUIClienteIdentificado(clienteChatActual);
+      }
       abrirFlujoChat();
     }
 
     async function cargarHistorialChatCliente() {
+      if (!clienteChatActual) inicializarChatCliente();
       if (!clienteChatActual) return;
-      const idCliente = clienteChatActual.telefono || clienteChatActual.cedula || clienteChatActual.nombre;
+      const idCliente = clienteChatActual.id || clienteChatActual.cedula || clienteChatActual.telefono;
+      if (!idCliente) return;
       try {
         const msgs = await obtenerHistorialChat(idCliente);
-        renderizarMensajesChat(msgs);
+        if (msgs && msgs.length > 0) {
+          renderizarMensajesChat(msgs);
+        }
       } catch (e) {}
     }
 
@@ -2210,28 +2227,39 @@ async function obtenerHistorialChat(clienteId) {
       const contenedor = document.getElementById('chatListaMensajes');
       if (!contenedor) return;
 
+      const estabaAlFinal = contenedor.scrollHeight - contenedor.scrollTop <= contenedor.clientHeight + 50;
+      const nombreCli = clienteChatActual ? (clienteChatActual.nombre || '').split(' ')[0] : '';
+
       let html = `
         <div class="flex items-start gap-2">
           <div class="w-7 h-7 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xs flex-shrink-0">
             <i class="fa-solid fa-store"></i>
           </div>
           <div class="bg-slate-800/80 border border-slate-700/50 text-slate-200 p-3 rounded-2xl rounded-tl-none max-w-[80%] space-y-1">
-            <p class="font-medium">¡Hola ${clienteChatActual ? clienteChatActual.nombre.split(' ')[0] : ''}! 👋 ¿Tienes dudas sobre algún producto o pedido? Escríbenos y te atenderemos.</p>
-            <span class="text-[9px] text-slate-400 block text-right">Tienda</span>
+            <p class="font-medium">¡Hola ${nombreCli}! 👋 ¿Tienes dudas sobre algún producto o pedido? Escríbenos y te atenderemos con gusto.</p>
+            <span class="text-[9px] text-slate-400 block text-right">Atención al Cliente</span>
           </div>
         </div>
       `;
 
       if (Array.isArray(msgs)) {
         for (const m of msgs) {
-          const esCliente = m.remitente === 'cliente';
-          const fechaHora = m.fecha ? new Date(m.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+          const esCliente = String(m.remitente || '').toLowerCase() === 'cliente';
+          const horaRaw = m.fechaHora || m.fecha || '';
+          let fechaHora = '';
+          if (horaRaw) {
+            if (horaRaw.includes(' ')) {
+              fechaHora = horaRaw.split(' ')[1].slice(0, 5);
+            } else {
+              try { fechaHora = new Date(horaRaw).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch (err) {}
+            }
+          }
 
           if (esCliente) {
             html += `
               <div class="flex items-start justify-end gap-2">
                 <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] space-y-1 shadow shadow-indigo-600/20">
-                  <p class="break-words">${m.mensaje}</p>
+                  <p class="break-words leading-relaxed">${m.mensaje}</p>
                   <span class="text-[9px] text-indigo-200 block text-right">${fechaHora}</span>
                 </div>
               </div>
@@ -2240,11 +2268,11 @@ async function obtenerHistorialChat(clienteId) {
             html += `
               <div class="flex items-start gap-2">
                 <div class="w-7 h-7 rounded-xl bg-emerald-600/20 text-emerald-400 flex items-center justify-center text-xs flex-shrink-0">
-                  <i class="fa-solid fa-shield-halved"></i>
+                  <i class="fa-solid fa-headset"></i>
                 </div>
                 <div class="bg-slate-800 border border-slate-700 text-slate-100 p-3 rounded-2xl rounded-tl-none max-w-[80%] space-y-1">
-                  <p class="break-words">${m.mensaje}</p>
-                  <span class="text-[9px] text-slate-400 block text-right">${fechaHora} • Administrador</span>
+                  <p class="break-words leading-relaxed">${m.mensaje}</p>
+                  <span class="text-[9px] text-emerald-400 block text-right">${fechaHora} • Asesor Oficial</span>
                 </div>
               </div>
             `;
@@ -2253,7 +2281,9 @@ async function obtenerHistorialChat(clienteId) {
       }
 
       contenedor.innerHTML = html;
-      contenedor.scrollTop = contenedor.scrollHeight;
+      if (estabaAlFinal || msgs.length <= 2) {
+        contenedor.scrollTop = contenedor.scrollHeight;
+      }
     }
 
     async function enviarMensajeChatCliente() {
@@ -2264,24 +2294,27 @@ async function obtenerHistorialChat(clienteId) {
       if (!clienteChatActual) {
         inicializarChatCliente();
         if (!clienteChatActual) {
+          const randId = 'CLI-' + Date.now().toString().slice(-6);
           clienteChatActual = {
+            id: randId,
             nombre: 'Cliente Web',
-            telefono: '04120000000',
-            cedula: 'V-CHAT-' + Date.now().toString().slice(-6)
+            telefono: '',
+            cedula: randId
           };
           localStorage.setItem('cliente_catalogo', JSON.stringify(clienteChatActual));
         }
       }
 
       input.value = '';
-      const idCliente = clienteChatActual.telefono || clienteChatActual.cedula || clienteChatActual.nombre || 'CLIENTE';
+      const idCliente = clienteChatActual.id || clienteChatActual.cedula || clienteChatActual.telefono || 'CLIENTE';
 
       const nuevoMsg = {
         id: 'MSG-' + Date.now(),
         fecha: new Date().toISOString(),
         clienteId: idCliente,
-        clienteNombre: clienteChatActual.nombre,
-        clienteTelefono: clienteChatActual.telefono,
+        clienteCedula: clienteChatActual.cedula || '',
+        clienteNombre: clienteChatActual.nombre || 'Cliente',
+        clienteTelefono: clienteChatActual.telefono || '',
         mensaje: texto,
         remitente: 'cliente'
       };
@@ -2291,7 +2324,7 @@ async function obtenerHistorialChat(clienteId) {
         const burbujaHtml = `
           <div class="flex items-start justify-end gap-2">
             <div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none max-w-[80%] space-y-1 shadow shadow-indigo-600/20">
-              <p class="break-words">${nuevoMsg.mensaje}</p>
+              <p class="break-words leading-relaxed">${nuevoMsg.mensaje}</p>
               <span class="text-[9px] text-indigo-200 block text-right">Ahora</span>
             </div>
           </div>
@@ -2303,6 +2336,31 @@ async function obtenerHistorialChat(clienteId) {
       await enviarMensajeChat(nuevoMsg);
       cargarHistorialChatCliente();
     }
+
+    // Polling en segundo plano para notificar si hay respuestas del asesor
+    async function verificarMensajesNuevosAdmin() {
+      if (!clienteChatActual) inicializarChatCliente();
+      if (!clienteChatActual) return;
+      const idCliente = clienteChatActual.id || clienteChatActual.cedula || clienteChatActual.telefono;
+      if (!idCliente) return;
+      const ventana = document.getElementById('ventanaChatFlotante');
+      if (ventana && !ventana.classList.contains('hidden')) return;
+
+      try {
+        const msgs = await obtenerHistorialChat(idCliente);
+        if (Array.isArray(msgs) && msgs.length > 0) {
+          const ultimo = msgs[msgs.length - 1];
+          if (ultimo && String(ultimo.remitente || '').toLowerCase() === 'admin' && String(ultimo.leido || '').toUpperCase() !== 'SI') {
+            const badge = document.getElementById('badgeChatNoLeidos');
+            if (badge) {
+              badge.textContent = '1';
+              badge.classList.remove('hidden');
+            }
+          }
+        }
+      } catch(e) {}
+    }
+    setInterval(verificarMensajesNuevosAdmin, 12000);
   </script>
 
   <!-- ========================================== -->
