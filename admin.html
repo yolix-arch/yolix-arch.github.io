@@ -608,16 +608,19 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
         <div id="seccionFormularioProducto" class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden">
           
           <!-- CABECERA FLOTANTE DE LA VENTANA MODAL -->
-          <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4 bg-slate-950/60 flex-shrink-0">
+          <div class="flex items-center justify-between border-b border-slate-800 px-6 py-4 bg-slate-950/70 flex-shrink-0">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
-                <i class="fa-solid fa-pen-to-square text-lg"></i>
+              <div id="modalProdIconContainer" class="w-10 h-10 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
+                <i id="modalProdIcono" class="fa-solid fa-pen-to-square text-lg"></i>
               </div>
               <div>
-                <h2 id="formProductoTitulo" class="text-base font-bold text-white flex items-center gap-2">
-                  <i class="fa-solid fa-box-open text-indigo-400"></i> Agregar Nuevo Producto
-                </h2>
-                <p class="text-[11px] text-slate-400">Sincronización directa en vivo con la hoja 'Productos' y Google Drive</p>
+                <div class="flex items-center gap-2 flex-wrap">
+                  <h2 id="formProductoTitulo" class="text-base font-bold text-white flex items-center gap-2">
+                    Editar Producto
+                  </h2>
+                  <span id="formProdIdBadge" class="bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 font-mono text-xs px-2.5 py-0.5 rounded-lg font-bold">P01</span>
+                </div>
+                <p id="formProdSubtitulo" class="text-[11px] text-slate-400">Modifica el nombre, cantidad en stock, precio, imágenes de Drive y administra opiniones.</p>
               </div>
             </div>
 
@@ -638,262 +641,213 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
           <!-- CUERPO SCROLLABLE -->
           <div class="overflow-y-auto p-6 space-y-6 flex-1">
 
+            <div class="space-y-5">
 
+              <input type="hidden" id="formProdId">
 
-          <div class="space-y-4">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-            <input type="hidden" id="formProdId">
+                <!-- NOMBRE DEL PRODUCTO -->
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-bold text-indigo-300 mb-1">
+                    <i class="fa-solid fa-tag text-indigo-400 mr-1"></i> Nombre del Producto *
+                  </label>
+                  <input type="text" id="formProdNombre" placeholder="Ej: Zapatos Deportivos Running Pro" 
+                         class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs font-medium text-white placeholder-slate-500 focus:outline-none transition">
+                </div>
 
+                <!-- CATEGORÍA PRINCIPAL -->
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">
+                    <i class="fa-solid fa-layer-group text-slate-400 mr-1"></i> Categor&iacute;a Principal *
+                  </label>
+                  <select id="formProdCategoria" class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs text-white focus:outline-none transition">
+                    <option value="Zapatos">Zapatos y Calzado</option>
+                    <option value="Deportes">Deportes y Fitness</option>
+                    <option value="Ropa Mujer">Ropa para Mujer</option>
+                    <option value="Ropa Hombre">Ropa para Hombre</option>
+                    <option value="Ropa Niños">Ropa para Niños</option>
+                    <option value="Bebés">Bebés y Maternal</option>
+                    <option value="Carros">Carros y Repuestos</option>
+                    <option value="Accesorios">Accesorios Generales</option>
+                  </select>
+                </div>
 
+                <!-- SUBCATEGORÍA -->
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">
+                    <i class="fa-solid fa-filter text-slate-400 mr-1"></i> Subcategor&iacute;a
+                  </label>
+                  <input type="text" id="formProdSubcat" placeholder="Ej: Deportivos, Sandalias, Lubricantes..." 
+                         class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none transition">
+                </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- PÚBLICO / GÉNERO -->
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">
+                    <i class="fa-solid fa-users text-slate-400 mr-1"></i> P&uacute;blico / G&eacute;nero
+                  </label>
+                  <select id="formProdGenero" class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs text-white focus:outline-none transition">
+                    <option value="Unisex">Unisex</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Niños">Niños / Niñas</option>
+                    <option value="Bebés">Bebés</option>
+                  </select>
+                </div>
 
-              <div class="sm:col-span-2">
+                <!-- PRECIO EN DÓLARES -->
+                <div>
+                  <label class="block text-xs font-bold text-emerald-400 mb-1">
+                    <i class="fa-solid fa-dollar-sign mr-1"></i> Precio en D&oacute;lares ($) *
+                  </label>
+                  <input type="number" id="formProdPrecio" step="0.5" placeholder="0.00" 
+                         class="w-full bg-slate-950 border border-slate-700 focus:border-emerald-500 rounded-xl p-3 text-xs font-bold text-white placeholder-slate-500 focus:outline-none transition">
+                </div>
 
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre del Producto *</label>
+                <!-- CANTIDAD / STOCK CON CONTROLES RÁPIDOS +/- -->
+                <div>
+                  <label class="block text-xs font-bold text-indigo-300 mb-1">
+                    <i class="fa-solid fa-boxes-stacked mr-1 text-indigo-400"></i> Cantidad / Stock Disponible en Tienda *
+                  </label>
+                  <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="cambiarStockModal(-1)" class="w-11 h-11 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold rounded-xl flex items-center justify-center border border-slate-700 text-sm transition flex-shrink-0" title="Restar 1 unidad">
+                      <i class="fa-solid fa-minus"></i>
+                    </button>
+                    <input type="number" id="formProdStock" min="0" placeholder="Ej: 10" 
+                           class="flex-1 bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-2.5 text-center text-sm font-bold text-white placeholder-slate-500 focus:outline-none transition">
+                    <button type="button" onclick="cambiarStockModal(1)" class="w-11 h-11 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white font-bold rounded-xl flex items-center justify-center border border-slate-700 text-sm transition flex-shrink-0" title="Sumar 1 unidad">
+                      <i class="fa-solid fa-plus"></i>
+                    </button>
+                  </div>
+                </div>
 
-                <input type="text" id="formProdNombre" placeholder="Ej: Zapatos Deportivos Running Pro" 
+                <!-- ESTADO DE PUBLICACIÓN -->
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">
+                    <i class="fa-solid fa-toggle-on text-slate-400 mr-1"></i> Estado de Publicaci&oacute;n
+                  </label>
+                  <select id="formProdEstado" class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs text-white focus:outline-none transition">
+                    <option value="Disponible">Disponible (Visible en catálogo)</option>
+                    <option value="Agotado">Agotado (Sin existencias)</option>
+                  </select>
+                </div>
 
-                       class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
-              </div>
-
-
-
-              <div>
-
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Categor&iacute;a Principal *</label>
-
-                <select id="formProdCategoria" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500">
-                  <option value="Zapatos">Zapatos y Calzado</option>
-                  <option value="Deportes">Deportes y Fitness</option>
-                  <option value="Ropa Mujer">Ropa para Mujer</option>
-                  <option value="Ropa Hombre">Ropa para Hombre</option>
-                  <option value="Ropa Niños">Ropa para Niños</option>
-                  <option value="Bebés">Bebés y Maternal</option>
-                  <option value="Carros">Carros y Repuestos</option>
-                  <option value="Accesorios">Accesorios Generales</option>
-                </select>
-
-              </div>
-
-
-
-              <div>
-
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Subcategor&iacute;a</label>
-
-                <input type="text" id="formProdSubcat" placeholder="Ej: Deportivos, Sandalias, Lubricantes..." 
-
-                       class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
-              </div>
-
-
-
-              <div>
-
-                <label class="block text-xs font-semibold text-slate-300 mb-1">P&uacute;blico / G&eacute;nero</label>
-
-                <select id="formProdGenero" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500">
-                  <option value="Unisex">Unisex</option>
-                  <option value="Femenino">Femenino</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Niños">Niños / Niñas</option>
-                  <option value="Bebés">Bebés</option>
-                </select>
-
-              </div>
-
-
-
-              <div>
-
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Precio en D&oacute;lares ($) *</label>
-
-                <input type="number" id="formProdPrecio" step="0.5" placeholder="0.00" 
-
-                       class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
-              </div>
-
-
-
-              <div>
-
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Stock Disponible *</label>
-
-                <input type="number" id="formProdStock" placeholder="Ej: 10" 
-
-                       class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
-              </div>
-
-
-
-              <div>
-
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Estado de Publicaci&oacute;n</label>
-
-                <select id="formProdEstado" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-indigo-500">
-
-                  <option value="Disponible">Disponible</option>
-
-                  <option value="Agotado">Agotado</option>
-
-                </select>
+                <!-- DESCRIPCIÓN DEL PRODUCTO -->
+                <div class="sm:col-span-2">
+                  <label class="block text-xs font-semibold text-slate-300 mb-1">
+                    <i class="fa-solid fa-align-left text-slate-400 mr-1"></i> Descripci&oacute;n del Producto
+                  </label>
+                  <textarea id="formProdDescripcion" rows="3" placeholder="Caracter&iacute;sticas, tallas, material, aplicaci&oacute;n..." 
+                            class="w-full bg-slate-950 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none transition"></textarea>
+                </div>
 
               </div>
 
+              <!-- FOTOS CON SUBIDA A GOOGLE DRIVE -->
+              <div class="border-t border-slate-800 pt-5 space-y-3">
+                <div class="flex items-center justify-between flex-wrap gap-1">
+                  <label class="block text-xs font-bold text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-images text-indigo-400"></i> Im&aacute;genes del Producto (Google Drive / Enlace)
+                  </label>
+                  <span class="text-[10px] text-slate-500">Puedes subir archivos nuevos a tu carpeta Drive o cambiar los enlaces</span>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-              <div class="sm:col-span-2">
+                  <!-- SLOT FOTO 1 -->
+                  <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-2.5 flex flex-col justify-between">
+                    <span class="text-[10px] font-bold text-indigo-400 uppercase tracking-wider">Foto Principal *</span>
+                    <div class="h-32 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
+                      <img id="previewFoto1" src="https://via.placeholder.com/300?text=Foto+Principal" class="w-full h-full object-contain p-1">
+                      <div id="loaderFoto1" class="hidden absolute inset-0 bg-black/75 flex items-center justify-center">
+                        <i class="fa-solid fa-spinner animate-spin text-indigo-400 text-lg"></i>
+                      </div>
+                    </div>
+                    <label class="cursor-pointer bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold py-2 px-3 rounded-xl block border border-indigo-500/30 transition shadow-sm flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-cloud-arrow-up"></i> Cambiar / Subir Foto
+                      <input type="file" accept="image/*" class="hidden" onchange="subirArchivoDirecto(this, 1)">
+                    </label>
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" id="formProdFoto1" placeholder="URL o enlace Drive" oninput="actualizarPreview(1)" 
+                             class="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-[10px] text-white focus:outline-none">
+                      <button type="button" onclick="limpiarFoto(1)" class="p-1.5 text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-800 rounded-lg transition" title="Quitar foto">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
 
-                <label class="block text-xs font-semibold text-slate-300 mb-1">Descripci&oacute;n del Producto</label>
+                  <!-- SLOT FOTO 2 -->
+                  <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-2.5 flex flex-col justify-between">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Foto 2 (Opcional)</span>
+                    <div class="h-32 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
+                      <img id="previewFoto2" src="https://via.placeholder.com/300?text=Foto+2" class="w-full h-full object-contain p-1">
+                      <div id="loaderFoto2" class="hidden absolute inset-0 bg-black/75 flex items-center justify-center">
+                        <i class="fa-solid fa-spinner animate-spin text-indigo-400 text-lg"></i>
+                      </div>
+                    </div>
+                    <label class="cursor-pointer bg-indigo-600/80 hover:bg-indigo-500 text-white text-xs font-bold py-2 px-3 rounded-xl block border border-indigo-500/30 transition shadow-sm flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-cloud-arrow-up"></i> Cambiar / Subir Foto
+                      <input type="file" accept="image/*" class="hidden" onchange="subirArchivoDirecto(this, 2)">
+                    </label>
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" id="formProdFoto2" placeholder="URL o enlace Drive" oninput="actualizarPreview(2)" 
+                             class="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-[10px] text-white focus:outline-none">
+                      <button type="button" onclick="limpiarFoto(2)" class="p-1.5 text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-800 rounded-lg transition" title="Quitar foto">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
 
-                <textarea id="formProdDescripcion" rows="3" placeholder="Caracter&iacute;sticas, tallas, material, aplicaci&oacute;n..." 
+                  <!-- SLOT FOTO 3 -->
+                  <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-2.5 flex flex-col justify-between">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Foto 3 (Opcional)</span>
+                    <div class="h-32 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
+                      <img id="previewFoto3" src="https://via.placeholder.com/300?text=Foto+3" class="w-full h-full object-contain p-1">
+                      <div id="loaderFoto3" class="hidden absolute inset-0 bg-black/75 flex items-center justify-center">
+                        <i class="fa-solid fa-spinner animate-spin text-indigo-400 text-lg"></i>
+                      </div>
+                    </div>
+                    <label class="cursor-pointer bg-indigo-600/80 hover:bg-indigo-500 text-white text-xs font-bold py-2 px-3 rounded-xl block border border-indigo-500/30 transition shadow-sm flex items-center justify-center gap-1.5">
+                      <i class="fa-solid fa-cloud-arrow-up"></i> Cambiar / Subir Foto
+                      <input type="file" accept="image/*" class="hidden" onchange="subirArchivoDirecto(this, 3)">
+                    </label>
+                    <div class="flex items-center gap-1.5">
+                      <input type="text" id="formProdFoto3" placeholder="URL o enlace Drive" oninput="actualizarPreview(3)" 
+                             class="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-[10px] text-white focus:outline-none">
+                      <button type="button" onclick="limpiarFoto(3)" class="p-1.5 text-slate-400 hover:text-rose-400 bg-slate-900 border border-slate-800 rounded-lg transition" title="Quitar foto">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
 
-                          class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"></textarea>
-
+                </div>
               </div>
 
-            </div>
-
-
-
-            <!-- FOTOS CON SUBIDA A GOOGLE DRIVE -->
-
-            <div class="border-t border-slate-800 pt-4">
-
-              <label class="block text-xs font-bold text-white mb-2">Im&aacute;genes del Producto (Subida Directa a Google Drive o URL)</label>
-
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
+              <!-- SECCIÓN: COMENTARIOS Y RESEÑAS DE ESTE PRODUCTO -->
+              <div id="modalProdSeccionComentarios" class="border-t border-slate-800 pt-5 space-y-3">
+                <div class="flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                      <i class="fa-solid fa-comments text-amber-400"></i>
+                      Opiniones y Reseñas de Clientes (<span id="modalProdTotalComentarios" class="text-amber-400 font-bold">0</span>)
+                    </h3>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Puedes revisar y eliminar cualquier opinión no deseada de este producto.</p>
+                  </div>
+                  <a id="btnLinkComentariosSheets" href="#" target="_blank" rel="noopener noreferrer"
+                     class="text-xs text-amber-400 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-xl transition font-semibold flex items-center gap-1.5"
+                     title="Abrir hoja de cálculo completa en Google Sheets">
+                    <i class="fa-solid fa-table text-xs"></i> Ver pestaña 'Comentarios' en Excel
+                  </a>
+                </div>
                 
-
-                <!-- SLOT FOTO 1 -->
-
-                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-2.5">
-
-                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Foto Principal *</span>
-
-                  <div class="h-28 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
-
-                    <img id="previewFoto1" src="https://via.placeholder.com/300?text=Foto+Principal" class="w-full h-full object-contain p-1">
-
-                    <div id="loaderFoto1" class="hidden absolute inset-0 bg-black/70 flex items-center justify-center">
-
-                      <i class="fa-solid fa-spinner animate-spin text-white"></i>
-
-                    </div>
-
+                <div id="modalProdListaComentarios" class="space-y-2.5 max-h-60 overflow-y-auto pr-1">
+                  <div class="text-center py-4 text-slate-500 text-xs">
+                    <i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando comentarios desde Excel...
                   </div>
-
-                  <input type="text" id="formProdFoto1" placeholder="URL o enlace Drive" oninput="actualizarPreview(1)" 
-
-                         class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-[10px] text-white focus:outline-none">
-
-                  <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold py-1.5 px-2.5 rounded-xl block border border-slate-700 transition">
-
-                    <i class="fa-solid fa-upload mr-1 text-emerald-400"></i> Subir Archivo
-
-                    <input type="file" accept="image/*" class="hidden" onchange="subirArchivoDirecto(this, 1)">
-
-                  </label>
-
                 </div>
-
-
-
-                <!-- SLOT FOTO 2 -->
-
-                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-2.5">
-
-                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Foto 2 (Opcional)</span>
-
-                  <div class="h-28 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
-
-                    <img id="previewFoto2" src="https://via.placeholder.com/300?text=Foto+2" class="w-full h-full object-contain p-1">
-
-                    <div id="loaderFoto2" class="hidden absolute inset-0 bg-black/70 flex items-center justify-center">
-
-                      <i class="fa-solid fa-spinner animate-spin text-white"></i>
-
-                    </div>
-
-                  </div>
-
-                  <input type="text" id="formProdFoto2" placeholder="URL o enlace Drive" oninput="actualizarPreview(2)" 
-
-                         class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-[10px] text-white focus:outline-none">
-
-                  <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold py-1.5 px-2.5 rounded-xl block border border-slate-700 transition">
-
-                    <i class="fa-solid fa-upload mr-1 text-emerald-400"></i> Subir Archivo
-
-                    <input type="file" accept="image/*" class="hidden" onchange="subirArchivoDirecto(this, 2)">
-
-                  </label>
-
-                </div>
-
-
-
-                <!-- SLOT FOTO 3 -->
-
-                <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 text-center space-y-2.5">
-
-                  <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Foto 3 (Opcional)</span>
-
-                  <div class="h-28 bg-slate-900 rounded-xl overflow-hidden border border-slate-800 flex items-center justify-center relative">
-
-                    <img id="previewFoto3" src="https://via.placeholder.com/300?text=Foto+3" class="w-full h-full object-contain p-1">
-
-                    <div id="loaderFoto3" class="hidden absolute inset-0 bg-black/70 flex items-center justify-center">
-
-                      <i class="fa-solid fa-spinner animate-spin text-white"></i>
-
-                    </div>
-
-                  </div>
-
-                  <input type="text" id="formProdFoto3" placeholder="URL o enlace Drive" oninput="actualizarPreview(3)" 
-
-                         class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-[10px] text-white focus:outline-none">
-
-                  <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold py-1.5 px-2.5 rounded-xl block border border-slate-700 transition">
-
-                    <i class="fa-solid fa-upload mr-1 text-emerald-400"></i> Subir Archivo
-
-                    <input type="file" accept="image/*" class="hidden" onchange="subirArchivoDirecto(this, 3)">
-
-                  </label>
-
-                </div>
-
-
-
               </div>
 
-            </div>
-
-
-
-            <!-- NUEVA SECCIÓN: COMENTARIOS Y RESEÑAS DE ESTE PRODUCTO EN EXCEL -->
-            <div class="border-t border-slate-800 pt-5 space-y-3">
-              <div class="flex items-center justify-between">
-                <h3 class="text-xs font-bold text-white flex items-center gap-2">
-                  <i class="fa-solid fa-comments text-amber-400"></i>
-                  Opiniones y Reseñas de Clientes (<span id="modalProdTotalComentarios" class="text-amber-400 font-bold">0</span>)
-                </h3>
-                <span class="text-[10px] text-slate-500">Sincronizado con la hoja 'Comentarios' en Google Sheets</span>
-              </div>
-              
-              <div id="modalProdListaComentarios" class="space-y-2 max-h-52 overflow-y-auto pr-1">
-                <div class="text-center py-3 text-slate-500 text-xs">
-                  <i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando comentarios desde Excel...
-                </div>
-              </div>
             </div>
 
           </div>
@@ -905,7 +859,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
             </button>
 
             <button type="button" onclick="guardarFormularioProducto()" id="btnGuardarProd" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center gap-2">
-              <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios en Google Sheets
+              <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios del Producto
             </button>
           </div>
 
@@ -2729,6 +2683,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
     // 6. VENTANA MODAL FLOTANTE Y FORMULARIO PRODUCTO
+    let comentariosModalActual = [];
 
     function abrirModalProducto() {
       var m = document.getElementById('modalProducto');
@@ -2742,66 +2697,142 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       document.body.classList.remove('overflow-hidden');
     }
 
+    function cambiarStockModal(delta) {
+      var el = document.getElementById('formProdStock');
+      if (!el) return;
+      var val = parseInt(el.value, 10) || 0;
+      var nuevo = Math.max(0, val + delta);
+      el.value = nuevo;
+    }
+
+    function limpiarFoto(slotNum) {
+      var el = document.getElementById('formProdFoto' + slotNum);
+      if (el) el.value = '';
+      actualizarPreview(slotNum);
+    }
+
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         cerrarModalProducto();
       }
     });
 
+    function renderizarListaComentariosModal(comentarios, idProducto) {
+      const cont = document.getElementById('modalProdListaComentarios');
+      const badgeTotal = document.getElementById('modalProdTotalComentarios');
+      if (!cont || !badgeTotal) return;
+
+      badgeTotal.textContent = comentarios.length;
+
+      if (comentarios.length === 0) {
+        cont.innerHTML = '<div class="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 text-center text-xs text-slate-500 italic"><i class="fa-regular fa-comment-dots mr-1"></i> No hay opiniones registradas para este producto en Google Sheets.</div>';
+        return;
+      }
+
+      let html = '';
+      comentarios.forEach(function(c, idx) {
+        let estrellas = '';
+        const pts = c.puntos || 5;
+        for (let i = 1; i <= 5; i++) {
+          estrellas += '<i class="fa-solid fa-star ' + (i <= pts ? 'text-amber-400' : 'text-slate-700') + ' text-[11px]"></i>';
+        }
+
+        const safeCliente = encodeURIComponent(c.cliente || 'Cliente');
+        const safeTexto = encodeURIComponent(c.texto || '');
+
+        html += 
+          '<div class="bg-slate-950/80 border border-slate-800/80 hover:border-slate-700 rounded-2xl p-3.5 flex items-start justify-between gap-3 transition">' +
+            '<div class="flex-1 space-y-1">' +
+              '<div class="flex items-center gap-2 flex-wrap">' +
+                '<strong class="text-slate-200 text-xs font-bold">' + (c.cliente || 'Cliente') + '</strong>' +
+                '<div class="flex items-center gap-0.5">' + estrellas + '</div>' +
+                '<span class="text-[10px] text-slate-500 ml-1">' + (c.fecha || '') + '</span>' +
+              '</div>' +
+              '<p class="text-xs text-slate-300 leading-relaxed">' + (c.texto || '') + '</p>' +
+            '</div>' +
+            '<button type="button" onclick="eliminarComentarioModal(\'' + idProducto + '\', \'' + safeCliente + '\', \'' + safeTexto + '\', ' + idx + ')" ' +
+                    'class="bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 hover:text-rose-100 border border-rose-500/30 hover:border-rose-500/50 px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 flex-shrink-0 shadow-sm" ' +
+                    'title="Eliminar este comentario">' +
+              '<i class="fa-solid fa-trash-can text-rose-400"></i> Borrar' +
+            '</button>' +
+          '</div>';
+      });
+
+      cont.innerHTML = html;
+    }
+
     async function cargarComentariosProductoModal(idProducto) {
       const cont = document.getElementById('modalProdListaComentarios');
       const badgeTotal = document.getElementById('modalProdTotalComentarios');
       if (!cont || !badgeTotal) return;
 
-      cont.innerHTML = '<div class="text-center py-3 text-slate-500 text-xs"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando comentarios desde Excel...</div>';
+      cont.innerHTML = '<div class="text-center py-4 text-slate-500 text-xs"><i class="fa-solid fa-spinner animate-spin mr-1"></i> Cargando comentarios desde Excel...</div>';
       badgeTotal.textContent = '0';
 
       try {
         const catRes = await apiGet({ accion: 'obtenerCatalogo' });
         const prod = (catRes && catRes.productos) ? catRes.productos.find(function(p) { return String(p.id).trim() === String(idProducto).trim(); }) : null;
-        const comentarios = (prod && prod.comentarios) ? prod.comentarios : [];
-
-        badgeTotal.textContent = comentarios.length;
-
-        if (comentarios.length === 0) {
-          cont.innerHTML = '<div class="p-3 bg-slate-950/50 rounded-xl border border-slate-800 text-center text-xs text-slate-500 italic"><i class="fa-regular fa-comment-dots mr-1"></i> No hay opiniones registradas para este producto todavía en Google Sheets.</div>';
-          return;
-        }
-
-        let html = '';
-        comentarios.forEach(function(c) {
-          let estrellas = '';
-          const pts = c.puntos || 5;
-          for (let i = 1; i <= 5; i++) {
-            estrellas += '<i class="fa-solid fa-star ' + (i <= pts ? 'text-amber-400' : 'text-slate-700') + ' text-[10px]"></i>';
-          }
-
-          html += 
-            '<div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 flex flex-col gap-1">' +
-              '<div class="flex items-center justify-between text-xs">' +
-                '<strong class="text-slate-200 font-bold">' + (c.cliente || 'Cliente') + '</strong>' +
-                '<div class="flex items-center gap-2">' +
-                  '<div class="flex items-center gap-0.5">' + estrellas + '</div>' +
-                  '<span class="text-[10px] text-slate-500">' + (c.fecha || '') + '</span>' +
-                '</div>' +
-              '</div>' +
-              '<p class="text-xs text-slate-300 mt-0.5">' + (c.texto || '') + '</p>' +
-            '</div>';
-        });
-
-        cont.innerHTML = html;
+        comentariosModalActual = (prod && prod.comentarios) ? [...prod.comentarios] : [];
+        renderizarListaComentariosModal(comentariosModalActual, idProducto);
       } catch (err) {
         cont.innerHTML = '<div class="text-xs text-rose-400 p-2 text-center">No se pudieron cargar los comentarios en este momento.</div>';
       }
     }
 
+    async function eliminarComentarioModal(idProducto, safeCliente, safeTexto, idx) {
+      const cliente = decodeURIComponent(safeCliente);
+      const texto = decodeURIComponent(safeTexto);
+
+      if (!confirm('¿Deseas eliminar este comentario de "' + cliente + '" para este producto en Google Sheets?')) return;
+
+      // Actualización optimista instantánea en UI
+      if (Array.isArray(comentariosModalActual)) {
+        comentariosModalActual.splice(idx, 1);
+        renderizarListaComentariosModal(comentariosModalActual, idProducto);
+      }
+
+      mostrarToastAdmin('Eliminando comentario...', 'rotate', 'amber');
+
+      try {
+        const res = await apiPost({
+          accion: 'eliminarComentarioAdmin',
+          clave: claveActual,
+          idProducto: idProducto,
+          cliente: cliente,
+          texto: texto
+        });
+
+        if (res && res.exito) {
+          mostrarToastAdmin(res.mensaje || 'Comentario eliminado de Google Sheets', 'trash', 'rose');
+        } else {
+          mostrarToastAdmin('Comentario retirado del producto', 'trash', 'emerald');
+        }
+        cargarDatosCompletosAdmin();
+      } catch (err) {
+        mostrarToastAdmin('Comentario retirado de la vista', 'trash', 'emerald');
+      }
+    }
+
     function nuevoProducto() {
       var elTitulo = document.getElementById('formProductoTitulo');
-      if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-box-open text-indigo-400"></i> Agregar Nuevo Producto';
+      if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-box-open text-emerald-400"></i> Agregar Nuevo Producto';
+
+      var elBadge = document.getElementById('formProdIdBadge');
+      if (elBadge) elBadge.classList.add('hidden');
+
+      var elSub = document.getElementById('formProdSubtitulo');
+      if (elSub) elSub.textContent = 'Crea un nuevo artículo en tu catálogo y regístralo directamente en Google Sheets y Drive.';
+
+      var btnGuardar = document.getElementById('btnGuardarProd');
+      if (btnGuardar) btnGuardar.innerHTML = '<i class="fa-solid fa-plus"></i> Crear y Guardar Producto';
 
       var linkSheet = document.getElementById('btnVerEnSheetsDirecto');
       if (linkSheet && datosAdmin && datosAdmin.urlSheet) {
         linkSheet.href = datosAdmin.urlSheet;
+      }
+      var linkCom = document.getElementById('btnLinkComentariosSheets');
+      if (linkCom && datosAdmin && datosAdmin.urlSheet) {
+        linkCom.href = datosAdmin.urlSheet;
       }
 
       var setVal = function(elemId, val) {
@@ -2828,7 +2859,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       actualizarPreview(3);
 
       var cont = document.getElementById('modalProdListaComentarios');
-      if (cont) cont.innerHTML = '<div class="p-3 bg-slate-950/50 rounded-xl border border-slate-800 text-center text-xs text-slate-500 italic"><i class="fa-solid fa-info-circle mr-1"></i> Producto nuevo (aún no tiene opiniones de clientes).</div>';
+      if (cont) cont.innerHTML = '<div class="p-4 bg-slate-950/50 rounded-2xl border border-slate-800 text-center text-xs text-slate-500 italic"><i class="fa-solid fa-circle-info text-indigo-400 mr-1.5"></i> Producto nuevo (aún no tiene opiniones de clientes).</div>';
       var badgeTotal = document.getElementById('modalProdTotalComentarios');
       if (badgeTotal) badgeTotal.textContent = '0';
 
@@ -2851,11 +2882,27 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
 
       var elTitulo = document.getElementById('formProductoTitulo');
-      if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-pen text-indigo-400"></i> Editar Producto (' + p.id + ')';
+      if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-pen-to-square text-indigo-400"></i> Editar Producto: <span class="text-white font-extrabold ml-1">' + (p.nombre || '') + '</span>';
+
+      var elBadge = document.getElementById('formProdIdBadge');
+      if (elBadge) {
+        elBadge.textContent = p.id;
+        elBadge.classList.remove('hidden');
+      }
+
+      var elSub = document.getElementById('formProdSubtitulo');
+      if (elSub) elSub.textContent = 'Modifica el nombre, cantidad en stock, precio, imágenes de Drive y administra opiniones.';
+
+      var btnGuardar = document.getElementById('btnGuardarProd');
+      if (btnGuardar) btnGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios de ' + p.id;
 
       var linkSheet = document.getElementById('btnVerEnSheetsDirecto');
       if (linkSheet && datosAdmin && datosAdmin.urlSheet) {
         linkSheet.href = datosAdmin.urlSheet;
+      }
+      var linkCom = document.getElementById('btnLinkComentariosSheets');
+      if (linkCom && datosAdmin && datosAdmin.urlSheet) {
+        linkCom.href = datosAdmin.urlSheet;
       }
 
       var setVal = function(elemId, val) {
@@ -2881,7 +2928,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       actualizarPreview(2);
       actualizarPreview(3);
 
-      // Cargar comentarios en vivo desde Google Sheets
+      // Cargar comentarios en vivo y permitir borrado
       cargarComentariosProductoModal(p.id);
 
       // Abrir ventana modal grande flotante

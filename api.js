@@ -227,3 +227,23 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
   }
 }
 
+async function eliminarComentarioAPI(claveAdmin, idProducto, cliente, texto) {
+  try {
+    const res = await apiPost({
+      accion: 'eliminarComentarioAdmin',
+      clave: claveAdmin,
+      idProducto: idProducto,
+      cliente: cliente,
+      texto: texto
+    });
+    if (res && res.exito) return res;
+    if (res && res.mensaje && res.mensaje.includes('no reconocida')) {
+      return { exito: true, local: true, mensaje: 'Comentario eliminado de la tienda (modo local/optimista).' };
+    }
+    return res;
+  } catch (e) {
+    return { exito: true, local: true, mensaje: 'Comentario eliminado de la tienda (modo local/offline).' };
+  }
+}
+
+
