@@ -317,34 +317,33 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
-    <!-- Pestañas Directas de Categorías (Una sola fila deslizable) -->
-
-    <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-2" id="contenedorCategorias">
-        <button onclick="seleccionarCategoria('Todos')" data-cat="Todos" class="btn-categoria active whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30 flex items-center gap-1.5">
+    <!-- Pestañas Directas de Categorías (Adaptables a cualquier pantalla) -->
+    <div class="flex flex-wrap items-center gap-2 py-2" id="contenedorCategorias">
+        <button onclick="seleccionarCategoria('Todos')" data-cat="Todos" class="btn-categoria active whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30 flex items-center gap-1.5">
           <i class="fa-solid fa-border-all"></i> Todos
         </button>
-        <button onclick="seleccionarCategoria('Zapatos')" data-cat="Zapatos" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Zapatos')" data-cat="Zapatos" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-shoe-prints text-emerald-400"></i> Zapatos
         </button>
-        <button onclick="seleccionarCategoria('Deportes')" data-cat="Deportes" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Deportes')" data-cat="Deportes" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-dumbbell text-sky-400"></i> Deportes
         </button>
-        <button onclick="seleccionarCategoria('Ropa Mujer')" data-cat="Ropa Mujer" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Ropa Mujer')" data-cat="Ropa Mujer" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-person-dress text-pink-400"></i> Ropa Mujer
         </button>
-        <button onclick="seleccionarCategoria('Ropa Hombre')" data-cat="Ropa Hombre" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Ropa Hombre')" data-cat="Ropa Hombre" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-person text-blue-400"></i> Ropa Hombre
         </button>
-        <button onclick="seleccionarCategoria('Ropa Niños')" data-cat="Ropa Niños" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Ropa Niños')" data-cat="Ropa Niños" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-child text-amber-400"></i> Ropa Niños
         </button>
-        <button onclick="seleccionarCategoria('Bebés')" data-cat="Bebés" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Bebés')" data-cat="Bebés" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-baby text-indigo-400"></i> Bebés
         </button>
-        <button onclick="seleccionarCategoria('Carros')" data-cat="Carros" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Carros')" data-cat="Carros" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-car text-rose-400"></i> Carros
         </button>
-        <button onclick="seleccionarCategoria('Accesorios')" data-cat="Accesorios" class="btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
+        <button onclick="seleccionarCategoria('Accesorios')" data-cat="Accesorios" class="btn-categoria whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-glasses text-teal-400"></i> Accesorios
         </button>
       </div>
@@ -1144,33 +1143,19 @@ async function obtenerHistorialChat(clienteId) {
 
 
       let html = '<button onclick="seleccionarCategoria(\'Todos\')" data-cat="Todos" class="btn-categoria ' +
-
-        (categoriaActiva === 'Todos' ? 'active whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30' : 'whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800') +
-
+        (categoriaActiva === 'Todos' ? 'active whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30' : 'whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800') +
         ' flex items-center gap-1.5">' +
-
         '<i class="fa-solid fa-border-all"></i> Todos' +
-
         '</button>';
 
-
-
       catsActivas.forEach(cat => {
-
         const info = obtenerIconoCategoria(cat);
-
         const isActive = categoriaActiva === cat;
-
         html += '<button onclick="seleccionarCategoria(\'' + cat.replace(/'/g, "\\'") + '\')" data-cat="' + cat.replace(/"/g, '&quot;') + '" class="btn-categoria ' +
-
-          (isActive ? 'active whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30' : 'whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800') +
-
+          (isActive ? 'active whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30' : 'whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-semibold transition bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white border border-slate-800') +
           ' flex items-center gap-1.5">' +
-
           '<i class="fa-solid ' + info.icon + ' ' + info.color + '"></i> ' + cat +
-
           '</button>';
-
       });
 
 
