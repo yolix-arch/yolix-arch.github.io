@@ -2082,7 +2082,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
               '<span class="text-xs text-slate-400">$</span>' +
 
-              '<input type="number" step="0.5" value="' + p.precio + '" onchange="guardarPrecioRapido(\"' + p.id + '\", this.value)" ' +
+              '<input type="number" step="0.5" value="' + p.precio + '" onchange="guardarPrecioRapido(\'' + p.id + '\', this.value)" ' +
 
                      'class="w-20 bg-slate-950 border border-slate-700 rounded-lg p-1 text-xs text-white text-right font-bold focus:border-indigo-500 focus:outline-none">' +
 
@@ -2094,7 +2094,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
             '<div class="flex flex-col items-center gap-1">' +
 
-              '<input type="number" min="0" value="' + p.stock + '" onchange="guardarStockRapido(\"' + p.id + '\", this.value)" ' +
+              '<input type="number" min="0" value="' + p.stock + '" onchange="guardarStockRapido(\'' + p.id + '\', this.value)" ' +
 
                      'class="w-16 bg-slate-950 border ' + (p.stock <= 0 ? 'border-rose-500 text-rose-400 font-bold' : (p.stock <= 3 ? 'border-amber-500 text-amber-400 font-bold' : 'border-slate-700 text-white')) + ' rounded-lg p-1 text-xs text-center focus:border-indigo-500 focus:outline-none">' +
 
@@ -2106,7 +2106,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           '<td class="p-3">' +
 
-            '<button type="button" onclick="alternarEstadoRapido(\"' + p.id + '\", \"' + p.estado + '\")" class="px-2.5 py-1 rounded-lg text-[10px] font-bold border ' + colorEstado + ' transition">' +
+            '<button type="button" onclick="alternarEstadoRapido(\'' + p.id + '\', \'' + p.estado + '\')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold border ' + colorEstado + ' transition">' +
 
               p.estado +
 
@@ -2116,13 +2116,13 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           '<td class="p-3 text-right space-x-1.5 whitespace-nowrap">' +
 
-            '<button type="button" onclick="editarProducto(\"' + p.id + '\")" class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-2.5 py-1.5 rounded-xl text-xs transition">' +
+            '<button type="button" onclick="editarProducto(\'' + p.id + '\')" class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-2.5 py-1.5 rounded-xl text-xs transition cursor-pointer" title="Editar">' +
 
               '<i class="fa-solid fa-pen"></i>' +
 
             '</button>' +
 
-            '<button type="button" onclick="eliminarProducto(\"' + p.id + '\")" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 px-2.5 py-1.5 rounded-xl text-xs transition">' +
+            '<button type="button" onclick="eliminarProducto(\'' + p.id + '\')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 px-2.5 py-1.5 rounded-xl text-xs transition cursor-pointer" title="Eliminar">' +
 
               '<i class="fa-solid fa-trash"></i>' +
 
@@ -2763,53 +2763,48 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
 
     function editarProducto(id) {
+      if (!datosAdmin || !datosAdmin.productos) {
+        console.warn('datosAdmin.productos no está listo.');
+        return;
+      }
 
-      var p = datosAdmin.productos.find(function(prod) { return prod.id === id; });
+      var p = datosAdmin.productos.find(function(prod) { 
+        return String(prod.id).trim() === String(id).trim(); 
+      });
 
-      if (!p) return;
+      if (!p) {
+        console.warn('Producto no encontrado con ID:', id);
+        return;
+      }
 
+      var elTitulo = document.getElementById('formProductoTitulo');
+      if (elTitulo) elTitulo.innerHTML = '<i class="fa-solid fa-pen text-indigo-400"></i> Editar Producto (' + p.id + ')';
 
+      var setVal = function(elemId, val) {
+        var el = document.getElementById(elemId);
+        if (el) el.value = (val !== undefined && val !== null) ? val : '';
+      };
 
-      document.getElementById('formProductoTitulo').innerHTML = '<i class="fa-solid fa-pen text-indigo-400"></i> Editar Producto (' + p.id + ')';
+      setVal('formProdId', p.id);
+      setVal('formProdNombre', p.nombre);
+      setVal('formProdCategoria', p.categoria);
+      setVal('formProdSubcat', p.subcategoria);
+      setVal('formProdGenero', p.genero || 'Unisex');
+      setVal('formProdPrecio', p.precio);
+      setVal('formProdStock', p.stock);
+      setVal('formProdEstado', p.estado);
+      setVal('formProdDescripcion', p.descripcion);
 
-      document.getElementById('formProdId').value = p.id;
-
-      document.getElementById('formProdNombre').value = p.nombre;
-
-      document.getElementById('formProdCategoria').value = p.categoria;
-
-      document.getElementById('formProdSubcat').value = p.subcategoria || '';
-
-      document.getElementById('formProdGenero').value = p.genero || 'Unisex';
-
-      document.getElementById('formProdPrecio').value = p.precio;
-
-      document.getElementById('formProdStock').value = p.stock;
-
-      document.getElementById('formProdEstado').value = p.estado;
-
-      document.getElementById('formProdDescripcion').value = p.descripcion || '';
-
-
-
-      document.getElementById('formProdFoto1').value = p.foto1 || '';
-
-      document.getElementById('formProdFoto2').value = p.foto2 || '';
-
-      document.getElementById('formProdFoto3').value = p.foto3 || '';
-
-
+      setVal('formProdFoto1', p.foto1);
+      setVal('formProdFoto2', p.foto2);
+      setVal('formProdFoto3', p.foto3);
 
       actualizarPreview(1);
-
       actualizarPreview(2);
-
       actualizarPreview(3);
 
-
-
       cambiarPestana('nuevo');
-
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
 
@@ -3102,7 +3097,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           '<td class="p-3">' +
 
-            '<select onchange="actualizarEstadoPedido(\"' + ped.id + '\", this.value)" class="bg-slate-950 border border-slate-700 text-[11px] rounded-lg p-1 text-slate-200 focus:outline-none">' +
+            '<select onchange="actualizarEstadoPedido(\'' + ped.id + '\', this.value)" class="bg-slate-950 border border-slate-700 text-[11px] rounded-lg p-1 text-slate-200 focus:outline-none">' +
 
               '<option value="Pendiente por Confirmar" ' + (ped.estado.includes('Pendiente') ? 'selected' : '') + '>Pendiente</option>' +
 
