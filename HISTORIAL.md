@@ -654,3 +654,29 @@ Bitácora cronológica de todas las tareas, decisiones técnicas, configuracione
     - **P6**: Cero Errores en Consola del Navegador (`console.error === 0`).
     - **P7**: Evidencia Visual Generada (5 capturas de alta definición en `./capturas/`).
   - Evidencia estructurada guardada en `resultado_modo_claro_oscuro.json`.
+
+---
+
+### [2026-10-17] - Herramienta CLI Profesional de Publicación y Subida Masiva con Drenaje Seguro (P36 a P108)
+
+- **Creación y Perfeccionamiento de la Herramienta CLI (`publicar_cli.js`)**:
+  - Implementación de herramienta CLI profesional `publicar_cli.js` (Yolix CLI) para escaneo, agrupamiento inteligente multiactivo, clasificación automática por categorías/género/segmento, cálculo de tallas, extracción de precios desde el nombre de archivo (`$`), subida asíncrona a Google Drive (carpetas oficiales por categoría con enlaces CDN `https://lh3.googleusercontent.com/d/ID`), registro transaccional en Google Sheets ERP y drenaje local seguro con tolerancia a fallos (Zero-Data-Loss).
+  - Comandos oficiales implementados:
+    * `node publicar_cli.js --clasificar`: Simula el procesamiento e inspecciona la cola en tabla formateada.
+    * `node publicar_cli.js --auto`: Ejecuta la subida a Drive, registro en Sheets y drenaje local de archivos exitosos.
+    * `node publicar_cli.js --ayuda`: Menú de ayuda e instrucciones de uso.
+  - Creación e integración de las categorías oficiales `CAT-10 Hogar` (carpeta Drive `10. Hogar`, ID `1MyHz_ANdjgflfJ1d3L92Ja1uqy11i1OV`) y `CAT-11 Herramientas` (carpeta Drive `11. Herramientas`, ID `1UQxFKkEKmRXP_gBlNMSz0gfz2__s6Wp9`) mediante `crearCategoriaAdmin`.
+  - Refinamiento de reglas de clasificación para prevenir falsos positivos (evitando que juegos de herramientas caigan en 'Juguetes', canalizando relojes, lentes, termos y perfumes hacia 'Accesorios', electrodomésticos hacia 'Hogar', herramientas hacia 'Herramientas', e indumentaria deportiva / push up hacia 'Deportes' femenino).
+  - Agrupamiento inteligente multiactivo: normalización avanzada capaz de agrupar fotos múltiples con sufijos numéricos y alfabéticos (ej: `... 1.webp`, `... a.webp`, `... b.webp`, variaciones de rango `35 a 40`, etc.).
+
+- **Carga Masiva Exitosa a Google Drive y Google Sheets ERP (73 Nuevos Productos: P36 a P108)**:
+  - **Juguetes y Niños**: Cocodrilo saca muela ($14, 3 fotos), Atari de agua ($12, 2 fotos), Lanza burbujas Play Day ($10, 2 fotos), Metras Kr Met ($7, 2 fotos), Metras canicas bolondronas ($9, 1 foto), Perinola tradicional ($6, 1 foto), Pistola burbuja dinosaurio ($14, 1 foto), Resorte multicolor ($4, 1 foto), Set de animales plásticos marinos ($15, 3 fotos), Mini juguetes de dedo ($31, 2 fotos), Yoyo con luces ($4, 1 foto).
+  - **Hogar y Electrodomésticos**: Arrocera Daewoo 10 tazas ($36, 3 fotos), Balanza electrónica Oster 40kg ($39, 2 fotos), Batidora de inmersión ($25, 2 fotos), Batidora de mano 7 vel ($18, 2 fotos), Batidora de mano Oster 1200w ($36, 2 fotos), Batidora de pedestal Mixer Electronic ($25, 3 fotos), Batidora de inmersión Lomenox 3 en 1 ($55, 3 fotos), Cafetera eléctrica Oster 6 tazas ($30, 2 fotos), Freidora de aire Universal Royal ($62, 2 fotos), Licuadora Oster clásica 4655 + picatodo ($40, 2 fotos), Máquinas de coser portátiles y mini ($8, $15, $18), Balanza de cocina peso vidrio 5kg ($12, 2 fotos), Planchas de ropa cerámica y Oster ($20, $28), Sartén eléctrico multiuso 1350w ($36, 2 fotos), Tostiarepa Oster 6 puestos ($36, 2 fotos).
+  - **Herramientas**: Alicate electricista Total 160mm ($10, 3 fotos), Juego de dados milimétricos 12 piezas con ratchet 1/4" ($10, 2 fotos), Juego de llaves combinadas 8 pzas ($15, 2 fotos), Juego de mechas taladro Total 6 pzas ($5, 1 foto), Juego destornilladores de precisión imantado ($12, 3 fotos), Pistola spray para pintar 450w Total ($42, 3 fotos), Set de destornilladores 6 piezas Total ($10, 2 fotos), Taladro inalámbrico recargable azul ($37, 2 fotos), Tester multímetro digital autorango M113 ($15, 2 fotos).
+  - **Accesorios y Calzado / Moda**: Lentes de sol leopardo, polarizados caballero, retro y visión nocturna, Relojes Skmei (1220, 1389, 1426, 1990, 9106, 9139), Relojes Geneva dama y unisex, Pulseras magnéticas y de goma/acero, Billetera tarjetero RFID, Termos vacuum y LED Smart, Gorras unicolor y acrílicas, Gorro pescador, Balaclava, Capucha Buff, Perfume Swiss Army Victorinox, Zapatos Chanel deportivos dama ($35, 3 fotos, tallas 35-40), Shorts bikers deportivos push up ($8, 2 fotos), Falda short deportiva dama ($15, 2 fotos).
+  - Total de productos activos en la base de datos aumentado de 35 a **108 productos**.
+
+- **Drenaje Seguro y Cero Pérdida de Datos (Zero-Data-Loss)**:
+  - Más de 130 archivos locales de imágenes subidos y eliminados de forma atómica tras confirmación exitosa de Sheets.
+  - La carpeta `./nuevos productos` quedó completamente limpia y drenada (0 imágenes residuales, conservando únicamente `INSTRUCCIONES_SUBIDA.md`).
+
