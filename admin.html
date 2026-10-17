@@ -910,9 +910,14 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           <!-- FOOTER FLOTANTE -->
           <div class="border-t border-slate-800 px-6 py-4 bg-slate-950/70 flex items-center justify-between flex-shrink-0">
-            <button type="button" onclick="cerrarModalProducto()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-xs transition">
-              Cancelar
-            </button>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="cerrarModalProducto()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-xs transition">
+                Cancelar
+              </button>
+              <button type="button" id="btnBorrarDesdeModalEdicion" onclick="borrarProductoDesdeModal()" class="hidden bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 px-3 py-2.5 rounded-xl text-xs font-semibold transition items-center gap-1.5" title="Eliminar permanentemente este producto">
+                <i class="fa-solid fa-trash-can"></i> Eliminar Producto
+              </button>
+            </div>
 
             <button type="button" onclick="guardarFormularioProducto()" id="btnGuardarProd" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center gap-2">
               <i class="fa-solid fa-floppy-disk"></i> Guardar Cambios del Producto
@@ -3130,6 +3135,12 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
         linkCom.href = datosAdmin.urlSheet;
       }
 
+      var btnDel = document.getElementById('btnBorrarDesdeModalEdicion');
+      if (btnDel) {
+        btnDel.classList.add('hidden');
+        btnDel.classList.remove('inline-flex');
+      }
+
       var setVal = function(elemId, val) {
         var el = document.getElementById(elemId);
         if (el) el.value = (val !== undefined && val !== null) ? val : '';
@@ -3193,6 +3204,12 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       var btnGuardar = document.getElementById('btnGuardarProd');
       if (btnGuardar) btnGuardar.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios de ' + p.id;
 
+      var btnDel = document.getElementById('btnBorrarDesdeModalEdicion');
+      if (btnDel) {
+        btnDel.classList.remove('hidden');
+        btnDel.classList.add('inline-flex');
+      }
+
       var linkSheet = document.getElementById('btnVerEnSheetsDirecto');
       if (linkSheet && datosAdmin && datosAdmin.urlSheet) {
         linkSheet.href = datosAdmin.urlSheet;
@@ -3234,26 +3251,23 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       abrirModalProducto();
     }
 
-
+    function borrarProductoDesdeModal() {
+      var id = document.getElementById('formProdId').value;
+      if (!id) return;
+      cerrarModalProducto();
+      eliminarProducto(id);
+    }
 
     async function eliminarProducto(id) {
-
-      if (!confirm('¿¿Deseas eliminar permanentemente el producto ' + id + '?')) return;
+      if (!confirm('¿Deseas eliminar permanentemente el producto ' + id + ' del catálogo, de Excel y de Google Drive?')) return;
 
       try {
-
         const res = await apiPost({ accion: 'eliminarProductoAdmin', clave: claveActual, id: id });
-
-        alert(res ? res.mensaje : 'Producto eliminado.');
-
+        alert(res ? res.mensaje : 'Producto eliminado correctamente.');
         cargarDatosCompletosAdmin();
-
       } catch (err) {
-
         alert('Error al eliminar: ' + (err.message || err));
-
       }
-
     }
 
 
