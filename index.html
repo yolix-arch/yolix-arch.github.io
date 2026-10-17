@@ -38,6 +38,11 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <style>
+    html, body {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+      width: 100% !important;
+    }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .star-rating .fa-star { transition: transform 0.15s ease, color 0.15s ease; }
@@ -798,21 +803,21 @@ async function obtenerHistorialChat(clienteId) {
     <div class="ambient-glow-1 absolute -bottom-40 left-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-tr from-cyan-600/10 via-indigo-600/10 to-violet-800/15"></div>
   </div>
 
-  <!-- TOP HEADER / NAVBAR (UNIFICADO EN UNA SOLA LÍNEA) -->
-  <header class="bg-slate-950/95 backdrop-blur-md text-white shadow-xl sticky top-0 z-40 border-b border-slate-800">
-    <div class="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3 md:gap-5">
+  <!-- TOP HEADER / NAVBAR RESPONSIVE -->
+  <header class="bg-slate-950/95 backdrop-blur-md text-white shadow-xl sticky top-0 z-40 border-b border-slate-800 w-full">
+    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex flex-wrap md:flex-nowrap items-center justify-between gap-2 md:gap-4">
       
       <!-- LOGO & NOMBRE TIENDA -->
-      <div class="flex items-center space-x-2.5 cursor-pointer flex-shrink-0" onclick="seleccionarCategoria('Todos')" title="Ir al catálogo principal">
+      <div class="flex items-center space-x-2 cursor-pointer flex-shrink-0" onclick="seleccionarCategoria('Todos')" title="Ir al catálogo principal">
         <div id="headerLogoContainer" class="flex items-center justify-center">
-          <img id="headerLogoImg" src="" alt="Logo" class="hidden h-9 w-9 object-contain rounded-xl shadow-md border border-slate-700/50 bg-slate-900 p-0.5">
-          <div id="headerLogoIcon" class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-2 rounded-xl text-white shadow-md shadow-indigo-500/30 flex items-center justify-center">
-            <i class="fa-solid fa-bag-shopping text-base"></i>
+          <img id="headerLogoImg" src="" alt="Logo" class="hidden h-8 w-8 sm:h-9 sm:w-9 object-contain rounded-xl shadow-md border border-slate-700/50 bg-slate-900 p-0.5">
+          <div id="headerLogoIcon" class="bg-gradient-to-tr from-indigo-600 to-violet-500 p-1.5 sm:p-2 rounded-xl text-white shadow-md shadow-indigo-500/30 flex items-center justify-center">
+            <i class="fa-solid fa-bag-shopping text-sm sm:text-base"></i>
           </div>
         </div>
         <div class="flex flex-col">
           <div class="flex items-center gap-1.5">
-            <h1 id="headerTituloTienda" class="motion-gradient-text text-base md:text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-tight">Yolix</h1>
+            <h1 id="headerTituloTienda" class="motion-gradient-text text-sm sm:text-base md:text-lg font-extrabold tracking-tight bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent leading-tight">Yolix</h1>
             <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30" title="Sincronizado con Google Sheets">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> En Vivo
             </span>
@@ -821,8 +826,8 @@ async function obtenerHistorialChat(clienteId) {
         </div>
       </div>
 
-      <!-- BUSCADOR COMPACTO EN EL CENTRO (FLEX-1) -->
-      <div class="flex-1 max-w-xl mx-1 sm:mx-2">
+      <!-- BUSCADOR: En móvil pasa a 2da fila con ancho completo (order-3 md:order-2); en escritorio al centro (flex-1) -->
+      <div class="order-3 md:order-2 w-full md:flex-1 md:max-w-xl mx-0 md:mx-2 mt-1 md:mt-0">
         <div class="bg-slate-900/90 border border-slate-700/80 hover:border-indigo-500/50 focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 rounded-xl px-3 py-1.5 shadow-inner flex items-center gap-2.5 transition">
           <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
           <input type="text" id="inputBuscador" name="buscador" oninput="filtrarProductos()" placeholder="Buscar por nombre, descripción, marca o repuesto..." 
@@ -833,22 +838,22 @@ async function obtenerHistorialChat(clienteId) {
         </div>
       </div>
 
-      <!-- BOTONES ACCIÓN NAVBAR (WHATSAPP Y CHAT JUNTOS) -->
-      <div class="flex items-center space-x-2 flex-shrink-0">
+      <!-- BOTONES ACCIÓN NAVBAR (order-2 md:order-3) -->
+      <div class="order-2 md:order-3 flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
         <!-- BOTÓN TOGGLE TEMA (SOL / LUNA) -->
         <button type="button" id="btnToggleTema" onclick="conmutarTema()" 
                 class="btn-motion p-2 rounded-xl text-xs font-semibold transition border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 shadow-sm flex items-center justify-center"
                 title="Cambiar a Modo Oscuro" aria-label="Cambiar tema">
-          <i id="iconoToggleTema" class="fa-solid fa-moon text-indigo-600 text-sm"></i>
+          <i id="iconoToggleTema" class="fa-solid fa-moon text-indigo-600 text-xs sm:text-sm"></i>
         </button>
         <div id="contenedorBtnWhatsappHeader" class="flex items-center gap-1.5"></div>
-        <button type="button" id="btnAbrirChat" onclick="abrirChatModal()" class="btn-motion bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 px-3 py-2 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 shadow-sm relative" title="Chatear con soporte">
-          <i class="fa-solid fa-comments text-cyan-400"></i>
+        <button type="button" id="btnAbrirChat" onclick="abrirChatModal()" class="btn-motion bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 px-2.5 sm:px-3 py-2 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 shadow-sm relative" title="Chatear con soporte">
+          <i class="fa-solid fa-comments text-cyan-400 text-xs sm:text-sm"></i>
           <span class="hidden sm:inline">Chat</span>
           <span id="badgeChatNav" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[9px] px-1.5 py-0.2 rounded-full animate-bounce">1</span>
         </button>
-        <button type="button" id="btnAbrirRegistro" onclick="abrirModalRegistro()" class="btn-motion bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-3.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-indigo-600/30 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-id-card"></i>
+        <button type="button" id="btnAbrirRegistro" onclick="abrirModalRegistro()" class="btn-motion bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-2.5 sm:px-3.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-indigo-600/30 transition flex items-center gap-1.5" title="Registro de Cliente">
+          <i class="fa-solid fa-id-card text-xs sm:text-sm"></i>
           <span id="txtBtnRegistro" class="hidden sm:inline">Registro Cliente</span>
         </button>
       </div>
@@ -857,12 +862,10 @@ async function obtenerHistorialChat(clienteId) {
   </header>
 
   <!-- SEARCH & CATEGORY BAR -->
-  <section class="max-w-7xl mx-auto px-4 pt-3 pb-2 w-full">
-
-
+  <section class="max-w-7xl mx-auto px-3 sm:px-4 pt-2.5 pb-2 w-full">
 
     <!-- Pestañas Directas de Categorías (Adaptables a cualquier pantalla) -->
-    <div class="flex flex-wrap items-center gap-2 py-2" id="contenedorCategorias">
+    <div class="flex items-center gap-2 py-2 overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap" id="contenedorCategorias">
         <button onclick="seleccionarCategoria('Todos')" data-cat="Todos" class="btn-categoria active whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30 flex items-center gap-1.5">
           <i class="fa-solid fa-border-all"></i> Todos
         </button>
@@ -940,36 +943,26 @@ async function obtenerHistorialChat(clienteId) {
 
   <!-- MODAL DE DETALLES DEL PRODUCTO (AMPLIADO Y MEJORADO) -->
 
-  <div id="modalProducto" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+  <div id="modalProducto" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
 
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-auto text-slate-100">
-
-      
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-auto text-slate-100">
 
       <!-- Modal Close & Share Buttons -->
-      <button id="btnCompartirProductoCabecera" onclick="compartirProductoActual()" class="absolute top-4 right-16 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition shadow-md" title="Compartir este producto">
-        <i class="fa-solid fa-share-nodes text-sm"></i>
+      <button id="btnCompartirProductoCabecera" onclick="compartirProductoActual()" class="absolute top-3 sm:top-4 right-14 sm:right-16 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition shadow-md" title="Compartir este producto">
+        <i class="fa-solid fa-share-nodes text-xs sm:text-sm"></i>
       </button>
 
-      <button id="btnCerrarModalProducto" onclick="cerrarModalProducto()" class="absolute top-4 right-4 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition" title="Cerrar ventana">
-
-        <i class="fa-solid fa-xmark text-base"></i>
-
+      <button id="btnCerrarModalProducto" onclick="cerrarModalProducto()" class="absolute top-3 sm:top-4 right-3 sm:right-4 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center transition shadow-md" title="Cerrar ventana">
+        <i class="fa-solid fa-xmark text-sm sm:text-base"></i>
       </button>
 
-
-
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-6 sm:p-8">
-
-        
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 p-4 sm:p-8 pt-12 sm:pt-8">
 
         <!-- COLUMNA MULTIMEDIA / IMÁGENES (7 de 12 columnas en escritorio) -->
-
         <div class="md:col-span-7 flex flex-col space-y-3">
 
           <!-- Contenedor Imagen Grande -->
-
-          <div onclick="abrirLightbox()" class="relative h-80 sm:h-96 md:h-[400px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 flex items-center justify-center group cursor-pointer shadow-inner">
+          <div onclick="abrirLightbox()" class="relative h-60 sm:h-80 md:h-[400px] bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 flex items-center justify-center group cursor-pointer shadow-inner">
 
             <img id="modalFotoPrincipal" src="" alt="Producto" class="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105">
 
@@ -1259,8 +1252,8 @@ async function obtenerHistorialChat(clienteId) {
   </div>
 
   <!-- MODAL DE COMPARTIR Y ENLACES PROFUNDOS -->
-  <div id="modalCompartir" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-100 modal-compartir-content animate-in fade-in zoom-in-95 duration-200">
+  <div id="modalCompartir" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-[94vw] sm:w-full max-w-md p-4 sm:p-6 shadow-2xl relative text-slate-100 modal-compartir-content animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
       <!-- Botón Cerrar -->
       <button id="btnCerrarModalCompartir" onclick="cerrarModalCompartir()" class="absolute top-4 right-4 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition" title="Cerrar ventana">
         <i class="fa-solid fa-xmark text-base"></i>
@@ -1378,9 +1371,9 @@ async function obtenerHistorialChat(clienteId) {
 
   <!-- MODAL DE REGISTRO DE CLIENTE -->
 
-  <div id="modalRegistro" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modalRegistro" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
 
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-100">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-[94vw] sm:w-full max-w-md p-4 sm:p-6 shadow-2xl relative text-slate-100 max-h-[92vh] overflow-y-auto">
 
       <button onclick="cerrarModalRegistro()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
 
@@ -1556,8 +1549,8 @@ async function obtenerHistorialChat(clienteId) {
   </div>
 
   <!-- MODAL AVISO VERIFICACIÓN DE CORREO PARA WHATSAPP -->
-  <div id="modalAvisoVerificacionWhatsApp" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-100 text-center space-y-4">
+  <div id="modalAvisoVerificacionWhatsApp" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-[94vw] sm:w-full max-w-md p-4 sm:p-6 shadow-2xl relative text-slate-100 text-center space-y-4 max-h-[92vh] overflow-y-auto">
       <button onclick="cerrarModalAvisoVerificacionWhatsApp()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
         <i class="fa-solid fa-xmark text-lg"></i>
       </button>
@@ -1590,9 +1583,9 @@ async function obtenerHistorialChat(clienteId) {
 
   <!-- MODAL DE PEDIDO POR WHATSAPP -->
 
-  <div id="modalPedido" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modalPedido" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
 
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-100">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl w-[94vw] sm:w-full max-w-md p-4 sm:p-6 shadow-2xl relative text-slate-100 max-h-[92vh] overflow-y-auto">
 
       <button id="btnCerrarModalPedido" onclick="cerrarModalPedido()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
 
@@ -2348,9 +2341,6 @@ async function obtenerHistorialChat(clienteId) {
           <div>
             <div class="relative h-56 bg-slate-950 overflow-hidden cursor-pointer" onclick="abrirModalProducto('${p.id}')">
               <img src="${foto}" alt="${p.nombre}" class="img-zoom w-full h-full object-contain p-3 transition duration-500 ease-out group-hover:scale-105">
-              <button type="button" onclick="event.stopPropagation(); compartirProductoPorId('${p.id}')" class="btn-compartir-card absolute top-3 right-20 w-7 h-7 rounded-full bg-slate-900/90 hover:bg-indigo-600 text-slate-300 hover:text-white flex items-center justify-center text-xs shadow-lg backdrop-blur-md border border-slate-700/60 transition z-10" title="Compartir ${p.nombre}">
-                <i class="fa-solid fa-share-nodes text-[11px]"></i>
-              </button>
               <div class="absolute top-3 right-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/60 text-white px-3 py-1 rounded-full text-xs font-black shadow-lg">
                 $${p.precio.toFixed(2)}
               </div>
@@ -4135,9 +4125,9 @@ async function obtenerHistorialChat(clienteId) {
   <!-- ========================================== -->
   <!-- MODAL DE CHAT WEB (SIN ELEMENTOS FLOTANTES INVASIVOS) -->
   <!-- ========================================== -->
-  <div id="modalChatTienda" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+  <div id="modalChatTienda" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-2 sm:p-4">
     
-    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 max-h-[560px] h-[560px]">
+    <div class="w-[96vw] sm:w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 h-[88vh] max-h-[580px]">
       
       <!-- Encabezado de la Ventana de Chat -->
       <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-4 border-b border-slate-800 flex items-center justify-between flex-shrink-0">

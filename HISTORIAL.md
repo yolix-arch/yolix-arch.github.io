@@ -748,3 +748,47 @@ Bitácora cronológica de todas las tareas, decisiones técnicas, configuracione
 - **Drenaje Seguro y Cero Pérdida de Datos (Zero-Data-Loss)**:
   - Los 32 archivos de imagen locales fueron eliminados de forma atómica únicamente tras recibir la confirmación de Google Sheets.
   - La carpeta `./nuevos productos` quedó completamente limpia (0 imágenes residuales).
+
+
+---
+
+## 📱 Optimización Integral de Responsividad Móvil y Ajuste de Ventanas Modales (17 de Octubre de 2026)
+
+### 1. Diagnóstico del Problema en Dispositivos Móviles
+- **Desbordamiento Horizontal (Viewport Overflow)**: La barra de navegación superior renderizaba 6 elementos en una sola fila inflexible (`flex-shrink-0`), forzando un ancho mínimo de ~650px en pantallas móviles estrechas (360px - 412px). Como consecuencia, los navegadores móviles reducían la escala (zoom-out involuntario), activando el breakpoint `sm:` (640px) de Tailwind CSS.
+- **Espacio Vacío y Columna Fantasma**: Al activarse `sm:grid-cols-2`, el catálogo intentaba renderizar dos columnas en un viewport reducido, dejando las tarjetas de producto apretadas en la mitad izquierda y una franja blanca/gris vacía en la mitad derecha.
+- **Colisión de Botones en Tarjeta**: El botón flotante de compartir (`top-3 right-20`) se superponía con la píldora de precio (`$20.00`) en la esquina superior de la foto de los productos.
+- **Desborde en Ventanas Modales (Subventanas)**: Las ventanas modales fijas (como `#modalChatTienda` con altura fija de `560px` y modales con padding rígido de escritorio) sufrían recortes de bordes, problemas de desplazamiento vertical y botones de cierre inaccesibles en pantallas móviles.
+
+### 2. Soluciones de Arquitectura CSS y Responsive Implementadas
+- **Contención Estricta de Viewport**:
+  - Incorporación de reglas globales `html, body { overflow-x: hidden !important; max-width: 100vw !important; width: 100% !important; }`.
+  - Aseguramiento de `scrollWidth <= innerWidth` (cero desbordamiento horizontal garantizado).
+- **Barra de Navegación Adaptativa de 2 Filas en Móviles**:
+  - En móviles (`< 768px`): 
+    * Fila 1: Logotipo + Badge "En Vivo" a la izquierda, Iconos de acción (Tema Sol/Luna, WhatsApp, Chat Web, Registro) a la derecha en una fila compacta.
+    * Fila 2: Barra de búsqueda a ancho completo (`w-full`) ubicada debajo, optimizada para facilitar la pulsación con el pulgar.
+  - En escritorio (`>= 768px`): Preservación intacta del diseño original en una sola fila horizontal.
+- **Carrusel Horizontal Táctil de Categorías**:
+  - La barra `#contenedorCategorias` se configuró como `overflow-x-auto no-scrollbar flex-nowrap sm:flex-wrap` permitiendo deslizar categorías horizontalmente con suavidad en móviles sin romper el ancho de pantalla.
+- **Limpieza de Badges en Tarjetas**:
+  - Eliminación del botón flotante redundante sobre la imagen que colisionaba con el precio. La tarjeta mantiene su botón dedicado de compartir en la fila inferior junto a "Ver Detalles y Comprar".
+- **Ajuste y Flexibilidad de Todas las Ventanas Modales**:
+  - `#modalProducto`: Imagen adaptada a `h-60 sm:h-80 md:h-[400px]`, espaciado superior ajustado para evitar solapamientos con botones de cerrar y compartir.
+  - `#modalCompartir`, `#modalRegistro`, `#modalPedido`, `#modalAvisoVerificacionWhatsApp`: Contenedores con ancho flexible `w-[94vw] sm:w-full max-w-md`, bordes redondeados `rounded-2xl sm:rounded-3xl`, padding optimizado `p-4 sm:p-6` y scroll vertical automático con `max-h-[92vh] overflow-y-auto`.
+  - `#modalChatTienda`: Reemplazo de altura fija por `w-[96vw] sm:w-full max-w-md h-[88vh] max-h-[580px] p-2 sm:p-4`, garantizando un marco perfecto en cualquier altura de teléfono.
+- **Sincronización SPA**:
+  - Réplica idéntica de `tienda_gh_pages/index.html` hacia `tienda_gh_pages/404.html`.
+
+### 3. Matriz de Pruebas y Validación Automatizada
+- **Viewport Móvil Auditado**: 375 x 667 px (iPhone SE / Dispositivos compactos).
+- **Métricas Comprobadas**:
+  * `docWidth: 375`, `winWidth: 375`, `bodyWidth: 375`.
+  * `hasHorizontalOverflow: false`.
+  * Cero desbordamientos (`overflow-x: hidden`).
+- **Capturas de Evidencia Verificadas**:
+  * `capturas/mobile_home_375px.png` (Catálogo 1 columna centrado, sin espacios vacíos laterales).
+  * `capturas/mobile_modal_producto_375px.png` (Modal de producto adaptado y proporcionado).
+  * `capturas/mobile_modal_compartir_375px.png` (Modal de compartir centrado y funcional).
+  * `capturas/mobile_modal_registro_375px.png` (Formulario de 2 pasos 100% visible sin cortes).
+  * `capturas/mobile_modal_chat_375px.png` (Chat web ajustado a la altura del dispositivo).
