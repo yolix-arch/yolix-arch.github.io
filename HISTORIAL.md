@@ -630,3 +630,27 @@ Bitácora cronológica de todas las tareas, decisiones técnicas, configuracione
 - **Suite de Pruebas Automatizadas Playwright (`test_suite_verificacion_otp.js`)**:
   - 10 de 10 comprobaciones superadas con éxito con **cero errores en consola (`console.error === 0`)**.
   - Evidencia estructurada guardada en `resultado_verificacion_correo_otp.json`.
+
+---
+
+### [2026-10-17] - Sistema Dual de Modo Claro ☀️ / Modo Oscuro 🌙 con Arquitectura Cero Roturas (Zero-Breakage)
+
+- **Frontend Catálogo (`tienda_gh_pages/index.html` y `tienda_gh_pages/404.html`)**:
+  - **Arranque en Modo Claro por Defecto**: La tienda inicia normalmente en Modo Claro (`theme-light`) para cualquier visitante nuevo sin preferencia almacenada previa, satisfaciendo estrictamente el requerimiento del cliente.
+  - **Preservación Total del Modo Oscuro**: Arquitectura modular no destructiva basada en `html.theme-light` y `body.theme-light`. Al alternar a Modo Oscuro, todas las clases Tailwind base (`bg-slate-900`, `text-slate-100`, etc.) se mantienen al 100% idénticas al diseño original sin roturas ni colisiones.
+  - **Micro-Script Anti-FOUC**: Inserción síncrona en `<head>` para inspeccionar `localStorage.getItem('tienda_tema_visual')` y aplicar `theme-light` antes del primer render de los estilos, eliminando parpadeos molestos de pantalla.
+  - **Botón Conmutador Sol/Luna (`#btnToggleTema`)**: Incorporado armoniosamente en la barra de navegación superior junto a WhatsApp y Chat Web, con cambio dinámico de iconos (`fa-moon` con tooltip 'Cambiar a Modo Oscuro' en tema claro, y `fa-sun` con tooltip 'Cambiar a Modo Claro' en tema oscuro).
+  - **Adaptación Cromática de Modales Críticas (WCAG AA)**:
+    - *Ficha de Producto (`#modalProducto`)*: Contenedor en blanco puro `#ffffff`, títulos en azul pizarra profundo `#0f172a`, precio esmeralda de alto contraste `#059669`, miniaturas enmarcadas en `#cbd5e1`, y selector de tallas con contraste óptimo.
+    - *Registro de Clientes y OTP (`#modalRegistro`)*: Formulario con inputs blancos nítidos, bordes `#cbd5e1`, etiquetas oscuras legibles y pantalla OTP contrastada con input `#f8fafc` e icono protector violeta.
+    - *Chat Web en Vivo (`#modalChatTienda`)*: Fondo de conversación blanco marfil `#f8fafc`, burbujas de asesor en blanco `#ffffff` con borde `#e2e8f0` y texto `#0f172a`, y burbujas de cliente en índigo vibrante `#4f46e5` con texto blanco.
+- **Suite de Pruebas Automatizadas Playwright (`test_modo_claro_oscuro.js`)**:
+  - 7 de 7 comprobaciones críticas superadas con éxito con **cero errores en consola (`console.error === 0`)**:
+    - **P1**: Carga Inicial por Defecto (Modo Claro activo sin configuración previa).
+    - **P2**: Conmutación Dinámica (Click Sol/Luna en `#btnToggleTema` sin recargas).
+    - **P3**: Preservación del Modo Oscuro (Fidelidad cromática original intacta).
+    - **P4**: Persistencia tras Recarga (F5 bidireccional consistente con `localStorage`).
+    - **P5**: Legibilidad de Textos en Modales (Contraste de alto impacto en Producto, Registro y Chat).
+    - **P6**: Cero Errores en Consola del Navegador (`console.error === 0`).
+    - **P7**: Evidencia Visual Generada (5 capturas de alta definición en `./capturas/`).
+  - Evidencia estructurada guardada en `resultado_modo_claro_oscuro.json`.

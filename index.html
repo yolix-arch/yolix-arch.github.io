@@ -11,6 +11,22 @@
   <title>Yolix - Catálogo Online</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
 
+  <!-- Micro-script Anti-FOUC: Inicializa el Modo Claro / Oscuro sin parpadeos -->
+  <script>
+    (function() {
+      try {
+        var temaGuardado = localStorage.getItem('tienda_tema_visual');
+        // Si no hay preferencia guardada, arranca en Modo Claro por defecto
+        var temaFinal = temaGuardado ? temaGuardado : 'claro';
+        if (temaFinal === 'claro') {
+          document.documentElement.classList.add('theme-light');
+        } else {
+          document.documentElement.classList.remove('theme-light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Tailwind CSS -->
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -115,6 +131,423 @@
 
     .bubble-animate {
       animation: bubblePop 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+
+  <!-- ========================================== -->
+  <!-- SISTEMA DUAL: ESTILOS MODULARES MODO CLARO -->
+  <!-- ========================================== -->
+  <style id="estilos-modo-claro">
+    /* 1. Fondo Global, Contenedores y Resplandor Ambiental */
+    html.theme-light body {
+      background-color: #f8fafc !important; /* slate-50 marfil suave */
+      color: #0f172a !important;            /* slate-900 contraste máximo */
+    }
+    html.theme-light .ambient-glow-1,
+    html.theme-light .ambient-glow-2 {
+      opacity: 0.18 !important; /* Suavizado para mantener fondos limpios */
+    }
+
+    /* 2. Cabecera Sticky y Buscador */
+    html.theme-light header {
+      background-color: #ffffff !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+    }
+    html.theme-light #headerTituloTienda {
+      background-image: linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #6366f1 100%) !important;
+      -webkit-background-clip: text !important;
+      color: transparent !important;
+    }
+    html.theme-light #headerSloganTienda {
+      color: #64748b !important;
+    }
+    html.theme-light #headerLogoImg {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light header .bg-slate-900\/90 {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light #inputBuscador {
+      color: #0f172a !important;
+    }
+    html.theme-light #inputBuscador::placeholder {
+      color: #94a3b8 !important;
+    }
+    html.theme-light #btnLimpiarBusqueda {
+      color: #64748b !important;
+    }
+    html.theme-light #btnLimpiarBusqueda:hover {
+      color: #0f172a !important;
+    }
+    html.theme-light #btnAbrirChat {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #334155 !important;
+    }
+    html.theme-light #btnAbrirChat:hover {
+      background-color: #f8fafc !important;
+      color: #0f172a !important;
+      border-color: #94a3b8 !important;
+    }
+    html.theme-light #btnToggleTema {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #475569 !important;
+    }
+    html.theme-light #btnToggleTema:hover {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #94a3b8 !important;
+    }
+
+    /* 3. Barra de Categorías */
+    html.theme-light #contenedorCategorias .btn-categoria:not(.bg-indigo-600) {
+      background-color: #ffffff !important;
+      color: #475569 !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+    html.theme-light #contenedorCategorias .btn-categoria:not(.bg-indigo-600):hover {
+      background-color: #f1f5f9 !important;
+      color: #0f172a !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light #contenedorCategorias .btn-categoria.bg-indigo-600 {
+      color: #ffffff !important;
+      box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3) !important;
+    }
+
+    /* 4. Tarjetas de Productos */
+    html.theme-light .producto-card {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04) !important;
+    }
+    html.theme-light .producto-card:hover {
+      border-color: #818cf8 !important;
+      box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.15), 0 8px 10px -6px rgba(99, 102, 241, 0.08) !important;
+    }
+    html.theme-light .producto-card .h-56.bg-slate-950,
+    html.theme-light .producto-card .bg-slate-950 {
+      background-color: #f8fafc !important;
+    }
+    html.theme-light .producto-card .bg-slate-900\/90 {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      border-color: #e2e8f0 !important;
+      color: #059669 !important; /* Esmeralda de alta legibilidad sobre blanco */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+    }
+    html.theme-light .producto-card h3 {
+      color: #0f172a !important;
+    }
+    html.theme-light .producto-card h3:hover {
+      color: #4f46e5 !important;
+    }
+    html.theme-light .producto-card p {
+      color: #475569 !important;
+    }
+    html.theme-light .producto-card .text-slate-400 {
+      color: #64748b !important;
+    }
+    html.theme-light .btn-ver-detalle {
+      background-color: #f8fafc !important;
+      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light .btn-ver-detalle:hover {
+      background-color: #4f46e5 !important;
+      color: #ffffff !important;
+      border-color: #4f46e5 !important;
+    }
+
+    /* 5. Estado Vacío / Sin Resultados */
+    html.theme-light #sinResultados .bg-slate-800 {
+      background-color: #e2e8f0 !important;
+      color: #64748b !important;
+    }
+    html.theme-light #sinResultados h3 {
+      color: #0f172a !important;
+    }
+    html.theme-light #sinResultados p {
+      color: #64748b !important;
+    }
+
+    /* 6. MODAL PRODUCTO (#modalProducto) */
+    html.theme-light #modalProducto > div {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    }
+    html.theme-light #btnCerrarModalProducto {
+      background-color: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    html.theme-light #btnCerrarModalProducto:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #modalProducto .h-80.bg-slate-950,
+    html.theme-light #modalProducto .bg-slate-950 {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #modalProducto .bg-slate-900\/80 {
+      background-color: rgba(255, 255, 255, 0.9) !important;
+      color: #334155 !important;
+      border: 1px solid #cbd5e1 !important;
+    }
+    html.theme-light #modalTitulo {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalPrecio {
+      color: #059669 !important;
+    }
+    html.theme-light #modalProducto .text-slate-400 {
+      color: #64748b !important;
+    }
+    html.theme-light #modalProducto .text-slate-300 {
+      color: #334155 !important;
+    }
+    html.theme-light #modalProducto .border-slate-800 {
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #modalGenero {
+      background-color: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    /* Miniaturas */
+    html.theme-light #modalMiniaturas div {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light #modalMiniaturas div.ring-2 {
+      border-color: #6366f1 !important;
+    }
+    /* Píldoras de Tallas */
+    html.theme-light .btn-talla-pildora:not(.bg-indigo-600) {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #1e293b !important;
+    }
+    html.theme-light .btn-talla-pildora:not(.bg-indigo-600):hover {
+      background-color: #e2e8f0 !important;
+      border-color: #6366f1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #modalSeccionTallas h4 {
+      color: #4338ca !important;
+    }
+    /* Comentarios y Reseñas en modalProducto */
+    html.theme-light #modalProducto .bg-slate-950\/60 {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #modalProducto h3 {
+      color: #0f172a !important;
+    }
+    html.theme-light #panelComentarioBloqueado {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #panelComentarioBloqueado h4 {
+      color: #0f172a !important;
+    }
+    html.theme-light #panelComentarioBloqueado p {
+      color: #475569 !important;
+    }
+    html.theme-light #panelComentarioBloqueado .bg-slate-700 {
+      background-color: #f1f5f9 !important;
+      color: #1e293b !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light #inputIdentificadorCliente {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #panelComentarioDesbloqueado {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #lblNombreClienteComentario {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalProducto textarea,
+    html.theme-light #modalProducto input[type="text"] {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #modalListaComentarios .bg-slate-900 {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #modalListaComentarios span.text-white {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalListaComentarios p.text-slate-300 {
+      color: #334155 !important;
+    }
+
+    /* 7. MODAL REGISTRO (#modalRegistro) */
+    html.theme-light #modalRegistro > div {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    }
+    html.theme-light #modalRegistro h3,
+    html.theme-light #modalRegistro h4 {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalRegistro .text-slate-400 {
+      color: #64748b !important;
+    }
+    html.theme-light #modalRegistro .text-slate-300 {
+      color: #334155 !important;
+    }
+    html.theme-light #modalRegistro label {
+      color: #1e293b !important;
+    }
+    html.theme-light #modalRegistro input,
+    html.theme-light #modalRegistro select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #modalRegistro input::placeholder {
+      color: #94a3b8 !important;
+    }
+    html.theme-light #modalRegistro input:focus,
+    html.theme-light #modalRegistro select:focus {
+      border-color: #4f46e5 !important;
+    }
+    html.theme-light #modalRegistro .bg-indigo-950\/50,
+    html.theme-light #modalRegistro .bg-indigo-950\/40 {
+      background-color: #eef2ff !important;
+      border-color: #c7d2fe !important;
+      color: #3730a3 !important;
+    }
+    html.theme-light #modalRegistro .bg-indigo-950\/50 .text-slate-200 {
+      color: #1e1b4b !important;
+    }
+    html.theme-light #inputCodigoOTP {
+      background-color: #f8fafc !important;
+      border-color: #6366f1 !important;
+      color: #4338ca !important;
+    }
+    html.theme-light #modalRegistro #btnVolverPaso1 {
+      color: #64748b !important;
+    }
+    html.theme-light #modalRegistro #btnVolverPaso1:hover {
+      color: #0f172a !important;
+    }
+
+    /* 8. MODAL CHAT TIENDA (#modalChatTienda) */
+    html.theme-light #modalChatTienda > div {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    }
+    html.theme-light #modalChatTienda .bg-gradient-to-r {
+      background: linear-gradient(to right, #ffffff, #f8fafc, #eef2ff) !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+    }
+    html.theme-light #chatNombreTienda {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalChatTienda .text-slate-400 {
+      color: #64748b !important;
+    }
+    html.theme-light #chatPasoIdentificacion h4 {
+      color: #0f172a !important;
+    }
+    html.theme-light #chatPasoIdentificacion p {
+      color: #475569 !important;
+    }
+    html.theme-light #chatInputNombre,
+    html.theme-light #chatInputTelefono {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #chatInputNombre::placeholder,
+    html.theme-light #chatInputTelefono::placeholder {
+      color: #94a3b8 !important;
+    }
+    html.theme-light #chatListaMensajes {
+      background-color: #f8fafc !important;
+    }
+    html.theme-light #chatListaMensajes .bg-slate-800,
+    html.theme-light #chatListaMensajes .bg-slate-800\/80 {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #0f172a !important;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    }
+    html.theme-light #chatListaMensajes .bg-slate-800 p,
+    html.theme-light #chatListaMensajes .bg-slate-800\/80 p {
+      color: #0f172a !important;
+    }
+    html.theme-light #chatListaMensajes .text-slate-400 {
+      color: #64748b !important;
+    }
+    html.theme-light #modalChatTienda .bg-slate-950\/90 {
+      background-color: #ffffff !important;
+      border-top: 1px solid #e2e8f0 !important;
+    }
+    html.theme-light #chatInputTexto {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #chatInputTexto::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    /* 9. Modales WhatsApp y Pedido */
+    html.theme-light #modalAvisoVerificacionWhatsApp > div,
+    html.theme-light #modalPedido > div {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    }
+    html.theme-light #modalAvisoVerificacionWhatsApp h3,
+    html.theme-light #modalPedido h3 {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalAvisoVerificacionWhatsApp .text-slate-300,
+    html.theme-light #modalPedido .text-slate-300 {
+      color: #334155 !important;
+    }
+    html.theme-light #modalAvisoVerificacionWhatsApp .text-slate-400,
+    html.theme-light #modalPedido .text-slate-400 {
+      color: #64748b !important;
+    }
+    html.theme-light #modalPedido label {
+      color: #1e293b !important;
+    }
+    html.theme-light #modalPedido input,
+    html.theme-light #modalPedido select {
+      background-color: #ffffff !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #pedidoResumenProducto {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+      color: #1e293b !important;
+    }
+
+    /* 10. Footer */
+    html.theme-light footer {
+      border-color: #e2e8f0 !important;
+      color: #64748b !important;
     }
   </style>
 
@@ -312,6 +745,12 @@ async function obtenerHistorialChat(clienteId) {
 
       <!-- BOTONES ACCIÓN NAVBAR (WHATSAPP Y CHAT JUNTOS) -->
       <div class="flex items-center space-x-2 flex-shrink-0">
+        <!-- BOTÓN TOGGLE TEMA (SOL / LUNA) -->
+        <button type="button" id="btnToggleTema" onclick="conmutarTema()" 
+                class="btn-motion p-2 rounded-xl text-xs font-semibold transition border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 shadow-sm flex items-center justify-center"
+                title="Cambiar a Modo Oscuro" aria-label="Cambiar tema">
+          <i id="iconoToggleTema" class="fa-solid fa-moon text-indigo-600 text-sm"></i>
+        </button>
         <div id="contenedorBtnWhatsappHeader" class="flex items-center gap-1.5"></div>
         <button type="button" id="btnAbrirChat" onclick="abrirChatModal()" class="btn-motion bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 px-3 py-2 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 shadow-sm relative" title="Chatear con soporte">
           <i class="fa-solid fa-comments text-cyan-400"></i>
@@ -1112,9 +1551,58 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
+    // ==========================================
+    // CONTROL DEL SISTEMA DUAL DE MODO CLARO / OSCURO
+    // ==========================================
+    function conmutarTema() {
+      const esClaroActual = document.documentElement.classList.contains('theme-light') || 
+                            (document.body && document.body.classList.contains('theme-light'));
+      const nuevoTema = esClaroActual ? 'oscuro' : 'claro';
+      aplicarTema(nuevoTema);
+      try {
+        localStorage.setItem('tienda_tema_visual', nuevoTema);
+      } catch (e) {}
+    }
+
+    function aplicarTema(tema) {
+      const root = document.documentElement;
+      const body = document.body;
+      const icono = document.getElementById('iconoToggleTema');
+      const btn = document.getElementById('btnToggleTema');
+
+      if (tema === 'claro') {
+        root.classList.add('theme-light');
+        if (body) body.classList.add('theme-light');
+        if (icono) icono.className = 'fa-solid fa-moon text-indigo-600 text-sm';
+        if (btn) {
+          btn.className = 'btn-motion p-2 rounded-xl text-xs font-semibold transition border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 shadow-sm flex items-center justify-center';
+          btn.title = 'Cambiar a Modo Oscuro';
+        }
+      } else {
+        root.classList.remove('theme-light');
+        if (body) body.classList.remove('theme-light');
+        if (icono) icono.className = 'fa-solid fa-sun text-amber-400 text-sm';
+        if (btn) {
+          btn.className = 'btn-motion p-2 rounded-xl text-xs font-semibold transition border border-slate-700/80 bg-slate-900 hover:bg-slate-800 text-slate-200 shadow-sm flex items-center justify-center';
+          btn.title = 'Cambiar a Modo Claro';
+        }
+      }
+    }
+
+    function inicializarTemaVisual() {
+      let temaGuardado = null;
+      try {
+        temaGuardado = localStorage.getItem('tienda_tema_visual');
+      } catch (e) {}
+      const temaFinal = temaGuardado ? temaGuardado : 'claro';
+      aplicarTema(temaFinal);
+    }
+
     // Inicializar al cargar
 
     document.addEventListener('DOMContentLoaded', () => {
+
+      inicializarTemaVisual();
 
       cargarClienteLocal();
 
