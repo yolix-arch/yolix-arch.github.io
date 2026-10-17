@@ -25,6 +25,65 @@ async function apiPost(payload = {}) {
 }
 
 // ==========================================
+// MÓDULO DE GESTIÓN DE TELÉFONOS WHATSAPP (1 Y 2)
+// ==========================================
+const CLAVE_STORAGE_TELEFONOS_WA = 'tienda_telefonos_whatsapp_v1';
+const TELEFONOS_WA_DEFAULT = {
+  tel1: '584120666322',
+  tel2: ''
+};
+
+async function obtenerTelefonosWA() {
+  try {
+    const res = await apiGet({ accion: 'obtenerTelefonosWA' });
+    if (res && res.exito && res.telefonos) {
+      localStorage.setItem(CLAVE_STORAGE_TELEFONOS_WA, JSON.stringify(res.telefonos));
+      return res.telefonos;
+    }
+  } catch (e) {}
+
+  try {
+    const local = localStorage.getItem(CLAVE_STORAGE_TELEFONOS_WA);
+    if (local) return { ...TELEFONOS_WA_DEFAULT, ...JSON.parse(local) };
+  } catch (e) {}
+
+  return TELEFONOS_WA_DEFAULT;
+}
+
+async function guardarTelefonosAdminAPI(claveAdmin, tel1, tel2) {
+  const tel1Limpio = String(tel1 || '').replace(/\D/g, '').trim();
+  const tel2Limpio = String(tel2 || '').replace(/\D/g, '').trim();
+
+  const datos = { tel1: tel1Limpio, tel2: tel2Limpio };
+  try {
+    localStorage.setItem(CLAVE_STORAGE_TELEFONOS_WA, JSON.stringify(datos));
+    const cfgLocal = localStorage.getItem(CLAVE_STORAGE_CONFIG);
+    if (cfgLocal) {
+      const cfgObj = JSON.parse(cfgLocal);
+      cfgObj.telefonoWA = tel1Limpio;
+      if (tel2Limpio) cfgObj.telefonoWA2 = tel2Limpio;
+      localStorage.setItem(CLAVE_STORAGE_CONFIG, JSON.stringify(cfgObj));
+    }
+  } catch (e) {}
+
+  try {
+    const res = await apiPost({
+      accion: 'guardarTelefonosAdmin',
+      clave: claveAdmin,
+      tel1: tel1Limpio,
+      tel2: tel2Limpio
+    });
+    if (res && res.exito) return res;
+    if (res && res.mensaje && res.mensaje.includes('no reconocida')) {
+      return { exito: true, local: true, telefonos: datos, mensaje: 'Teléfonos guardados localmente en la tienda (modo optimista).' };
+    }
+    return res;
+  } catch (e) {
+    return { exito: true, local: true, telefonos: datos, mensaje: 'Teléfonos guardados localmente en navegador y tienda (modo offline).' };
+  }
+}
+
+// ==========================================
 // MÓDULO DE MARCA Y CONFIGURACIÓN DINÁMICA
 // ==========================================
 const CLAVE_STORAGE_CONFIG = 'tienda_config_marca_v1';

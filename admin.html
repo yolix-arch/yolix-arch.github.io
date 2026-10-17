@@ -386,6 +386,17 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
           </button>
 
+          <!-- BOTÓN CONFIGURAR TELÉFONOS WHATSAPP -->
+
+          <button type="button" id="btnConfigurarWhatsApp" onclick="abrirModalConfigurarWhatsApp()" 
+
+                  class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+                  title="Configurar números de WhatsApp de la tienda">
+
+            <i class="fa-brands fa-whatsapp text-emerald-400"></i> WhatsApps
+
+          </button>
+
           <a id="btnVerTienda" href="./" target="_blank" rel="noopener noreferrer"
              class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold transition flex items-center gap-1.5">
             <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver Tienda
@@ -1382,6 +1393,59 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
   </div>
 
+  <!-- ========================================== -->
+  <!-- MODAL CONFIGURAR WHATSAPP (TELÉFONOS 1 Y 2) -->
+  <!-- ========================================== -->
+  <div id="modalConfigurarWhatsApp" class="fixed inset-0 z-50 bg-black/80 hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i> Configurar WhatsApps
+        </h3>
+        <button type="button" onclick="cerrarModalConfigurarWhatsApp()" class="text-slate-400 hover:text-white text-xs">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <div class="p-3 bg-emerald-950/40 border border-emerald-500/20 rounded-2xl flex items-start gap-2.5 text-xs text-slate-300">
+        <i class="fa-solid fa-circle-info text-emerald-400 mt-0.5 flex-shrink-0"></i>
+        <p class="leading-relaxed text-[11px]">
+          Estos números rigen los enlaces directos de compra y soporte en todo el catálogo público.
+        </p>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">
+            <span class="text-emerald-400 font-bold">Teléfono Principal WhatsApp *</span>
+          </label>
+          <input type="tel" id="inputTel1WA" placeholder="Ej. 584120666322" 
+                 class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-500 mt-1">Línea oficial para recepción de pedidos (código país + número, sin +).</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">
+            <span class="text-teal-400 font-bold">Teléfono Secundario / Soporte</span> (Opcional)
+          </label>
+          <input type="tel" id="inputTel2WA" placeholder="Ej. 584141234567" 
+                 class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-teal-500">
+          <p class="text-[10px] text-slate-500 mt-1">Línea de respaldo o atención alternativa de dudas.</p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-800 pt-3 flex justify-end gap-2">
+        <button type="button" onclick="cerrarModalConfigurarWhatsApp()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-semibold transition">
+          Cancelar
+        </button>
+        <button type="button" onclick="guardarTelefonosAdmin()" id="btnGuardarTelefonosModal" 
+                class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-xl text-xs font-bold transition shadow flex items-center gap-1.5">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Teléfonos
+        </button>
+      </div>
+    </div>
+  </div>
+
 
 
   <!-- MODAL NUEVA CATEGORÍA -->
@@ -1599,6 +1663,12 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
         const res = await apiGet({ accion: 'obtenerDatosAdmin', clave: claveActual });
         if (res && res.exito) {
           datosAdmin = res;
+          if (res.telefonosWA && res.telefonosWA.tel1) {
+            telefonosWAActuales = res.telefonosWA;
+            try {
+              localStorage.setItem('tienda_telefonos_whatsapp_v1', JSON.stringify(res.telefonosWA));
+            } catch(e) {}
+          }
           mostrarPanelPrincipal();
         } else {
           alert((res && res.mensaje) ? res.mensaje : 'Acceso denegado');
@@ -2035,7 +2105,11 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       btn.textContent = 'Guardando...';
 
       try {
-        await guardarConfiguracionMarca(claveAdminActual, config);
+        await guardarConfiguracionMarca(claveActual || claveAdminActual, config);
+        telefonosWAActuales.tel1 = config.telefonoWA;
+        try {
+          localStorage.setItem('tienda_telefonos_whatsapp_v1', JSON.stringify(telefonosWAActuales));
+        } catch(e) {}
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Cambios de Marca';
         
@@ -3685,7 +3759,89 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
     }
 
+    // ==========================================
+    // 10.1 MODAL CONFIGURACIÓN DE TELÉFONOS WHATSAPP (1 Y 2)
+    // ==========================================
+    var telefonosWAActuales = { tel1: '584120666322', tel2: '' };
+    try {
+      var localWA = localStorage.getItem('tienda_telefonos_whatsapp_v1');
+      if (localWA) {
+        var pWA = JSON.parse(localWA);
+        if (pWA && pWA.tel1) telefonosWAActuales = pWA;
+      }
+    } catch (e) {}
 
+    function abrirModalConfigurarWhatsApp() {
+      var t1 = document.getElementById('inputTel1WA');
+      var t2 = document.getElementById('inputTel2WA');
+      if (t1) t1.value = telefonosWAActuales.tel1 || '';
+      if (t2) t2.value = telefonosWAActuales.tel2 || '';
+
+      var modal = document.getElementById('modalConfigurarWhatsApp');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    }
+
+    function cerrarModalConfigurarWhatsApp() {
+      var modal = document.getElementById('modalConfigurarWhatsApp');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    }
+
+    async function guardarTelefonosAdmin() {
+      var tel1Raw = (document.getElementById('inputTel1WA').value || '').trim();
+      var tel2Raw = (document.getElementById('inputTel2WA').value || '').trim();
+
+      var tel1Limpio = tel1Raw.replace(/\D/g, '');
+      var tel2Limpio = tel2Raw.replace(/\D/g, '');
+
+      if (!tel1Limpio || tel1Limpio.length < 7) {
+        alert('El teléfono principal es obligatorio y debe tener al menos 7 dígitos numéricos con código de país (ej. 584120666322).');
+        return;
+      }
+
+      if (tel2Raw && (!tel2Limpio || tel2Limpio.length < 7)) {
+        alert('Si especificas un teléfono secundario, debe tener al menos 7 dígitos numéricos.');
+        return;
+      }
+
+      var btn = document.getElementById('btnGuardarTelefonosModal');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
+      }
+
+      try {
+        var res = await guardarTelefonosAdminAPI(claveActual, tel1Limpio, tel2Limpio);
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Teléfonos';
+        }
+
+        if (res && res.exito) {
+          telefonosWAActuales.tel1 = tel1Limpio;
+          telefonosWAActuales.tel2 = tel2Limpio;
+
+          var elCfgWa = document.getElementById('cfgInputTelefonoWA');
+          if (elCfgWa) elCfgWa.value = tel1Limpio;
+
+          cerrarModalConfigurarWhatsApp();
+          mostrarToastAdmin(res.mensaje || 'Teléfonos de WhatsApp actualizados correctamente', 'brands fa-whatsapp', 'emerald');
+        } else {
+          alert((res && res.mensaje) ? res.mensaje : 'Error al guardar los teléfonos');
+        }
+      } catch (err) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar Teléfonos';
+        }
+        alert('Error al guardar teléfonos: ' + (err.message || err));
+      }
+    }
 
     // 11. UTILIDADES Y TOAST
 
