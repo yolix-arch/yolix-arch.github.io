@@ -529,9 +529,9 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
-          <!-- Botones de Acción: WhatsApp y Chat de Soporte -->
-          <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <button id="btnComprarWA" onclick="abrirModalPedido()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+          <!-- Botones de Acción Dinámicos: WhatsApp (0, 1 o 2 líneas) y Chat Web -->
+          <div id="contenedorBotonesAccionProducto" class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button id="btnComprarWA" onclick="abrirModalPedido(1)" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
               <i class="fa-brands fa-whatsapp text-lg"></i>
               <span>Pedir por WhatsApp</span>
             </button>
@@ -1506,6 +1506,9 @@ async function obtenerHistorialChat(clienteId) {
       // Renderizar selector de tallas y variantes
       renderizarSelectorTallasProducto();
 
+      // Renderizar botones dinámicos de contacto (0, 1 o 2 WhatsApps + Chat Web)
+      actualizarLogicaBotonesWhatsApp();
+
       // Renderizar estado de comentarios
 
       renderizarComentariosModal();
@@ -2069,11 +2072,12 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
-    // 8. PEDIDOS POR WHATSAPP
+    let lineaWAObjetivo = 1;
 
-    function abrirModalPedido() {
+    function abrirModalPedido(linea = 1) {
 
       if (!productoActual) return;
+      lineaWAObjetivo = (linea === 2) ? 2 : 1;
 
       // Validación: Si el producto requiere talla y no se ha seleccionado ninguna, resaltar y avisar
       if (productoRequiereTalla() && !tallaSeleccionada) {
@@ -2198,8 +2202,15 @@ async function obtenerHistorialChat(clienteId) {
 
         const msgWA = encodeURIComponent(textoWA);
 
-        const numWAActivo = (TELEFONOS_WA && TELEFONOS_WA.tel1) ? String(TELEFONOS_WA.tel1).replace(/\D/g, '') : TELEFONO_WHATSAPP;
-        window.open(`https://wa.me/${numWAActivo}?text=${msgWA}`, '_blank');
+        const tel1 = (TELEFONOS_WA && TELEFONOS_WA.tel1) ? String(TELEFONOS_WA.tel1).replace(/\D/g, '').trim() : '';
+        const tel2 = (TELEFONOS_WA && TELEFONOS_WA.tel2) ? String(TELEFONOS_WA.tel2).replace(/\D/g, '').trim() : '';
+        const numWAActivo = (lineaWAObjetivo === 2 && tel2) ? tel2 : (tel1 || TELEFONO_WHATSAPP);
+
+        if (numWAActivo && numWAActivo.length >= 7) {
+          window.open(`https://wa.me/${numWAActivo}?text=${msgWA}`, '_blank');
+        } else {
+          abrirChatDesdeProducto();
+        }
 
         if (typeof confetti === 'function') {
           confetti({
@@ -2218,9 +2229,7 @@ async function obtenerHistorialChat(clienteId) {
       } catch (err) {
 
         btn.disabled = false;
-
-        btn.textContent = 'Confirmar y Abrir WhatsApp';
-
+        actualizarLogicaBotonesWhatsApp();
         alert('Error al registrar pedido: ' + err.message);
 
       }
@@ -2305,31 +2314,96 @@ async function obtenerHistorialChat(clienteId) {
       }
     }
 
-    function actualizarSoporteWhatsAppSecundarioUI() {
-      const telSecundario = (TELEFONOS_WA && TELEFONOS_WA.tel2) ? String(TELEFONOS_WA.tel2).replace(/\D/g, '').trim() : '';
-      const btnChatWA = document.getElementById('btnChatWASoporte');
-      const contSec = document.getElementById('soporteSecundarioContainer');
-      const linkSec = document.getElementById('linkSoporteSecundarioWA');
+    function actualizarLogicaBotonesWhatsApp() {
+      const tel1 = (TELEFONOS_WA && TELEFONOS_WA.tel1) ? String(TELEFONOS_WA.tel1).replace(/\D/g, '').trim() : '';
+      const tel2 = (TELEFONOS_WA && TELEFONOS_WA.tel2) ? String(TELEFONOS_WA.tel2).replace(/\D/g, '').trim() : '';
 
-      if (telSecundario && telSecundario.length >= 7) {
-        if (btnChatWA) {
-          btnChatWA.href = 'https://wa.me/' + telSecundario + '?text=' + encodeURIComponent('¡Hola! Me gustaría hacer una consulta de soporte sobre la tienda.');
+      const tieneTel1 = tel1.length >= 7;
+      const tieneTel2 = tel2.length >= 7;
+
+      const cont = document.getElementById('contenedorBotonesAccionProducto');
+      if (cont) {
+        if (!tieneTel1 && !tieneTel2) {
+          // 0 Teléfonos: No sale ningún botón de WhatsApp, solo botón de Chat Web
+          cont.className = 'pt-2 flex flex-col gap-2.5';
+          cont.innerHTML = `
+            <button type="button" id="btnChatearDesdeProducto" onclick="abrirChatDesdeProducto()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <i class="fa-solid fa-comments text-base"></i>
+              <span>Chatear / Preguntar</span>
+            </button>
+          `;
+        } else if (tieneTel1 && !tieneTel2) {
+          // 1 Teléfono: 1 solo botón de WhatsApp + 1 botón de Chat Web
+          cont.className = 'pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5';
+          cont.innerHTML = `
+            <button id="btnComprarWA" onclick="abrirModalPedido(1)" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <i class="fa-brands fa-whatsapp text-lg"></i>
+              <span>Pedir por WhatsApp</span>
+            </button>
+            <button type="button" id="btnChatearDesdeProducto" onclick="abrirChatDesdeProducto()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <i class="fa-solid fa-comments text-base"></i>
+              <span>Chatear / Preguntar</span>
+            </button>
+          `;
+        } else if (tieneTel1 && tieneTel2) {
+          // 2 Teléfonos: 2 botones de WhatsApp (Línea 1 y Línea 2) + botón de Chat Web
+          cont.className = 'pt-2 flex flex-col gap-2.5';
+          cont.innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
+              <button id="btnComprarWA1" onclick="abrirModalPedido(1)" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-3 rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm" title="Enviar orden a WhatsApp Línea 1">
+                <i class="fa-brands fa-whatsapp text-lg text-emerald-200"></i>
+                <span>Pedir WhatsApp Línea 1</span>
+              </button>
+              <button id="btnComprarWA2" onclick="abrirModalPedido(2)" class="w-full bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-500 hover:to-cyan-500 text-white font-bold py-3.5 px-3 rounded-2xl shadow-lg shadow-teal-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm" title="Enviar orden a WhatsApp Línea 2">
+                <i class="fa-brands fa-whatsapp text-lg text-teal-200"></i>
+                <span>Pedir WhatsApp Línea 2</span>
+              </button>
+            </div>
+            <button type="button" id="btnChatearDesdeProducto" onclick="abrirChatDesdeProducto()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 px-4 rounded-2xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <i class="fa-solid fa-comments text-base"></i>
+              <span>Chatear / Preguntar</span>
+            </button>
+          `;
+        }
+      }
+
+      // Soporte en chat
+      const btnChatWA = document.getElementById('btnChatWASoporte');
+      if (btnChatWA) {
+        if (tieneTel2) {
+          btnChatWA.href = 'https://wa.me/' + tel2 + '?text=' + encodeURIComponent('¡Hola! Me gustaría hacer una consulta de soporte sobre la tienda.');
           btnChatWA.classList.remove('hidden');
           btnChatWA.classList.add('inline-flex');
-        }
-        if (contSec && linkSec) {
-          linkSec.href = 'https://wa.me/' + telSecundario + '?text=' + encodeURIComponent('¡Hola! Me gustaría hacer una consulta de soporte antes de ordenar.');
-          contSec.classList.remove('hidden');
-        }
-      } else {
-        if (btnChatWA) {
+        } else if (tieneTel1) {
+          btnChatWA.href = 'https://wa.me/' + tel1 + '?text=' + encodeURIComponent('¡Hola! Me gustaría hacer una consulta de soporte sobre la tienda.');
+          btnChatWA.classList.remove('hidden');
+          btnChatWA.classList.add('inline-flex');
+        } else {
           btnChatWA.classList.add('hidden');
           btnChatWA.classList.remove('inline-flex');
         }
-        if (contSec) {
-          contSec.classList.add('hidden');
+      }
+
+      // Botón en modal de pedidos
+      const btnPed = document.getElementById('btnConfirmarPedido');
+      if (btnPed) {
+        if (!tieneTel1 && !tieneTel2) {
+          btnPed.innerHTML = '<i class="fa-solid fa-paper-plane mr-1.5"></i> Registrar Pedido (Atención por Chat Web)';
+          btnPed.className = 'w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-indigo-600/30 mt-2 flex items-center justify-center';
+        } else if (tieneTel1 && tieneTel2) {
+          btnPed.innerHTML = `<i class="fa-brands fa-whatsapp mr-1.5 text-base"></i> Confirmar y Enviar a WhatsApp (Línea ${lineaWAObjetivo})`;
+          btnPed.className = (lineaWAObjetivo === 2)
+            ? 'w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-teal-600/30 mt-2 flex items-center justify-center'
+            : 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-emerald-600/30 mt-2 flex items-center justify-center';
+        } else {
+          btnPed.innerHTML = '<i class="fa-brands fa-whatsapp mr-1.5 text-base"></i> Confirmar y Abrir WhatsApp';
+          btnPed.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-emerald-600/30 mt-2 flex items-center justify-center';
         }
       }
+    }
+
+    function actualizarSoporteWhatsAppSecundarioUI() {
+      actualizarLogicaBotonesWhatsApp();
     }
 
     // ==========================================
