@@ -787,113 +787,202 @@ async function obtenerHistorialChat(clienteId) {
 
       </button>
 
-      <div class="flex items-center gap-3 mb-4">
+      <!-- PASO 1: FORMULARIO DE DATOS -->
+      <div id="pasoRegistro1">
+        <div class="flex items-center gap-3 mb-4">
 
-        <div class="bg-indigo-600/20 text-indigo-400 p-3 rounded-2xl border border-indigo-500/20">
+          <div class="bg-indigo-600/20 text-indigo-400 p-3 rounded-2xl border border-indigo-500/20">
 
-          <i class="fa-solid fa-address-card text-2xl"></i>
+            <i class="fa-solid fa-address-card text-2xl"></i>
+
+          </div>
+
+          <div>
+
+            <h3 class="text-base font-bold text-white">Registro de Cliente</h3>
+
+            <p class="text-[11px] text-slate-400">Paso 1 de 2: Guarda tus datos para compras y opiniones</p>
+
+          </div>
 
         </div>
 
-        <div>
+        <form onsubmit="guardarRegistroCliente(event)" class="space-y-3">
 
-          <h3 class="text-base font-bold text-white">Registro de Cliente</h3>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Cédula o DNI *</label>
+            <div class="flex gap-1.5">
+              <select id="regCedulaPrefijo" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
+                <option value="V-">V-</option>
+                <option value="E-">E-</option>
+                <option value="J-">J-</option>
+                <option value="G-">G-</option>
+                <option value="DNI-">DNI</option>
+              </select>
+              <input type="text" id="regCedulaNumero" inputmode="numeric" required placeholder="12.345.678" oninput="formatearCedulaInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+              <input type="hidden" id="regCedula">
+            </div>
+          </div>
 
-          <p class="text-[11px] text-slate-400">Guarda tus datos para compras y opiniones</p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo *</label>
+            <input type="text" id="regNombre" required placeholder="Nombre y Apellido" 
+                   class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+          </div>
 
-        </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">
+              <i class="fa-regular fa-envelope text-indigo-400 mr-1"></i> Correo Electr&oacute;nico *
+            </label>
+            <input type="email" id="regCorreo" required placeholder="ejemplo@correo.com" 
+                   class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+          </div>
 
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono WhatsApp *</label>
+            <div class="flex gap-1.5">
+              <select id="regTelPais" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-emerald-300 font-bold focus:outline-none focus:border-emerald-500">
+                <option value="+58">🇻🇪 +58</option>
+                <option value="+57">🇨🇴 +57</option>
+                <option value="+56">🇨🇱 +56</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+51">🇵🇪 +51</option>
+                <option value="+54">🇦🇷 +54</option>
+                <option value="+52">🇲🇽 +52</option>
+                <option value="+507">🇵🇦 +507</option>
+              </select>
+              <input type="tel" id="regTelNumero" inputmode="numeric" required placeholder="412 1234567" oninput="formatearTelefonoInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+              <input type="hidden" id="regTelefono">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+
+            <div>
+
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Ciudad</label>
+
+              <input type="text" id="regCiudad" placeholder="Ej: Caracas" 
+
+                     class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+
+            </div>
+
+            <div>
+
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Dirección</label>
+
+              <input type="text" id="regDireccion" placeholder="Sector, Calle" 
+
+                     class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+
+            </div>
+
+          </div>
+
+          <div class="bg-indigo-950/50 border border-indigo-500/30 rounded-xl p-2.5 text-[11px] text-indigo-300 flex items-start gap-2 mt-2">
+            <i class="fa-solid fa-shield-check text-emerald-400 mt-0.5"></i>
+            <div>
+              <span class="font-semibold text-slate-200">Verificación Segura:</span> En el siguiente paso te enviaremos un código serial a tu correo para activar pedidos por WhatsApp y sello VIP de opiniones.
+            </div>
+          </div>
+
+          <button type="submit" id="btnGuardarRegistro" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-indigo-600/30 mt-2 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right"></i> Continuar y Verificar Correo
+          </button>
+
+        </form>
       </div>
 
-      <form onsubmit="guardarRegistroCliente(event)" class="space-y-3">
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Cédula o DNI *</label>
-          <div class="flex gap-1.5">
-            <select id="regCedulaPrefijo" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
-              <option value="V-">V-</option>
-              <option value="E-">E-</option>
-              <option value="J-">J-</option>
-              <option value="G-">G-</option>
-              <option value="DNI-">DNI</option>
-            </select>
-            <input type="text" id="regCedulaNumero" inputmode="numeric" required placeholder="12.345.678" oninput="formatearCedulaInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-            <input type="hidden" id="regCedula">
+      <!-- PASO 2: PANTALLA DE VERIFICACIÓN OTP -->
+      <div id="pasoRegistro2" class="hidden space-y-4">
+        <div class="text-center space-y-1">
+          <div class="inline-flex p-3 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 mb-1">
+            <i class="fa-solid fa-shield-halved text-2xl"></i>
           </div>
+          <h4 class="text-base font-bold text-white">Confirma tu Código de Seguridad</h4>
+          <p class="text-xs text-slate-300">
+            Hemos enviado un código serial de confirmación a:<br>
+            <strong id="lblCorreoDestinoOTP" class="text-indigo-400 font-mono text-xs break-all">correo@ejemplo.com</strong>
+          </p>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo *</label>
-          <input type="text" id="regNombre" required placeholder="Nombre y Apellido" 
-                 class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-        </div>
+        <!-- Alerta de feedback (error / éxito) -->
+        <div id="alertaOTP" class="hidden p-3 rounded-xl text-xs font-medium flex items-center gap-2"></div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">
-            <i class="fa-regular fa-envelope text-indigo-400 mr-1"></i> Correo Electr&oacute;nico *
+        <div class="space-y-2">
+          <label class="block text-xs font-semibold text-slate-300 text-center">
+            Ingresa el Código Serial OTP
           </label>
-          <input type="email" id="regCorreo" required placeholder="ejemplo@correo.com" 
-                 class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+          <div class="relative">
+            <input type="text" id="inputCodigoOTP" maxlength="10" placeholder="YLX-XXXX"
+                   class="w-full bg-slate-950 border-2 border-indigo-500/40 rounded-2xl py-3 px-4 text-center font-mono text-xl tracking-widest text-indigo-300 placeholder-slate-600 focus:outline-none focus:border-indigo-400 uppercase font-black"
+                   autocomplete="off" spellcheck="false">
+          </div>
+          <p class="text-[11px] text-slate-400 text-center">
+            Ingresa el formato serial recibido (ej: <span class="font-mono text-indigo-300">YLX-7482</span> o solo los 4 caracteres finales).
+          </p>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono WhatsApp *</label>
-          <div class="flex gap-1.5">
-            <select id="regTelPais" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-emerald-300 font-bold focus:outline-none focus:border-emerald-500">
-              <option value="+58">🇻🇪 +58</option>
-              <option value="+57">🇨🇴 +57</option>
-              <option value="+56">🇨🇱 +56</option>
-              <option value="+34">🇪🇸 +34</option>
-              <option value="+1">🇺🇸 +1</option>
-              <option value="+51">🇵🇪 +51</option>
-              <option value="+54">🇦🇷 +54</option>
-              <option value="+52">🇲🇽 +52</option>
-              <option value="+507">🇵🇦 +507</option>
-            </select>
-            <input type="tel" id="regTelNumero" inputmode="numeric" required placeholder="412 1234567" oninput="formatearTelefonoInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-            <input type="hidden" id="regTelefono">
+        <div class="space-y-2 pt-1">
+          <button type="button" id="btnConfirmarOTP" onclick="confirmarCodigoOTPCliente()"
+                  class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-circle-check text-sm"></i> ✅ Confirmar Código
+          </button>
+
+          <div class="flex items-center justify-between gap-2 pt-1">
+            <button type="button" id="btnVolverPaso1" onclick="volverAPaso1Registro()"
+                    class="text-[11px] text-slate-400 hover:text-white transition flex items-center gap-1">
+              <i class="fa-solid fa-arrow-left"></i> Modificar datos
+            </button>
+
+            <button type="button" id="btnReenviarOTP" onclick="reenviarCodigoOTPCliente()"
+                    class="text-[11px] text-indigo-400 hover:text-indigo-300 transition flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed">
+              <i class="fa-solid fa-rotate-right"></i> <span id="txtReenviarOTP">🔄 Reenviar código</span>
+            </button>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2">
-
-          <div>
-
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Ciudad</label>
-
-            <input type="text" id="regCiudad" placeholder="Ej: Caracas" 
-
-                   class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
-          </div>
-
-          <div>
-
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Dirección</label>
-
-            <input type="text" id="regDireccion" placeholder="Sector, Calle" 
-
-                   class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
-          </div>
-
+        <div class="bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-2.5 text-[11px] text-slate-400 flex items-start gap-2">
+          <i class="fa-solid fa-circle-info text-indigo-400 mt-0.5 text-xs"></i>
+          <span>Revisa también tu carpeta de Spam o Correo no deseado si no lo ves en tu bandeja principal.</span>
         </div>
-
-        <div class="bg-indigo-950/50 border border-indigo-500/30 rounded-xl p-2.5 text-[11px] text-indigo-300 flex items-start gap-2 mt-2">
-          <i class="fa-solid fa-clock text-amber-400 mt-0.5"></i>
-          <div>
-            <span class="font-semibold text-slate-200">Vigencia del Registro:</span> Tu sesión local dura <strong>1 semana</strong> y tu solicitud queda registrada como <em>Pendiente</em> para validación de la tienda.
-          </div>
-        </div>
-
-        <button type="submit" id="btnGuardarRegistro" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-indigo-600/30 mt-2">
-          Guardar Registro
-        </button>
-
-      </form>
+      </div>
 
     </div>
 
+  </div>
+
+  <!-- MODAL AVISO VERIFICACIÓN DE CORREO PARA WHATSAPP -->
+  <div id="modalAvisoVerificacionWhatsApp" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-100 text-center space-y-4">
+      <button onclick="cerrarModalAvisoVerificacionWhatsApp()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <div class="inline-flex p-3.5 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+        <i class="fa-solid fa-shield-cat text-3xl"></i>
+      </div>
+      <div class="space-y-1.5">
+        <h3 class="text-base font-bold text-white">Verificación de Correo Requerida</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Para proteger las transacciones y garantizar compras seguras libres de spam, el botón directo de WhatsApp requiere que confirmes tu correo electrónico.
+        </p>
+        <p class="text-[11px] text-amber-300/90 font-medium">
+          ⚡ Toma menos de 30 segundos y se realiza solo una vez.
+        </p>
+      </div>
+      <div class="space-y-2 pt-2">
+        <button type="button" id="btnIniciarVerificacionDesdeAviso" onclick="iniciarVerificacionDesdeAvisoWhatsApp()"
+                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition text-xs shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-envelope-circle-check"></i> ⚡ Verificar mi Correo Ahora
+        </button>
+        <button type="button" onclick="cerrarModalAvisoVerificacionWhatsApp(); abrirChatTienda();"
+                class="w-full bg-slate-800 hover:bg-slate-700 text-cyan-300 font-semibold py-2.5 rounded-xl transition text-xs border border-slate-700 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-comments"></i> 💬 Chatear por Chat Web (Sin restricciones)
+        </button>
+      </div>
+    </div>
   </div>
 
 
@@ -1041,24 +1130,69 @@ async function obtenerHistorialChat(clienteId) {
 
     // 1. CARGA DEL CLIENTE EN LOCALSTORAGE (VIGENCIA 1 SEMANA = 7 DÍAS)
     const DURACION_REGISTRO_MS = 7 * 24 * 60 * 60 * 1000;
+    const CLAVE_STORAGE_CLIENTE_SESION = 'tienda_cliente_sesion_v1';
+    const CLAVE_STORAGE_CLIENTE_LEGACY = 'cliente_catalogo';
+
+    function guardarSesionCliente(cli) {
+      if (!cli) return null;
+      const esVerificado = cli.correoVerificado === true || String(cli.estadoCorreo || '').toLowerCase() === 'verificado';
+      const sesion = {
+        id: cli.id || ('CLI-' + Date.now()),
+        nombre: String(cli.nombre || '').trim(),
+        cedula: String(cli.cedula || '').trim(),
+        telefono: String(cli.telefono || '').trim(),
+        correo: String(cli.correo || '').trim().toLowerCase(),
+        ciudad: String(cli.ciudad || '').trim(),
+        direccion: String(cli.direccion || '').trim(),
+        correoVerificado: esVerificado,
+        estado: cli.estado || (esVerificado ? 'Confirmado' : 'Pendiente'),
+        estadoCorreo: esVerificado ? 'Verificado' : (cli.estadoCorreo || 'Pendiente'),
+        fechaVerificacion: cli.fechaVerificacion || (esVerificado ? new Date().toISOString() : ''),
+        expiraEn: cli.expiraEn || (Date.now() + DURACION_REGISTRO_MS)
+      };
+
+      try {
+        localStorage.setItem(CLAVE_STORAGE_CLIENTE_SESION, JSON.stringify(sesion));
+        localStorage.setItem(CLAVE_STORAGE_CLIENTE_LEGACY, JSON.stringify(sesion));
+      } catch (e) {}
+      return sesion;
+    }
+
+    function obtenerSesionCliente() {
+      try {
+        const v1 = localStorage.getItem(CLAVE_STORAGE_CLIENTE_SESION);
+        if (v1) {
+          const parsed = JSON.parse(v1);
+          if (parsed && parsed.expiraEn && Date.now() > parsed.expiraEn) {
+            console.log('El registro del cliente ha caducado. Limpiando almacenamiento.');
+            localStorage.removeItem(CLAVE_STORAGE_CLIENTE_SESION);
+            localStorage.removeItem(CLAVE_STORAGE_CLIENTE_LEGACY);
+            return null;
+          }
+          return parsed;
+        }
+
+        const legacy = localStorage.getItem(CLAVE_STORAGE_CLIENTE_LEGACY);
+        if (legacy) {
+          const parsedLegacy = JSON.parse(legacy);
+          if (parsedLegacy && parsedLegacy.expiraEn && Date.now() > parsedLegacy.expiraEn) {
+            localStorage.removeItem(CLAVE_STORAGE_CLIENTE_LEGACY);
+            return null;
+          }
+          return guardarSesionCliente(parsedLegacy);
+        }
+      } catch (e) {
+        return null;
+      }
+      return null;
+    }
 
     function cargarClienteLocal() {
-      const data = localStorage.getItem('cliente_catalogo');
-      if (data) {
-        try {
-          const cli = JSON.parse(data);
-          // Verificar si expiró el registro de 1 semana
-          if (cli.expiraEn && Date.now() > cli.expiraEn) {
-            console.log('El registro del cliente ha caducado tras 1 semana. Limpiando almacenamiento local.');
-            localStorage.removeItem('cliente_catalogo');
-            actualizarUIClienteIdentificado(null);
-            if (typeof actualizarEstadoFormularioComentarios === 'function') {
-              actualizarEstadoFormularioComentarios();
-            }
-            return;
-          }
-          actualizarUIClienteIdentificado(cli);
-        } catch(e) {}
+      const cli = obtenerSesionCliente();
+      if (cli) {
+        actualizarUIClienteIdentificado(cli);
+      } else {
+        actualizarUIClienteIdentificado(null);
       }
     }
 
@@ -1114,6 +1248,11 @@ async function obtenerHistorialChat(clienteId) {
     function actualizarUIClienteIdentificado(cli) {
       if (!cli) {
         document.getElementById('txtBtnRegistro').textContent = 'Registro Cliente';
+        const btnReg = document.getElementById('btnAbrirRegistro');
+        if (btnReg) {
+          btnReg.classList.remove('from-emerald-600', 'to-teal-600');
+          btnReg.classList.add('from-indigo-600', 'to-violet-600');
+        }
         const lblNom = document.getElementById('lblNombreClienteComentario');
         if (lblNom) lblNom.textContent = '';
         const lblCed = document.getElementById('lblCedulaClienteComentario');
@@ -1122,8 +1261,22 @@ async function obtenerHistorialChat(clienteId) {
       }
 
       var nombreCorto = cli.nombre ? cli.nombre.split(' ')[0] : 'Perfil';
-      var badgeEstado = cli.estado === 'Confirmado' ? ' (✅)' : ' (⏳)';
+      var esVerif = cli.correoVerificado === true || String(cli.estadoCorreo || '').toLowerCase() === 'verificado';
+      var badgeEstado = esVerif ? ' (✓ Verificado)' : (cli.estado === 'Confirmado' ? ' (✅)' : ' (⏳)');
       document.getElementById('txtBtnRegistro').textContent = nombreCorto + badgeEstado;
+
+      const btnReg = document.getElementById('btnAbrirRegistro');
+      if (btnReg) {
+        if (esVerif) {
+          btnReg.classList.remove('from-indigo-600', 'to-violet-600');
+          btnReg.classList.add('from-emerald-600', 'to-teal-600');
+          btnReg.title = 'Cuenta Verificada Oficial Yolix';
+        } else {
+          btnReg.classList.remove('from-emerald-600', 'to-teal-600');
+          btnReg.classList.add('from-indigo-600', 'to-violet-600');
+          btnReg.title = 'Registro de Cliente';
+        }
+      }
 
       if (document.getElementById('lblNombreClienteComentario')) {
         document.getElementById('lblNombreClienteComentario').textContent = cli.nombre || '';
@@ -1196,17 +1349,7 @@ async function obtenerHistorialChat(clienteId) {
 
 
     function clienteActual() {
-
-      const data = localStorage.getItem('cliente_catalogo');
-
-      if (data) {
-
-        try { return JSON.parse(data); } catch(e) {}
-
-      }
-
-      return null;
-
+      return obtenerSesionCliente();
     }
 
 
@@ -1989,7 +2132,12 @@ async function obtenerHistorialChat(clienteId) {
 
         }
 
-
+        let badgeVerifHtml = '';
+        if (c.verificado === true || c.correoVerificado === true || String(c.estado || '').toLowerCase() === 'verificado' || String(c.estado || '').toLowerCase() === 'confirmado') {
+          badgeVerifHtml = '<span class="text-[9px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-1.5 py-0.5 rounded-full font-bold ml-1.5">✓ Verificado</span>';
+        } else {
+          badgeVerifHtml = '<span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded-full font-bold ml-1.5">(No Confirmado)</span>';
+        }
 
         item.innerHTML = `
 
@@ -1997,7 +2145,7 @@ async function obtenerHistorialChat(clienteId) {
 
             <span class="text-xs font-bold text-white flex items-center gap-1.5">
 
-              <i class="fa-solid fa-circle-user text-indigo-400"></i> ${c.cliente}
+              <i class="fa-solid fa-circle-user text-indigo-400"></i> ${c.cliente} ${badgeVerifHtml}
 
             </span>
 
@@ -2095,102 +2243,326 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
-    // 7. REGISTRO DE CLIENTE
+    // 7. REGISTRO DE CLIENTE Y VERIFICACIÓN OTP EN 2 PASOS
+    let temporizadorReenvioInterval = null;
+    let datosRegistroPendientes = null;
 
-    function abrirModalRegistro() {
+    function abrirModalRegistro(paso = 1) {
+      const modal = document.getElementById('modalRegistro');
+      if (!modal) return;
+      modal.classList.remove('hidden');
 
-      document.getElementById('modalRegistro').classList.remove('hidden');
-
+      if (paso === 2) {
+        mostrarPaso2Registro();
+      } else {
+        mostrarPaso1Registro();
+      }
     }
 
     function cerrarModalRegistro() {
-
-      document.getElementById('modalRegistro').classList.add('hidden');
-
+      const modal = document.getElementById('modalRegistro');
+      if (modal) modal.classList.add('hidden');
+      if (temporizadorReenvioInterval) {
+        clearInterval(temporizadorReenvioInterval);
+        temporizadorReenvioInterval = null;
+      }
     }
 
+    function mostrarPaso1Registro() {
+      const p1 = document.getElementById('pasoRegistro1');
+      const p2 = document.getElementById('pasoRegistro2');
+      if (p1) p1.classList.remove('hidden');
+      if (p2) p2.classList.add('hidden');
+    }
 
+    function mostrarPaso2Registro(correo) {
+      const p1 = document.getElementById('pasoRegistro1');
+      const p2 = document.getElementById('pasoRegistro2');
+      if (p1) p1.classList.add('hidden');
+      if (p2) p2.classList.remove('hidden');
+
+      const correoMostrar = correo || (datosRegistroPendientes ? datosRegistroPendientes.correo : '') || (document.getElementById('regCorreo') ? document.getElementById('regCorreo').value : '');
+      const lblCorreo = document.getElementById('lblCorreoDestinoOTP');
+      if (lblCorreo) lblCorreo.textContent = correoMostrar || 'tu correo';
+
+      const inputOTP = document.getElementById('inputCodigoOTP');
+      if (inputOTP) {
+        inputOTP.value = '';
+        setTimeout(() => { try { inputOTP.focus(); } catch(e){} }, 200);
+      }
+
+      const alerta = document.getElementById('alertaOTP');
+      if (alerta) {
+        alerta.className = 'hidden';
+        alerta.innerHTML = '';
+      }
+
+      iniciarTemporizadorReenvio(45);
+    }
+
+    function volverAPaso1Registro() {
+      mostrarPaso1Registro();
+    }
+
+    function iniciarTemporizadorReenvio(segundos = 45) {
+      if (temporizadorReenvioInterval) clearInterval(temporizadorReenvioInterval);
+      const btnReenv = document.getElementById('btnReenviarOTP');
+      const txtReenv = document.getElementById('txtReenviarOTP');
+      if (!btnReenv || !txtReenv) return;
+
+      let restante = segundos;
+      btnReenv.disabled = true;
+      txtReenv.textContent = `🔄 Reenviar en ${restante}s`;
+
+      temporizadorReenvioInterval = setInterval(() => {
+        restante--;
+        if (restante <= 0) {
+          clearInterval(temporizadorReenvioInterval);
+          temporizadorReenvioInterval = null;
+          btnReenv.disabled = false;
+          txtReenv.textContent = '🔄 Reenviar código';
+        } else {
+          txtReenv.textContent = `🔄 Reenviar en ${restante}s`;
+        }
+      }, 1000);
+    }
+
+    async function reenviarCodigoOTPCliente() {
+      const correo = (datosRegistroPendientes && datosRegistroPendientes.correo) 
+        ? datosRegistroPendientes.correo 
+        : (document.getElementById('regCorreo') ? document.getElementById('regCorreo').value.trim() : '');
+      
+      if (!correo) {
+        mostrarAlertaOTP('No hay un correo registrado para reenviar el código.', 'error');
+        return;
+      }
+
+      const txtReenv = document.getElementById('txtReenviarOTP');
+      if (txtReenv) txtReenv.textContent = 'Enviando...';
+
+      try {
+        const res = await apiPost({
+          accion: 'solicitarCodigoOTP',
+          correo: correo,
+          nombre: datosRegistroPendientes ? datosRegistroPendientes.nombre : '',
+          cedula: datosRegistroPendientes ? datosRegistroPendientes.cedula : ''
+        });
+
+        if (res && res.codigoOTP) {
+          sessionStorage.setItem('otp_temporal_' + correo.toLowerCase(), res.codigoOTP);
+        }
+
+        mostrarAlertaOTP('Hemos enviado un nuevo código a tu correo ' + correo, 'exito');
+        iniciarTemporizadorReenvio(45);
+      } catch (err) {
+        mostrarAlertaOTP('No se pudo reenviar el código. Intenta de nuevo en unos momentos.', 'error');
+        iniciarTemporizadorReenvio(15);
+      }
+    }
+
+    function mostrarAlertaOTP(mensaje, tipo = 'error') {
+      const el = document.getElementById('alertaOTP');
+      if (!el) return;
+      el.classList.remove('hidden');
+      if (tipo === 'error') {
+        el.className = 'p-3 rounded-xl text-xs font-semibold flex items-center gap-2 bg-rose-500/20 border border-rose-500/40 text-rose-300 shadow-sm';
+        el.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-sm"></i> <span>' + mensaje + '</span>';
+      } else {
+        el.className = 'p-3 rounded-xl text-xs font-semibold flex items-center gap-2 bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 shadow-sm';
+        el.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i> <span>' + mensaje + '</span>';
+      }
+    }
 
     async function guardarRegistroCliente(e) {
       e.preventDefault();
       actualizarCamposOcultosDoc();
 
-      const datos = {
-        cedula: document.getElementById('regCedula').value.trim(),
+      const cedula = (document.getElementById('regCedula')?.value || '').trim();
+      const nombre = (document.getElementById('regNombre')?.value || '').trim();
+      const correo = (document.getElementById('regCorreo')?.value || '').trim().toLowerCase();
+      const telefono = (document.getElementById('regTelefono')?.value || '').trim();
+      const ciudad = (document.getElementById('regCiudad')?.value || '').trim();
+      const direccion = (document.getElementById('regDireccion')?.value || '').trim();
 
-        nombre: document.getElementById('regNombre').value.trim(),
-
-        correo: document.getElementById('regCorreo') ? document.getElementById('regCorreo').value.trim() : '',
-
-        telefono: document.getElementById('regTelefono').value.trim(),
-
-        ciudad: document.getElementById('regCiudad').value.trim(),
-
-        direccion: document.getElementById('regDireccion').value.trim()
-
-      };
-
-
-
-      const btn = document.getElementById('btnGuardarRegistro');
-
-      btn.disabled = true;
-
-      btn.textContent = 'Guardando en la base de datos...';
-
-
-
-      try {
-
-        const res = await apiPost({
-
-          accion: 'guardarCliente',
-
-          datos: datos
-
-        });
-
-        btn.disabled = false;
-
-        btn.textContent = 'Guardar Registro';
-
-        if (res && res.exito) {
-          const cliFinal = res.cliente || datos;
-          cliFinal.expiraEn = Date.now() + DURACION_REGISTRO_MS;
-          cliFinal.fechaRegistro = cliFinal.fechaRegistro || new Date().toISOString();
-          cliFinal.estado = cliFinal.estado || 'Pendiente';
-
-          localStorage.setItem('cliente_catalogo', JSON.stringify(cliFinal));
-          actualizarUIClienteIdentificado(cliFinal);
-          actualizarEstadoFormularioComentarios();
-          cerrarModalRegistro();
-          alert('🎉 ' + (res.mensaje || 'Registro recibido con éxito. Tu cuenta está en estado Pendiente de Confirmación por el Administrador (válido por 1 semana).'));
-        } else {
-
-          alert(res ? res.mensaje : 'Error al registrar cliente');
-
-        }
-
-      } catch (err) {
-
-        btn.disabled = false;
-
-        btn.textContent = 'Guardar Registro';
-
-        alert('Error al registrar: ' + err.message);
-
+      if (!correo || !correo.includes('@')) {
+        alert('Por favor introduce una dirección de correo válida.');
+        return;
       }
 
+      datosRegistroPendientes = {
+        cedula, nombre, correo, telefono, ciudad, direccion
+      };
+
+      const btn = document.getElementById('btnGuardarRegistro');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Generando código...';
+
+      try {
+        // 1. Guardar cliente en Google Sheets
+        apiPost({
+          accion: 'guardarCliente',
+          datos: datosRegistroPendientes
+        }).catch(() => {});
+
+        // 2. Solicitar código OTP al backend
+        const resOTP = await apiPost({
+          accion: 'solicitarCodigoOTP',
+          correo: correo,
+          nombre: nombre,
+          cedula: cedula,
+          telefono: telefono
+        });
+
+        if (resOTP && resOTP.codigoOTP) {
+          sessionStorage.setItem('otp_temporal_' + correo, resOTP.codigoOTP);
+        }
+
+        // Guardar sesión provisional no verificada
+        const sesionProvisoria = {
+          ...datosRegistroPendientes,
+          correoVerificado: false,
+          estadoCorreo: 'Pendiente',
+          estado: 'Pendiente',
+          expiraEn: Date.now() + DURACION_REGISTRO_MS
+        };
+        guardarSesionCliente(sesionProvisoria);
+        actualizarUIClienteIdentificado(sesionProvisoria);
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> Continuar y Verificar Correo';
+
+        // Pasar al Paso 2 fluidamente sin recargar la página
+        mostrarPaso2Registro(correo);
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-arrow-right"></i> Continuar y Verificar Correo';
+        // Aún con error de red, pasa al paso 2 con fallback
+        mostrarPaso2Registro(correo);
+      }
     }
 
+    async function confirmarCodigoOTPCliente() {
+      const inputOTP = document.getElementById('inputCodigoOTP');
+      const codigo = (inputOTP?.value || '').trim().toUpperCase();
 
+      if (!codigo) {
+        mostrarAlertaOTP('Por favor ingresa el código recibido en tu correo.', 'error');
+        if (inputOTP) inputOTP.focus();
+        return;
+      }
+
+      const correo = (datosRegistroPendientes && datosRegistroPendientes.correo)
+        ? datosRegistroPendientes.correo
+        : (document.getElementById('regCorreo') ? document.getElementById('regCorreo').value.trim().toLowerCase() : '');
+      const cedula = (datosRegistroPendientes && datosRegistroPendientes.cedula)
+        ? datosRegistroPendientes.cedula
+        : (document.getElementById('regCedula') ? document.getElementById('regCedula').value.trim() : '');
+
+      const btn = document.getElementById('btnConfirmarOTP');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Validando código...';
+
+      try {
+        const res = await apiPost({
+          accion: 'validarCodigoOTP',
+          correo: correo,
+          cedula: cedula,
+          codigo: codigo
+        });
+
+        // Comprobación de éxito o fallback
+        let exito = res && res.exito;
+        if (!exito) {
+          // Comprobar si coincide con código temporal en sessionStorage
+          const codigoEsperado = sessionStorage.getItem('otp_temporal_' + correo);
+          const esperadoLimpio = codigoEsperado ? codigoEsperado.replace(/[\s-]/g, '').toUpperCase() : '';
+          const recibidoLimpio = codigo.replace(/[\s-]/g, '').toUpperCase();
+          if (esperadoLimpio && (esperadoLimpio === recibidoLimpio || esperadoLimpio.endsWith(recibidoLimpio))) {
+            exito = true;
+          }
+        }
+
+        if (exito) {
+          mostrarAlertaOTP('¡Código confirmado con éxito! Tu cuenta está verificada.', 'exito');
+          
+          try {
+            if (typeof confetti === 'function') {
+              confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+            }
+          } catch(e) {}
+
+          const sesionActual = obtenerSesionCliente() || datosRegistroPendientes || {};
+          const sesionVerificada = {
+            ...sesionActual,
+            ...((res && res.cliente) ? res.cliente : {}),
+            correoVerificado: true,
+            estadoCorreo: 'Verificado',
+            estado: 'Confirmado',
+            fechaVerificacion: new Date().toISOString(),
+            expiraEn: Date.now() + DURACION_REGISTRO_MS
+          };
+
+          guardarSesionCliente(sesionVerificada);
+          actualizarUIClienteIdentificado(sesionVerificada);
+          if (typeof actualizarEstadoFormularioComentarios === 'function') {
+            actualizarEstadoFormularioComentarios();
+          }
+
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i> ✅ Confirmar Código';
+            cerrarModalRegistro();
+          }, 1100);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i> ✅ Confirmar Código';
+          mostrarAlertaOTP((res && res.mensaje) ? res.mensaje : 'Código incorrecto. Revisa el código recibido en tu correo.', 'error');
+          if (inputOTP) {
+            inputOTP.focus();
+            inputOTP.select();
+          }
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i> ✅ Confirmar Código';
+        mostrarAlertaOTP('Error al conectar con el servidor. Revisa tu conexión.', 'error');
+      }
+    }
+
+    // Modal de Aviso de Verificación para WhatsApp
+    function abrirModalAvisoVerificacionWhatsApp() {
+      const m = document.getElementById('modalAvisoVerificacionWhatsApp');
+      if (m) m.classList.remove('hidden');
+    }
+
+    function cerrarModalAvisoVerificacionWhatsApp() {
+      const m = document.getElementById('modalAvisoVerificacionWhatsApp');
+      if (m) m.classList.add('hidden');
+    }
+
+    function iniciarVerificacionDesdeAvisoWhatsApp() {
+      cerrarModalAvisoVerificacionWhatsApp();
+      const cli = clienteActual();
+      if (cli && cli.correo) {
+        datosRegistroPendientes = cli;
+        abrirModalRegistro(2);
+      } else {
+        abrirModalRegistro(1);
+      }
+    }
 
     let lineaWAObjetivo = 1;
 
     function abrirModalPedido(linea = 1) {
-
       if (!productoActual) return;
       lineaWAObjetivo = (linea === 2) ? 2 : 1;
+
+      // SEGMENTACIÓN Y GATING DE SEGURIDAD OTP:
+      const cli = clienteActual();
+      if (!cli || !cli.correoVerificado) {
+        abrirModalAvisoVerificacionWhatsApp();
+        return;
+      }
 
       // Validación: Si el producto requiere talla y no se ha seleccionado ninguna, resaltar y avisar
       if (productoRequiereTalla() && !tallaSeleccionada) {

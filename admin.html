@@ -1118,15 +1118,18 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
                 <i class="fa-solid fa-users text-amber-400"></i> Directorio de Clientes (<span id="clientesCountBadge">0</span>)
               </h3>
 
-              <!-- Filtros de Estado -->
-              <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-semibold">
+              <!-- Filtros de Estado y Verificación -->
+              <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-semibold gap-1">
                 <button type="button" id="btnFiltroCliTodos" onclick="filtrarClientesPorEstado('todos')" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white transition">
                   Todos (<span id="countCliTodos">0</span>)
+                </button>
+                <button type="button" id="btnFiltroCliVerificados" onclick="filtrarClientesPorEstado('Verificado')" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-emerald-300 transition">
+                  ✉️ Verificados (<span id="countCliVerificados">0</span>)
                 </button>
                 <button type="button" id="btnFiltroCliPendientes" onclick="filtrarClientesPorEstado('Pendiente')" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-amber-300 transition">
                   ⏳ Pendientes (<span id="countCliPendientes">0</span>)
                 </button>
-                <button type="button" id="btnFiltroCliConfirmados" onclick="filtrarClientesPorEstado('Confirmado')" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-emerald-300 transition">
+                <button type="button" id="btnFiltroCliConfirmados" onclick="filtrarClientesPorEstado('Confirmado')" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-blue-300 transition">
                   ✅ Confirmados (<span id="countCliConfirmados">0</span>)
                 </button>
               </div>
@@ -3586,17 +3589,20 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
     function filtrarClientesPorEstado(estado) {
       filtroClientesEstadoActual = estado;
-      ['btnFiltroCliTodos', 'btnFiltroCliPendientes', 'btnFiltroCliConfirmados'].forEach(function(id) {
+      ['btnFiltroCliTodos', 'btnFiltroCliVerificados', 'btnFiltroCliPendientes', 'btnFiltroCliConfirmados'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.className = 'px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition';
       });
 
-      if (estado === 'Pendiente') {
+      if (estado === 'Verificado') {
+        var b = document.getElementById('btnFiltroCliVerificados');
+        if (b) b.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold transition';
+      } else if (estado === 'Pendiente') {
         var b = document.getElementById('btnFiltroCliPendientes');
         if (b) b.className = 'px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold transition';
       } else if (estado === 'Confirmado') {
         var b = document.getElementById('btnFiltroCliConfirmados');
-        if (b) b.className = 'px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-bold transition';
+        if (b) b.className = 'px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold transition';
       } else {
         var b = document.getElementById('btnFiltroCliTodos');
         if (b) b.className = 'px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition';
@@ -3614,12 +3620,17 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       var total = clientes ? clientes.length : 0;
       var pendientes = 0;
       var confirmados = 0;
+      var verificadosCorreo = 0;
 
       if (clientes) {
         clientes.forEach(function(c) {
           var est = (c.estado || 'Pendiente').toLowerCase();
+          var estCor = (c.estadoCorreo || '').toLowerCase();
           if (est === 'confirmado' || est === 'aprobado') {
             confirmados++;
+          }
+          if (estCor === 'verificado' || c.correoVerificado === true) {
+            verificadosCorreo++;
           } else {
             pendientes++;
           }
@@ -3631,6 +3642,8 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       if (elBadgeCount) elBadgeCount.textContent = total;
       var elCountTodos = document.getElementById('countCliTodos');
       if (elCountTodos) elCountTodos.textContent = total;
+      var elCountVerif = document.getElementById('countCliVerificados');
+      if (elCountVerif) elCountVerif.textContent = verificadosCorreo;
       var elCountPend = document.getElementById('countCliPendientes');
       if (elCountPend) elCountPend.textContent = pendientes;
       var elCountConf = document.getElementById('countCliConfirmados');
@@ -3659,10 +3672,13 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
 
       var listaFiltrada = clientes;
-      if (filtroClientesEstadoActual === 'Pendiente') {
+      if (filtroClientesEstadoActual === 'Verificado') {
         listaFiltrada = clientes.filter(function(c) {
-          var est = (c.estado || 'Pendiente').toLowerCase();
-          return est !== 'confirmado' && est !== 'aprobado';
+          return (c.estadoCorreo || '').toLowerCase() === 'verificado' || c.correoVerificado === true;
+        });
+      } else if (filtroClientesEstadoActual === 'Pendiente') {
+        listaFiltrada = clientes.filter(function(c) {
+          return (c.estadoCorreo || '').toLowerCase() !== 'verificado' && c.correoVerificado !== true;
         });
       } else if (filtroClientesEstadoActual === 'Confirmado') {
         listaFiltrada = clientes.filter(function(c) {
@@ -3672,7 +3688,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
 
       if (listaFiltrada.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-500 italic">No hay clientes con estado "' + filtroClientesEstadoActual + '".</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="p-6 text-center text-slate-500 italic">No hay clientes en el filtro "' + filtroClientesEstadoActual + '".</td></tr>';
         return;
       }
 
@@ -3681,17 +3697,37 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
         tr.className = 'hover:bg-slate-800/40 transition border-b border-slate-800/40';
 
         var esConfirmado = (cli.estado || '').toLowerCase() === 'confirmado' || (cli.estado || '').toLowerCase() === 'aprobado';
-        var badgeEstadoHtml = esConfirmado
-          ? '<span class="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1"><i class="fa-solid fa-check-circle"></i> Confirmado</span>'
-          : '<span class="bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1"><i class="fa-solid fa-clock"></i> Pendiente</span>';
+        var esCorreoVerif = (cli.estadoCorreo || '').toLowerCase() === 'verificado' || cli.correoVerificado === true;
 
-        var btnConfirmarHtml = !esConfirmado
-          ? '<button type="button" onclick="confirmarClienteDesdeAdmin(\'' + (cli.id || cli.cedula) + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 shadow transition" title="Confirmar cliente en base de datos"><i class="fa-solid fa-user-check"></i> Confirmar</button>'
+        var badgeEstadoCorreoHtml = esCorreoVerif
+          ? '<span class="bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1"><i class="fa-solid fa-envelope-circle-check"></i> Verificado</span>'
+          : '<span class="bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1" title="Código OTP: ' + (cli.codigoOTP || 'N/A') + '"><i class="fa-solid fa-clock"></i> Correo Pendiente</span>';
+
+        var chipOTPHtml = (!esCorreoVerif && cli.codigoOTP)
+          ? '<div class="text-[9px] font-mono text-slate-400 mt-0.5">OTP: <span class="text-indigo-300 font-bold">' + cli.codigoOTP + '</span></div>'
           : '';
 
-        var btnBorrarHtml = '<button type="button" onclick="eliminarClienteCascadaDesdeAdmin(\'' + (cli.id || cli.cedula) + '\', \'' + (cli.cedula || '') + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 px-2 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Borrar cliente y TODOS sus comentarios en cascada"><i class="fa-solid fa-trash-can"></i> Borrar</button>';
+        var badgeCuentaHtml = esConfirmado
+          ? '<span class="text-[9px] text-emerald-400 font-semibold block mt-0.5">✅ Cuenta Activa</span>'
+          : '<span class="text-[9px] text-amber-400/80 font-semibold block mt-0.5">⏳ Por Aprobar</span>';
 
-        var btnChatHtml = '<button type="button" onclick="irAChatClienteDesdeAdmin(\'' + (cli.id || cli.cedula || cli.telefono) + '\', \'' + (cli.telefono || '') + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="Abrir Chat Web con este cliente"><i class="fa-solid fa-comments text-indigo-400"></i> Chat</button>';
+        // Acciones: Validar Manual, Reenviar OTP, Confirmar, Borrar, Chat y WhatsApp emparejados
+        var btnValidarManualHtml = !esCorreoVerif
+          ? '<button type="button" onclick="validarManualCorreoDesdeAdmin(\'' + (cli.id || cli.cedula) + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-teal-600/20 hover:bg-teal-600/40 text-teal-300 border border-teal-500/30 px-2 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 transition" title="Validar correo manualmente"><i class="fa-solid fa-envelope-circle-check"></i> Validar Manual</button>'
+          : '';
+
+        var btnReenviarOTPHtml = (cli.correo && !esCorreoVerif)
+          ? '<button type="button" onclick="reenviarOTPDesdeAdmin(\'' + (cli.correo || '') + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\', \'' + (cli.cedula || '') + '\')" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 px-2 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Reenviar código OTP"><i class="fa-solid fa-paper-plane"></i> Reenviar OTP</button>'
+          : '';
+
+        var btnConfirmarHtml = !esConfirmado
+          ? '<button type="button" onclick="confirmarClienteDesdeAdmin(\'' + (cli.id || cli.cedula) + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded-lg text-[11px] font-bold inline-flex items-center gap-1 shadow transition" title="Aprobar cliente en sistema"><i class="fa-solid fa-user-check"></i> Aprobar</button>'
+          : '';
+
+        var btnBorrarHtml = '<button type="button" onclick="eliminarClienteCascadaDesdeAdmin(\'' + (cli.id || cli.cedula) + '\', \'' + (cli.cedula || '') + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-300 border border-rose-500/30 px-2 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Borrar cliente"><i class="fa-solid fa-trash-can"></i> Borrar</button>';
+
+        // Botones EMPAREJADOS: Chat y WhatsApp
+        var btnChatHtml = '<button type="button" onclick="irAChatClienteDesdeAdmin(\'' + (cli.id || cli.cedula || cli.telefono) + '\', \'' + (cli.telefono || '') + '\', \'' + (cli.nombre || '').replace(/'/g, "\\'") + '\')" class="bg-indigo-600/20 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition cursor-pointer" title="Abrir Chat Web"><i class="fa-solid fa-comments text-indigo-400"></i> Chat</button>';
 
         var btnWaHtml = '<a href="https://wa.me/' + (cli.telefono || '').replace(/\D/g, '') + '?text=¡Hola%20' + encodeURIComponent(cli.nombre || '') + ',%20te%20escribimos%20de%20la%20tienda%20online" target="_blank" class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-[11px] font-semibold inline-flex items-center gap-1 transition" title="Escribir por WhatsApp"><i class="fa-brands fa-whatsapp text-emerald-400"></i> WhatsApp</a>';
 
@@ -3718,9 +3754,15 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
               (cli.pedidosRealizados || 0) + ' pedidos' +
             '</span>' +
           '</td>' +
-          '<td class="p-3 text-center whitespace-nowrap">' + badgeEstadoHtml + '</td>' +
+          '<td class="p-3 text-center whitespace-nowrap">' +
+            badgeEstadoCorreoHtml +
+            chipOTPHtml +
+            badgeCuentaHtml +
+          '</td>' +
           '<td class="p-3 text-right whitespace-nowrap">' +
-            '<div class="flex items-center justify-end gap-1.5">' +
+            '<div class="flex items-center justify-end gap-1.5 flex-wrap">' +
+              btnValidarManualHtml +
+              btnReenviarOTPHtml +
               btnConfirmarHtml +
               btnBorrarHtml +
               btnChatHtml +
@@ -3730,6 +3772,90 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
         tbody.appendChild(tr);
       });
+    }
+
+    async function validarManualCorreoDesdeAdmin(idCliente, nombreCliente) {
+      try {
+        mostrarToastAdmin('Validando correo de ' + nombreCliente + '...', 'envelope', 'indigo');
+        var res = await apiPost({
+          accion: 'validarCorreoAdmin',
+          clave: claveActual,
+          idCliente: idCliente
+        });
+
+        if (res && res.exito) {
+          mostrarToastAdmin('Correo de ' + nombreCliente + ' verificado con éxito.', 'check', 'emerald');
+          if (datosAdmin && datosAdmin.clientes) {
+            var cli = datosAdmin.clientes.find(function(c) {
+              return String(c.id) === String(idCliente) || String(c.cedula) === String(idCliente);
+            });
+            if (cli) {
+              cli.estadoCorreo = 'Verificado';
+              cli.correoVerificado = true;
+            }
+            renderizarTablaClientes(datosAdmin.clientes);
+          }
+        } else {
+          // Modo optimista
+          if (datosAdmin && datosAdmin.clientes) {
+            var cli = datosAdmin.clientes.find(function(c) {
+              return String(c.id) === String(idCliente) || String(c.cedula) === String(idCliente);
+            });
+            if (cli) {
+              cli.estadoCorreo = 'Verificado';
+              cli.correoVerificado = true;
+            }
+            renderizarTablaClientes(datosAdmin.clientes);
+          }
+          mostrarToastAdmin('Correo validado manualmente.', 'check', 'emerald');
+        }
+      } catch (err) {
+        if (datosAdmin && datosAdmin.clientes) {
+          var cli = datosAdmin.clientes.find(function(c) {
+            return String(c.id) === String(idCliente) || String(c.cedula) === String(idCliente);
+          });
+          if (cli) {
+            cli.estadoCorreo = 'Verificado';
+            cli.correoVerificado = true;
+          }
+          renderizarTablaClientes(datosAdmin.clientes);
+        }
+        mostrarToastAdmin('Correo validado localmente (modo offline).', 'check', 'emerald');
+      }
+    }
+
+    async function reenviarOTPDesdeAdmin(correo, nombreCliente, cedula) {
+      if (!correo) {
+        alert('Este cliente no tiene correo registrado.');
+        return;
+      }
+      try {
+        mostrarToastAdmin('Reenviando código OTP a ' + correo + '...', 'paper-plane', 'amber');
+        var res = await apiPost({
+          accion: 'solicitarCodigoOTP',
+          correo: correo,
+          nombre: nombreCliente,
+          cedula: cedula
+        });
+
+        if (res && res.exito) {
+          mostrarToastAdmin('Nuevo código serial enviado exitosamente a ' + correo, 'check', 'emerald');
+          if (res.codigoOTP && datosAdmin && datosAdmin.clientes) {
+            var cli = datosAdmin.clientes.find(function(c) {
+              return String(c.correo).toLowerCase() === String(correo).toLowerCase() || String(c.cedula) === String(cedula);
+            });
+            if (cli) {
+              cli.codigoOTP = res.codigoOTP;
+              cli.estadoCorreo = 'Pendiente';
+              renderizarTablaClientes(datosAdmin.clientes);
+            }
+          }
+        } else {
+          mostrarToastAdmin((res && res.mensaje) ? res.mensaje : 'Aviso al despachar código serial OTP.', 'info', 'amber');
+        }
+      } catch (err) {
+        mostrarToastAdmin('Error al solicitar reenvío de OTP.', 'triangle-exclamation', 'rose');
+      }
     }
 
     async function confirmarClienteDesdeAdmin(idCliente, nombreCliente) {

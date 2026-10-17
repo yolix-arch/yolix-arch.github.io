@@ -603,3 +603,30 @@ Bitácora cronológica de todas las tareas, decisiones técnicas, configuracione
 
 
 
+
+---
+
+### [2026-10-17] - Verificación de Correo Electrónico con Serial OTP Nativo MailApp y Matriz de Calidad 10/10
+
+- **Backend Google Apps Script (`J:\texto\Codigo.gs`)**:
+  - Ampliación de la estructura de la hoja 'Clientes' a 13 columnas agregando: `Correo_Electronico` (Col 10), `Codigo_OTP` (Col 11), `Estado_Correo` (Col 12), `Fecha_OTP` (Col 13).
+  - Formateo visual automático en `embellecerYFormatearSheets` (@ para texto y yyyy-mm-dd hh:mm para fechas).
+  - Generador de código serial seguro `generarCodigoSerialOTP()` con formato `YLX-XXXX` (8 caracteres, números y mayúsculas, sin caracteres ambiguos 0/O, 1/I).
+  - Envío transaccional HTML nativo con `MailApp.sendEmail` y plantilla responsiva Yolix en bloque `try/catch` blindado contra agotamiento de cuotas y fallos de red (sin caídas HTTP 500).
+  - Endpoints REST en `doGet` y `doPost` para `solicitarCodigoOTP`, `validarCodigoOTP` y `validarCorreoAdmin`.
+  - Mapeo completo en `obtenerDatosAdmin` de los nuevos campos de verificación.
+- **Frontend y UX de Clientes (`tienda_gh_pages/index.html`, `404.html`, `api.js`)**:
+  - Flujo de registro en dos pasos (`#pasoRegistro1` y `#pasoRegistro2` en `#modalRegistro`) con transición fluida sin recargas.
+  - Temporizador interactivo de cuenta regresiva de 45 segundos para reenvío de OTP con botón `[Reenviar código]`.
+  - Alertas visuales dinámicas de código erróneo con preservación estricta de inputs (cero reseteos involuntarios).
+  - Sincronización en `localStorage` con retrocompatibilidad para clientes antiguos (`tienda_cliente_sesion_v1` y `cliente_catalogo`).
+  - Gating de seguridad para WhatsApp con modal protector amigable `#modalAvisoVerificacionWhatsApp` y acceso de 1 clic a verificar.
+  - Libertad absoluta de navegación y Chat Web sin restricciones para visitantes no verificados.
+  - Distintivo `[✓ Verificado]` en reseñas y cabecera para clientes confirmados; clientes no confirmados llevan `(No Confirmado)`.
+- **Panel de Administración (`tienda_gh_pages/admin.html`)**:
+  - Filtros rápidos en la tabla de clientes: `Todos`, `✉️ Verificados`, `⏳ Pendientes` y `✅ Confirmados`.
+  - Badges visuales de estado `[✉️ Verificado]` (verde esmeralda) y `[⏳ Correo Pendiente]` (ámbar) con chip de código OTP.
+  - Botones de acción rápida `[Validar Manual]` y `[Reenviar OTP]`, manteniendo siempre emparejados los botones `[💬 Chat]` y `[📱 WhatsApp]`.
+- **Suite de Pruebas Automatizadas Playwright (`test_suite_verificacion_otp.js`)**:
+  - 10 de 10 comprobaciones superadas con éxito con **cero errores en consola (`console.error === 0`)**.
+  - Evidencia estructurada guardada en `resultado_verificacion_correo_otp.json`.
