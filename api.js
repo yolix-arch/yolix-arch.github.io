@@ -97,14 +97,6 @@ const CONFIG_MARCA_DEFAULT = {
 
 async function obtenerConfiguracionMarca() {
   try {
-    const res = await apiGet({ accion: 'obtenerConfigTienda' });
-    if (res && res.exito && res.config) {
-      localStorage.setItem(CLAVE_STORAGE_CONFIG, JSON.stringify(res.config));
-      return res.config;
-    }
-  } catch (e) {}
-
-  try {
     const local = localStorage.getItem(CLAVE_STORAGE_CONFIG);
     if (local) return { ...CONFIG_MARCA_DEFAULT, ...JSON.parse(local) };
   } catch (e) {}

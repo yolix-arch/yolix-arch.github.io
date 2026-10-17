@@ -203,14 +203,6 @@ const CONFIG_MARCA_DEFAULT = {
 
 async function obtenerConfiguracionMarca() {
   try {
-    const res = await apiGet({ accion: 'obtenerConfigTienda' });
-    if (res && res.exito && res.config) {
-      localStorage.setItem(CLAVE_STORAGE_CONFIG, JSON.stringify(res.config));
-      return res.config;
-    }
-  } catch (e) {}
-
-  try {
     const local = localStorage.getItem(CLAVE_STORAGE_CONFIG);
     if (local) return { ...CONFIG_MARCA_DEFAULT, ...JSON.parse(local) };
   } catch (e) {}
@@ -317,14 +309,15 @@ async function obtenerHistorialChat(clienteId) {
         </div>
       </div>
 
-      <!-- BOTONES ACCIÓN NAVBAR -->
+      <!-- BOTONES ACCIÓN NAVBAR (WHATSAPP Y CHAT JUNTOS) -->
       <div class="flex items-center space-x-2 flex-shrink-0">
-        <button type="button" onclick="abrirChatModal()" class="btn-motion bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 px-3 py-2 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 shadow-sm relative" title="Chatear con soporte">
+        <div id="contenedorBtnWhatsappHeader" class="flex items-center gap-1.5"></div>
+        <button type="button" id="btnAbrirChat" onclick="abrirChatModal()" class="btn-motion bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 px-3 py-2 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 shadow-sm relative" title="Chatear con soporte">
           <i class="fa-solid fa-comments text-cyan-400"></i>
           <span class="hidden sm:inline">Chat</span>
           <span id="badgeChatNav" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[9px] px-1.5 py-0.2 rounded-full animate-bounce">1</span>
         </button>
-        <button onclick="abrirModalRegistro()" class="btn-motion bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-3.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-indigo-600/30 transition flex items-center gap-1.5">
+        <button type="button" id="btnAbrirRegistro" onclick="abrirModalRegistro()" class="btn-motion bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-3.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-indigo-600/30 transition flex items-center gap-1.5">
           <i class="fa-solid fa-id-card"></i>
           <span id="txtBtnRegistro" class="hidden sm:inline">Registro Cliente</span>
         </button>
@@ -2439,6 +2432,32 @@ async function obtenerHistorialChat(clienteId) {
 
       const tieneTel1 = tel1.length >= 7;
       const tieneTel2 = tel2.length >= 7;
+
+      // Actualizar botones de WhatsApp en Cabecera (junto al botón de Chat)
+      const contHeader = document.getElementById('contenedorBtnWhatsappHeader');
+      if (contHeader) {
+        if (!tieneTel1 && !tieneTel2) {
+          contHeader.innerHTML = '';
+        } else if (tieneTel1 && !tieneTel2) {
+          contHeader.innerHTML = `
+            <a href="https://wa.me/${tel1}?text=${encodeURIComponent('¡Hola! Me gustaría hacer una consulta en la tienda.')}" target="_blank" class="btn-motion bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-2 rounded-xl font-semibold text-xs shadow-md shadow-emerald-600/30 transition flex items-center gap-1.5" title="Contactar por WhatsApp">
+              <i class="fa-brands fa-whatsapp text-sm"></i>
+              <span class="hidden sm:inline">WhatsApp</span>
+            </a>
+          `;
+        } else if (tieneTel1 && tieneTel2) {
+          contHeader.innerHTML = `
+            <a href="https://wa.me/${tel1}?text=${encodeURIComponent('¡Hola! Me gustaría hacer una consulta para pedidos.')}" target="_blank" class="btn-motion bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-emerald-600/30 transition flex items-center gap-1.5" title="WhatsApp Línea 1 (Pedidos)">
+              <i class="fa-brands fa-whatsapp text-sm text-emerald-200"></i>
+              <span class="hidden md:inline">WA 1</span>
+            </a>
+            <a href="https://wa.me/${tel2}?text=${encodeURIComponent('¡Hola! Me gustaría hacer una consulta de soporte.')}" target="_blank" class="btn-motion bg-teal-600 hover:bg-teal-500 text-white px-2.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-teal-600/30 transition flex items-center gap-1.5" title="WhatsApp Línea 2 (Soporte)">
+              <i class="fa-brands fa-whatsapp text-sm text-teal-200"></i>
+              <span class="hidden md:inline">WA 2</span>
+            </a>
+          `;
+        }
+      }
 
       const cont = document.getElementById('contenedorBotonesAccionProducto');
       if (cont) {
