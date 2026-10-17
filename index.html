@@ -302,8 +302,13 @@ async function obtenerHistorialChat(clienteId) {
         </div>
       </div>
 
-      <!-- BOTÓN REGISTRO CLIENTE -->
+      <!-- BOTONES ACCIÓN NAVBAR -->
       <div class="flex items-center space-x-2 flex-shrink-0">
+        <button type="button" onclick="abrirChatModal()" class="btn-motion bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 px-3 py-2 rounded-xl font-semibold text-xs transition flex items-center gap-1.5 shadow-sm relative" title="Chatear con soporte">
+          <i class="fa-solid fa-comments text-cyan-400"></i>
+          <span class="hidden sm:inline">Chat</span>
+          <span id="badgeChatNav" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[9px] px-1.5 py-0.2 rounded-full animate-bounce">1</span>
+        </button>
         <button onclick="abrirModalRegistro()" class="btn-motion bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white px-3.5 py-2 rounded-xl font-semibold text-xs shadow-md shadow-indigo-600/30 transition flex items-center gap-1.5">
           <i class="fa-solid fa-id-card"></i>
           <span id="txtBtnRegistro" class="hidden sm:inline">Registro Cliente</span>
@@ -493,18 +498,16 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
-          <!-- Botón de Pedido por WhatsApp -->
-
-          <div class="pt-2">
-
-            <button id="btnComprarWA" onclick="abrirModalPedido()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2.5 text-sm">
-
+          <!-- Botones de Acción: WhatsApp y Chat de Soporte -->
+          <div class="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button id="btnComprarWA" onclick="abrirModalPedido()" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
               <i class="fa-brands fa-whatsapp text-lg"></i>
-
-              Comprar / Pedir por WhatsApp
-
+              <span>Pedir por WhatsApp</span>
             </button>
-
+            <button type="button" id="btnChatearDesdeProducto" onclick="abrirChatDesdeProducto()" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3.5 px-4 rounded-2xl shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+              <i class="fa-solid fa-comments text-base"></i>
+              <span>Chatear / Preguntar</span>
+            </button>
           </div>
 
         </div>
@@ -2139,28 +2142,43 @@ async function obtenerHistorialChat(clienteId) {
       }
     }
 
-    function toggleChatFlotante() {
-      const ventana = document.getElementById('ventanaChatFlotante');
-      const icono = document.getElementById('iconoChatFlotante');
-      const badge = document.getElementById('badgeChatNoLeidos');
-      
-      if (ventana.classList.contains('hidden')) {
-        ventana.classList.remove('hidden');
-        if (icono) {
-          icono.classList.remove('fa-comments');
-          icono.classList.add('fa-xmark');
-        }
-        if (badge) badge.classList.add('hidden');
+    function abrirChatModal() {
+      const modal = document.getElementById('modalChatTienda');
+      if (modal) {
+        modal.classList.remove('hidden');
         abrirFlujoChat();
+      }
+      const bNav = document.getElementById('badgeChatNav');
+      if (bNav) bNav.classList.add('hidden');
+    }
+
+    function cerrarChatModal() {
+      const modal = document.getElementById('modalChatTienda');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+      if (chatIntervalo) {
+        clearInterval(chatIntervalo);
+        chatIntervalo = null;
+      }
+    }
+
+    function toggleChatFlotante() {
+      const modal = document.getElementById('modalChatTienda');
+      if (modal && modal.classList.contains('hidden')) {
+        abrirChatModal();
       } else {
-        ventana.classList.add('hidden');
-        if (icono) {
-          icono.classList.remove('fa-xmark');
-          icono.classList.add('fa-comments');
-        }
-        if (chatIntervalo) {
-          clearInterval(chatIntervalo);
-          chatIntervalo = null;
+        cerrarChatModal();
+      }
+    }
+
+    function abrirChatDesdeProducto() {
+      abrirChatModal();
+      if (productoActual && productoActual.nombre) {
+        const input = document.getElementById('chatInputTexto');
+        if (input) {
+          input.value = 'Hola, tengo una pregunta sobre: ' + productoActual.nombre + ' ($' + productoActual.precio.toFixed(2) + ')';
+          setTimeout(() => { try { input.focus(); } catch(e){} }, 200);
         }
       }
     }
@@ -2358,15 +2376,14 @@ async function obtenerHistorialChat(clienteId) {
   </script>
 
   <!-- ========================================== -->
-  <!-- CHAT WEB FLOTANTE (MENSAJERÍA INTERNA) -->
+  <!-- MODAL DE CHAT WEB (SIN ELEMENTOS FLOTANTES INVASIVOS) -->
   <!-- ========================================== -->
-  <div id="contenedorChatFlotante" class="fixed bottom-5 right-5 z-50 flex flex-col items-end">
+  <div id="modalChatTienda" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
     
-    <!-- Ventana de Chat Flotante -->
-    <div id="ventanaChatFlotante" class="hidden mb-3 w-[340px] sm:w-[380px] bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 max-h-[520px] h-[520px]">
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 max-h-[560px] h-[560px]">
       
       <!-- Encabezado de la Ventana de Chat -->
-      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-4 border-b border-slate-800 flex items-center justify-between">
+      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 p-4 border-b border-slate-800 flex items-center justify-between flex-shrink-0">
         <div class="flex items-center gap-3">
           <div class="relative">
             <div class="w-10 h-10 rounded-2xl bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-bold text-sm shadow">
@@ -2375,19 +2392,19 @@ async function obtenerHistorialChat(clienteId) {
             <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
           </div>
           <div>
-            <h3 id="chatNombreTienda" class="text-xs font-bold text-white tracking-wide">Soporte y Ventas</h3>
+            <h3 id="chatNombreTienda" class="text-xs font-bold text-white tracking-wide">Soporte y Atención al Cliente</h3>
             <span class="text-[10px] text-emerald-400 flex items-center gap-1 font-medium">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> En línea ahora
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Asesores en línea
             </span>
           </div>
         </div>
-        <button type="button" onclick="toggleChatFlotante()" class="text-slate-400 hover:text-white p-1 rounded-lg transition text-base">
+        <button type="button" onclick="cerrarChatModal()" class="text-slate-400 hover:text-white p-1.5 rounded-xl hover:bg-slate-800/80 transition text-base">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <!-- Paso 1: Identificación (si no está registrado) -->
-      <div id="chatPasoIdentificacion" class="hidden p-5 flex-1 flex flex-col justify-center items-center text-center space-y-4">
+      <div id="chatPasoIdentificacion" class="hidden p-6 flex-1 flex flex-col justify-center items-center text-center space-y-4">
         <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-2xl">
           <i class="fa-regular fa-comment-dots"></i>
         </div>
@@ -2406,7 +2423,7 @@ async function obtenerHistorialChat(clienteId) {
 
       <!-- Paso 2: Mensajes y Conversación -->
       <div id="chatPasoMensajes" class="flex-1 flex flex-col overflow-hidden">
-        <div id="chatListaMensajes" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+        <div id="chatListaMensajes" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs bg-slate-900/60">
           <!-- Mensaje de bienvenida inicial -->
           <div class="flex items-start gap-2">
             <div class="w-7 h-7 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center text-xs flex-shrink-0">
@@ -2420,7 +2437,7 @@ async function obtenerHistorialChat(clienteId) {
         </div>
 
         <!-- Barra inferior de envío -->
-        <div class="p-3 bg-slate-950/80 border-t border-slate-800 flex items-center gap-2">
+        <div class="p-3 bg-slate-950/90 border-t border-slate-800 flex items-center gap-2">
           <input type="text" id="chatInputTexto" placeholder="Escribe tu mensaje aquí..." 
                  onkeydown="if(event.key==='Enter'){ enviarMensajeChatCliente(); }"
                  class="flex-1 bg-slate-900 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
@@ -2430,21 +2447,6 @@ async function obtenerHistorialChat(clienteId) {
         </div>
       </div>
 
-    </div>
-
-    <!-- Botón Flotante de Activación con Motion Graphics -->
-    <div class="relative flex items-center justify-center">
-      <span class="absolute inline-flex h-12 w-12 rounded-full bg-indigo-500 opacity-40 animate-ping pointer-events-none"></span>
-      <button type="button" id="btnChatFlotante" onclick="toggleChatFlotante()" 
-              class="motion-pulse-glow group relative bg-gradient-to-r from-indigo-600 via-indigo-500 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-indigo-600/50 z-10">
-        <i id="iconoChatFlotante" class="fa-solid fa-comments text-2xl transition duration-300 group-hover:rotate-12"></i>
-        <!-- Badge de no leídos -->
-        <span id="badgeChatNoLeidos" class="hidden absolute -top-1 -right-1 bg-rose-500 text-white font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-slate-950 shadow animate-bounce">1</span>
-        <!-- Tooltip -->
-        <span class="hidden sm:group-hover:flex absolute right-16 bg-slate-900/95 backdrop-blur-md border border-slate-700 text-white text-xs font-semibold px-3.5 py-2 rounded-2xl whitespace-nowrap shadow-2xl items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> ¿Tienes dudas? ¡Chatea aquí!
-        </span>
-      </button>
     </div>
 
   </div>
