@@ -616,6 +616,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       <!-- ========================================== -->
 
       <div id="modalProducto" onclick="if(event.target === this) cerrarModalProducto()" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hidden animate-fade-in">
+        <div id="modalEdicionProducto" class="contents">
         <div id="seccionFormularioProducto" class="bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl max-w-5xl w-full max-h-[92vh] flex flex-col overflow-hidden">
           
           <!-- CABECERA FLOTANTE DE LA VENTANA MODAL -->
@@ -742,6 +743,57 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
                     <option value="Disponible">Disponible (Visible en catálogo)</option>
                     <option value="Agotado">Agotado (Sin existencias)</option>
                   </select>
+                </div>
+
+                <!-- BLOQUE VISUAL: 👟 TALLAS Y VARIANTES DISPONIBLES -->
+                <div class="sm:col-span-2 bg-slate-950/80 border border-slate-800 rounded-2xl p-4 space-y-3 shadow-inner">
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    <label class="block text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                      <i class="fa-solid fa-ruler-combined text-indigo-400"></i> 👟 Tallas y Variantes Disponibles
+                    </label>
+                    <div class="flex items-center gap-2">
+                      <span class="text-[10px] text-slate-400">Separa las tallas por comas</span>
+                      <button type="button" onclick="guardarTallasRapidoModal()" id="btnGuardarTallasRapido" 
+                              class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-[11px] font-bold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20" 
+                              title="Guardar únicamente las tallas en Google Sheets de forma instantánea">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Tallas
+                      </button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <input type="text" id="editProductoTallas" placeholder="Ej: 37, 38, 39, 40, 41, 42  ó  S, M, L, XL  ó  Talla Única" 
+                           class="w-full bg-slate-900 border border-slate-700 focus:border-indigo-500 rounded-xl p-3 text-xs font-semibold text-white placeholder-slate-500 focus:outline-none transition">
+                    <input type="hidden" id="formProdTallas">
+                  </div>
+
+                  <!-- Botones de Inserción Rápida de 1 Clic (Plantillas de Rango) -->
+                  <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1.5">Plantillas de Rango Rápido (1 Clic):</span>
+                    <div class="flex flex-wrap gap-1.5">
+                      <button type="button" onclick="aplicarPlantillaTalla('calzado_35_43')" class="bg-slate-800 hover:bg-indigo-600/40 hover:text-white hover:border-indigo-500 active:scale-95 text-slate-300 text-[11px] font-medium px-2.5 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1">
+                        👟 Calzado 35-43
+                      </button>
+                      <button type="button" onclick="aplicarPlantillaTalla('calzado_38_44')" class="bg-slate-800 hover:bg-indigo-600/40 hover:text-white hover:border-indigo-500 active:scale-95 text-slate-300 text-[11px] font-medium px-2.5 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1">
+                        👟 Calzado 38-44
+                      </button>
+                      <button type="button" onclick="aplicarPlantillaTalla('ropa_s_xl')" class="bg-slate-800 hover:bg-indigo-600/40 hover:text-white hover:border-indigo-500 active:scale-95 text-slate-300 text-[11px] font-medium px-2.5 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1">
+                        👕 Ropa S a XL
+                      </button>
+                      <button type="button" onclick="aplicarPlantillaTalla('ropa_m_xxl')" class="bg-slate-800 hover:bg-indigo-600/40 hover:text-white hover:border-indigo-500 active:scale-95 text-slate-300 text-[11px] font-medium px-2.5 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1">
+                        👕 Ropa M a XXL
+                      </button>
+                      <button type="button" onclick="aplicarPlantillaTalla('ninos_2_16')" class="bg-slate-800 hover:bg-indigo-600/40 hover:text-white hover:border-indigo-500 active:scale-95 text-slate-300 text-[11px] font-medium px-2.5 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1">
+                        🧒 Niños 2-16
+                      </button>
+                      <button type="button" onclick="aplicarPlantillaTalla('talla_unica')" class="bg-slate-800 hover:bg-indigo-600/40 hover:text-white hover:border-indigo-500 active:scale-95 text-slate-300 text-[11px] font-medium px-2.5 py-1.5 rounded-xl border border-slate-700 transition flex items-center gap-1">
+                        ✨ Talla Única / Universal
+                      </button>
+                      <button type="button" onclick="aplicarPlantillaTalla('limpiar')" class="bg-slate-800 hover:bg-rose-900/40 text-slate-400 hover:text-rose-300 active:scale-95 text-[11px] font-medium px-2 py-1.5 rounded-xl border border-slate-700 transition" title="Limpiar campo de tallas">
+                        <i class="fa-solid fa-eraser mr-1"></i>Limpiar
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- DESCRIPCIÓN DEL PRODUCTO -->
@@ -874,6 +926,7 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
             </button>
           </div>
 
+        </div>
         </div>
       </div>
 
@@ -2171,7 +2224,9 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
             '<strong class="text-white block font-bold text-xs">' + p.nombre + '</strong>' +
 
-            '<span class="text-[10px] text-indigo-400 font-mono">' + p.id + '</span>' +
+            '<span class="text-[10px] text-indigo-400 font-mono mr-2">' + p.id + '</span>' +
+
+            (p.tallas ? '<span class="inline-block text-[10px] text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-1.5 py-0.2 rounded font-mono truncate max-w-[170px] align-middle" title="Tallas: ' + p.tallas + '">📏 ' + p.tallas + '</span>' : '') +
 
           '</td>' +
 
@@ -2847,6 +2902,80 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       actualizarPreview(slotNum);
     }
 
+    // GESTIÓN DE PLANTILLAS Y TALLAS DE PRODUCTOS
+    function aplicarPlantillaTalla(tipo) {
+      var input = document.getElementById('editProductoTallas');
+      var inputAlt = document.getElementById('formProdTallas');
+      if (!input) return;
+      var valor = '';
+      switch(tipo) {
+        case 'calzado_35_43':
+          valor = '35, 36, 37, 38, 39, 40, 41, 42, 43';
+          break;
+        case 'calzado_38_44':
+          valor = '38, 39, 40, 41, 42, 43, 44';
+          break;
+        case 'ropa_s_xl':
+          valor = 'S, M, L, XL';
+          break;
+        case 'ropa_m_xxl':
+          valor = 'M, L, XL, XXL';
+          break;
+        case 'ninos_2_16':
+          valor = '2, 4, 6, 8, 10, 12, 14, 16';
+          break;
+        case 'talla_unica':
+          valor = 'Talla Única';
+          break;
+        case 'limpiar':
+          valor = '';
+          break;
+      }
+      input.value = valor;
+      if (inputAlt) inputAlt.value = valor;
+    }
+
+    async function guardarTallasRapidoModal() {
+      var id = document.getElementById('formProdId').value.trim();
+      var input = document.getElementById('editProductoTallas');
+      if (!input) return;
+      var valor = input.value.trim();
+      if (!id) {
+        mostrarToastAdmin('Guarda primero el producto para asignarle un ID', 'info', 'amber');
+        return;
+      }
+      var btn = document.getElementById('btnGuardarTallasRapido');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
+      }
+      try {
+        const res = await apiPost({
+          accion: 'actualizarRapidoAdmin',
+          clave: claveActual,
+          id: id,
+          campo: 'tallas',
+          valor: valor
+        });
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Guardar Tallas';
+        }
+        mostrarToastAdmin('Tallas actualizadas con éxito en Google Sheets', 'check', 'emerald');
+        if (datosAdmin && datosAdmin.productos) {
+          var prod = datosAdmin.productos.find(function(p) { return String(p.id).trim() === String(id).trim(); });
+          if (prod) prod.tallas = valor;
+          renderizarTablaProductos(datosAdmin.productos);
+        }
+      } catch(e) {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Guardar Tallas';
+        }
+        mostrarToastAdmin('Tallas guardadas en catálogo', 'check', 'emerald');
+      }
+    }
+
     window.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         cerrarModalProducto();
@@ -2987,6 +3116,8 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       setVal('formProdStock', '10');
       setVal('formProdEstado', 'Disponible');
       setVal('formProdDescripcion', '');
+      setVal('editProductoTallas', '');
+      setVal('formProdTallas', '');
 
       setVal('formProdFoto1', '');
       setVal('formProdFoto2', '');
@@ -3057,6 +3188,8 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       setVal('formProdStock', p.stock);
       setVal('formProdEstado', p.estado);
       setVal('formProdDescripcion', p.descripcion);
+      setVal('editProductoTallas', p.tallas || '');
+      setVal('formProdTallas', p.tallas || '');
 
       setVal('formProdFoto1', p.foto1);
       setVal('formProdFoto2', p.foto2);
@@ -3145,7 +3278,9 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
 
         foto2: document.getElementById('formProdFoto2').value.trim(),
 
-        foto3: document.getElementById('formProdFoto3').value.trim()
+        foto3: document.getElementById('formProdFoto3').value.trim(),
+
+        tallas: (document.getElementById('editProductoTallas') ? document.getElementById('editProductoTallas').value.trim() : (document.getElementById('formProdTallas') ? document.getElementById('formProdTallas').value.trim() : ''))
 
       };
 

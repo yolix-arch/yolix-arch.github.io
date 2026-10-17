@@ -509,6 +509,22 @@ async function obtenerHistorialChat(clienteId) {
 
             </div>
 
+            <!-- SELECTOR DINÁMICO DE TALLAS Y VARIANTES -->
+            <div id="modalSeccionTallas" class="border-t border-slate-800 pt-3 hidden">
+              <div class="flex items-center justify-between mb-2">
+                <h4 class="text-xs font-bold text-indigo-300 uppercase tracking-wide flex items-center gap-1.5">
+                  <i class="fa-solid fa-ruler-combined text-indigo-400"></i> Selecciona tu Talla:
+                </h4>
+                <span id="modalTallaSeleccionadaBadge" class="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-lg hidden"></span>
+              </div>
+              <div id="modalContenedorPildorasTallas" class="flex flex-wrap gap-2">
+                <!-- Píldoras inyectadas dinámicamente -->
+              </div>
+              <p id="modalAvisoTallaRequerida" class="text-xs text-rose-400 font-semibold mt-2 hidden flex items-center gap-1.5 animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation"></i> Por favor elige tu talla para procesar tu orden
+              </p>
+            </div>
+
           </div>
 
 
@@ -984,6 +1000,8 @@ async function obtenerHistorialChat(clienteId) {
     let fotoActualIndex = 0;
 
     let calificacionSeleccionada = 5;
+
+    let tallaSeleccionada = '';
 
 
 
@@ -1485,6 +1503,9 @@ async function obtenerHistorialChat(clienteId) {
 
 
 
+      // Renderizar selector de tallas y variantes
+      renderizarSelectorTallasProducto();
+
       // Renderizar estado de comentarios
 
       renderizarComentariosModal();
@@ -1517,6 +1538,90 @@ async function obtenerHistorialChat(clienteId) {
 
       document.getElementById('modalProducto').classList.add('hidden');
 
+    }
+
+    // ==========================================
+    // SISTEMA DINÁMICO DE TALLAS Y VARIANTES
+    // ==========================================
+    function productoRequiereTalla() {
+      if (!productoActual) return false;
+      const raw = String(productoActual.tallas || '').trim();
+      if (!raw) return false;
+      const normal = raw.toLowerCase();
+      if (normal === 'talla única' || normal === 'talla unica' || normal === 'única' || normal === 'unica') return false;
+      return true;
+    }
+
+    function renderizarSelectorTallasProducto() {
+      tallaSeleccionada = '';
+      const seccion = document.getElementById('modalSeccionTallas');
+      const cont = document.getElementById('modalContenedorPildorasTallas');
+      const badge = document.getElementById('modalTallaSeleccionadaBadge');
+      const aviso = document.getElementById('modalAvisoTallaRequerida');
+
+      if (aviso) aviso.classList.add('hidden');
+      if (badge) {
+        badge.textContent = '';
+        badge.classList.add('hidden');
+      }
+
+      if (!seccion || !cont) return;
+
+      const raw = String(productoActual.tallas || '').trim();
+      const normal = raw.toLowerCase();
+
+      // Si el producto tiene asignada "Talla Única" o no tiene tallas, no muestra el selector para mantener la ficha limpia
+      if (!raw || normal === 'talla única' || normal === 'talla unica' || normal === 'única' || normal === 'unica') {
+        seccion.classList.add('hidden');
+        cont.innerHTML = '';
+        tallaSeleccionada = (normal.includes('unica') || normal.includes('única')) ? 'Talla Única' : '';
+        return;
+      }
+
+      // Si tiene tallas definidas (ej. "38, 39, 40, 41" o "S, M, L")
+      const lista = raw.split(',').map(t => t.trim()).filter(Boolean);
+      if (lista.length === 0) {
+        seccion.classList.add('hidden');
+        cont.innerHTML = '';
+        return;
+      }
+
+      cont.innerHTML = '';
+      seccion.classList.remove('hidden');
+
+      lista.forEach(talla => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-talla-pildora px-3.5 py-1.5 rounded-xl text-xs font-bold border border-slate-700 bg-slate-800/90 text-slate-200 hover:border-indigo-500 hover:bg-slate-700 active:scale-95 transition-all shadow-sm';
+        btn.textContent = talla;
+        btn.setAttribute('data-talla', talla);
+        btn.onclick = () => seleccionarTallaProducto(talla);
+        cont.appendChild(btn);
+      });
+    }
+
+    function seleccionarTallaProducto(talla) {
+      tallaSeleccionada = talla;
+      const cont = document.getElementById('modalContenedorPildorasTallas');
+      const badge = document.getElementById('modalTallaSeleccionadaBadge');
+      const aviso = document.getElementById('modalAvisoTallaRequerida');
+
+      if (aviso) aviso.classList.add('hidden');
+
+      if (cont) {
+        Array.from(cont.children).forEach(btn => {
+          if (btn.getAttribute('data-talla') === talla) {
+            btn.className = 'btn-talla-pildora px-3.5 py-1.5 rounded-xl text-xs font-bold border border-indigo-500 bg-indigo-600 text-white shadow-lg shadow-indigo-600/40 ring-2 ring-indigo-500/30 scale-105 transition-all active:scale-95';
+          } else {
+            btn.className = 'btn-talla-pildora px-3.5 py-1.5 rounded-xl text-xs font-bold border border-slate-700 bg-slate-800/80 text-slate-300 hover:border-indigo-500 hover:bg-slate-700 transition-all opacity-80 active:scale-95';
+          }
+        });
+      }
+
+      if (badge) {
+        badge.textContent = `Talla: ${talla}`;
+        badge.classList.remove('hidden');
+      }
     }
 
 
@@ -1970,6 +2075,23 @@ async function obtenerHistorialChat(clienteId) {
 
       if (!productoActual) return;
 
+      // Validación: Si el producto requiere talla y no se ha seleccionado ninguna, resaltar y avisar
+      if (productoRequiereTalla() && !tallaSeleccionada) {
+        const aviso = document.getElementById('modalAvisoTallaRequerida');
+        if (aviso) aviso.classList.remove('hidden');
+        const cont = document.getElementById('modalContenedorPildorasTallas');
+        if (cont) {
+          cont.classList.add('animate-pulse');
+          setTimeout(() => cont.classList.remove('animate-pulse'), 1500);
+          try { cont.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch(e){}
+        }
+        return;
+      }
+
+      const tallaBadgeHtml = (tallaSeleccionada && tallaSeleccionada !== 'Talla Única') 
+        ? `<span class="text-[11px] font-bold text-indigo-300 bg-indigo-500/20 border border-indigo-500/30 px-2 py-0.5 rounded-md">📏 Talla: ${tallaSeleccionada}</span>`
+        : '';
+
       document.getElementById('pedidoResumenProducto').innerHTML = `
 
         <div class="flex items-center gap-3">
@@ -1980,7 +2102,13 @@ async function obtenerHistorialChat(clienteId) {
 
             <h4 class="font-bold text-white">${productoActual.nombre}</h4>
 
-            <span class="text-emerald-400 font-extrabold text-sm">$${productoActual.precio.toFixed(2)} USD</span>
+            <div class="flex items-center gap-2 mt-0.5 flex-wrap">
+
+              <span class="text-emerald-400 font-extrabold text-sm">$${productoActual.precio.toFixed(2)} USD</span>
+
+              ${tallaBadgeHtml}
+
+            </div>
 
           </div>
 
@@ -2004,6 +2132,8 @@ async function obtenerHistorialChat(clienteId) {
 
       e.preventDefault();
 
+      const infoTallaDetalle = (tallaSeleccionada && tallaSeleccionada !== 'Talla Única') ? ` (Talla: ${tallaSeleccionada})` : '';
+
       const pedido = {
 
         nombre: document.getElementById('pedNombre').value.trim(),
@@ -2014,7 +2144,7 @@ async function obtenerHistorialChat(clienteId) {
 
         direccion: document.getElementById('pedDireccion').value.trim(),
 
-        detalle: `${productoActual.nombre} (ID: ${productoActual.id}) x 1 unidad`,
+        detalle: `${productoActual.nombre} (ID: ${productoActual.id})${infoTallaDetalle} x 1 unidad`,
 
         total: productoActual.precio
 
@@ -2038,7 +2168,7 @@ async function obtenerHistorialChat(clienteId) {
 
           clienteData: pedido,
 
-          productos: [{ id: productoActual.id, nombre: productoActual.nombre, precio: productoActual.precio, cantidad: 1 }],
+          productos: [{ id: productoActual.id, nombre: productoActual.nombre, precio: productoActual.precio, cantidad: 1, talla: tallaSeleccionada }],
 
           total: productoActual.precio,
 
@@ -2056,7 +2186,17 @@ async function obtenerHistorialChat(clienteId) {
 
         const idPed = (res && res.idPedido) ? res.idPedido : 'PEDIDO';
 
-        const msgWA = encodeURIComponent(`¡¡Hola! Acabo de registrar mi pedido en el catálogo:\n- Código: ${idPed}\n- Producto: ${productoActual.nombre}\n- Total: $${productoActual.precio.toFixed(2)} USD\n- Nombre: ${pedido.nombre}\n- Teléfono: ${pedido.telefono}\n- Dirección: ${pedido.direccion}`);
+        const nombreTienda = (typeof CONFIG_MARCA !== 'undefined' && CONFIG_MARCA && CONFIG_MARCA.nombreTienda) ? CONFIG_MARCA.nombreTienda : 'Yolix';
+        const lineaTalla = (tallaSeleccionada && tallaSeleccionada !== 'Talla Única') ? `\n📏 Talla: ${tallaSeleccionada}` : '';
+        const textoWA = `Hola ${nombreTienda}, deseo ordenar el siguiente producto:\n` +
+          `📦 Producto: ${productoActual.nombre}` +
+          `${lineaTalla}\n` +
+          `💵 Precio: $${productoActual.precio.toFixed(2)}\n` +
+          `👤 Comprador: ${pedido.nombre} (Tel: ${pedido.telefono})\n` +
+          `📍 Dirección: ${pedido.direccion}\n` +
+          `🔖 Código: ${idPed}`;
+
+        const msgWA = encodeURIComponent(textoWA);
 
         const numWAActivo = (TELEFONOS_WA && TELEFONOS_WA.tel1) ? String(TELEFONOS_WA.tel1).replace(/\D/g, '') : TELEFONO_WHATSAPP;
         window.open(`https://wa.me/${numWAActivo}?text=${msgWA}`, '_blank');
@@ -2245,7 +2385,10 @@ async function obtenerHistorialChat(clienteId) {
       if (productoActual && productoActual.nombre) {
         const input = document.getElementById('chatInputTexto');
         if (input) {
-          input.value = 'Hola, tengo una pregunta sobre: ' + productoActual.nombre + ' ($' + productoActual.precio.toFixed(2) + ')';
+          const infoTalla = (tallaSeleccionada && tallaSeleccionada !== 'Talla Única') 
+            ? ' (Talla ' + tallaSeleccionada + ', $' + productoActual.precio.toFixed(2) + ')' 
+            : ' ($' + productoActual.precio.toFixed(2) + ')';
+          input.value = 'Hola, tengo una pregunta sobre: ' + productoActual.nombre + infoTalla;
           setTimeout(() => { try { input.focus(); } catch(e){} }, 200);
         }
       }

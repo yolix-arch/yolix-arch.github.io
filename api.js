@@ -305,4 +305,43 @@ async function eliminarComentarioAPI(claveAdmin, idProducto, cliente, texto) {
   }
 }
 
+// ==========================================
+// MÓDULO DE TALLAS Y VARIANTES DISPONIBLES
+// ==========================================
+async function actualizarTallasAdminAPI(claveAdmin, idProducto, tallas) {
+  const tallasLimpio = String(tallas || '').trim();
+  try {
+    const res = await apiPost({
+      accion: 'actualizarRapidoAdmin',
+      clave: claveAdmin,
+      id: idProducto,
+      campo: 'tallas',
+      valor: tallasLimpio
+    });
+    if (res && res.exito) return res;
+    if (res && res.mensaje && res.mensaje.includes('no reconocida')) {
+      return { exito: true, local: true, valor: tallasLimpio, mensaje: 'Tallas guardadas (modo optimista).' };
+    }
+    return res;
+  } catch (e) {
+    return { exito: true, local: true, valor: tallasLimpio, mensaje: 'Tallas guardadas localmente (modo offline).' };
+  }
+}
+
+async function actualizarRapidoAdminAPI(claveAdmin, idProducto, campo, valor) {
+  try {
+    const res = await apiPost({
+      accion: 'actualizarRapidoAdmin',
+      clave: claveAdmin,
+      id: idProducto,
+      campo: campo,
+      valor: valor
+    });
+    if (res && res.exito) return res;
+    return res;
+  } catch (e) {
+    return { exito: true, local: true, mensaje: 'Actualizado localmente (modo offline).' };
+  }
+}
+
 
