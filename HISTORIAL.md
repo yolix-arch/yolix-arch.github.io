@@ -717,3 +717,34 @@ Bitácora cronológica de todas las tareas, decisiones técnicas, configuracione
     * **Check 6**: Limpieza limpia de URL con `replaceState` al cerrar la ficha.
     * **Check 7**: Cero errores de consola en Modo Claro y Modo Oscuro con capturas generadas.
   - Evidencias visuales capturadas en `./capturas/` y reporte estructurado en `resultado_sistema_compartir_deeplinks.json`.
+
+---
+
+### [2026-10-17] - Carga Masiva y Drenaje Seguro de Nuevo Lote Tecnológico y Fitness (P109 a P123)
+
+- **Ejecución Automatizada con Yolix CLI (`publicar_cli.js --auto`)**:
+  - Detección, agrupación y clasificación inteligente de 15 productos nuevos con 32 archivos de imagen locales.
+  - Normalización cromática y de segmento:
+    * **Accesorios (Tecnología, Audio y Cuidado Personal)**:
+      - Afeitadora Eléctrica Máquina Cortar Barba Cabello T9 Vintage ($8.00, 2 fotos).
+      - Audífonos Alámbricos Samsung AKG Tipo C Manos Libres ($7.00, 1 foto).
+      - Audífonos Alámbricos Micrófono In-ear Deportivos Hi-Fi CK ($5.00, 3 fotos).
+      - Audífonos Inalámbricos Bluetooth M25 Somos Tienda Fi Gris ($9.00, 2 fotos).
+      - Audífonos Inalámbricos Bluetooth M90 Pro Negro ($7.00, 2 fotos).
+      - Audífonos Micrófono In-ear Deportivos Hi-Fi AKX ($8.00, 3 fotos).
+      - Base Para Audífonos Soporte Stand Gamer Headset ($9.00, 2 fotos).
+      - Cable Cargador Tipo C Carga Rápida 180 Grados Rotación Naranja ($8.00, 3 fotos).
+      - Cargador Xiaomi 33W Carga Rápida Puerto USB C Con Conector ($8.00, 2 fotos).
+      - Hub Multiplicador USB 3.0 Tipo C 4 Puertos Adaptador Laptop PC ($7.00, 2 fotos).
+      - Mini Afeitadora Eléctrica Portátil Carga USB Barba Y Bigote ($7.00, 3 fotos).
+      - Mouse Gamer RGB Ergonómico USB Alámbrico Negro ($5.00, 2 fotos).
+      - Power Bank De 50.000 mAh 22.5W Negro ($35.00, 1 foto).
+      - Taco Cargador De Pared 4 Puertos USB 5V 3.0 Amp Todo Uso Blanco ($8.00, 2 fotos).
+    * **Deportes (Fitness y Entrenamiento)**:
+      - Ligas Elásticas Entrenamiento Resistencia Ejercicio Fitness Negro ($7.00, 2 fotos).
+  - Todos los activos fueron transferidos a Google Drive (`subirFotoDrive`) y vinculados en Google Sheets ERP (`guardarProductoAdmin`).
+  - IDs generados: desde `P109` hasta `P123`.
+
+- **Drenaje Seguro y Cero Pérdida de Datos (Zero-Data-Loss)**:
+  - Los 32 archivos de imagen locales fueron eliminados de forma atómica únicamente tras recibir la confirmación de Google Sheets.
+  - La carpeta `./nuevos productos` quedó completamente limpia (0 imágenes residuales).
