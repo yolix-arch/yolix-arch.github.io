@@ -544,7 +544,97 @@
       color: #1e293b !important;
     }
 
-    /* 10. Footer */
+    /* 10. MODAL DE COMPARTIR Y NOTIFICACIONES (#modalCompartir y #toastNotificacion) */
+    html.theme-light #modalCompartir > div {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+      color: #0f172a !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    }
+    html.theme-light #btnCerrarModalCompartir {
+      background-color: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    html.theme-light #btnCerrarModalCompartir:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #modalCompartirTitulo {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalCompartirPreview {
+      background-color: #f8fafc !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #modalCompartirImg {
+      background-color: #ffffff !important;
+      border-color: #e2e8f0 !important;
+    }
+    html.theme-light #modalCompartirNombre {
+      color: #0f172a !important;
+    }
+    html.theme-light #modalCompartirSubtitulo {
+      color: #059669 !important;
+    }
+    html.theme-light #inputEnlaceCompartir {
+      background-color: #f8fafc !important;
+      border-color: #cbd5e1 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #btnCompartirNativo {
+      background-color: #f1f5f9 !important;
+      color: #334155 !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light #btnCompartirNativo:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #btnCompartirProductoCabecera {
+      background-color: #f1f5f9 !important;
+      color: #475569 !important;
+    }
+    html.theme-light #btnCompartirProductoCabecera:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #btnCompartirProductoModal {
+      background-color: #f1f5f9 !important;
+      color: #334155 !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light #btnCompartirProductoModal:hover {
+      background-color: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    html.theme-light #btnCompartirCategoria {
+      background-color: #e0e7ff !important;
+      border-color: #c7d2fe !important;
+      color: #4338ca !important;
+    }
+    html.theme-light #btnCompartirCategoria:hover {
+      background-color: #c7d2fe !important;
+    }
+    html.theme-light .btn-compartir-card {
+      background-color: #ffffff !important;
+      color: #334155 !important;
+      border-color: #cbd5e1 !important;
+    }
+    html.theme-light .btn-compartir-card:hover {
+      background-color: #4f46e5 !important;
+      color: #ffffff !important;
+    }
+    html.theme-light #toastNotificacion {
+      background-color: #ffffff !important;
+      border-color: #10b981 !important;
+      color: #0f172a !important;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+    }
+    html.theme-light #toastNotificacionTexto {
+      color: #0f172a !important;
+    }
+
+    /* 11. Footer */
     html.theme-light footer {
       border-color: #e2e8f0 !important;
       color: #64748b !important;
@@ -856,9 +946,12 @@ async function obtenerHistorialChat(clienteId) {
 
       
 
-      <!-- Modal Close Button -->
+      <!-- Modal Close & Share Buttons -->
+      <button id="btnCompartirProductoCabecera" onclick="compartirProductoActual()" class="absolute top-4 right-16 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition shadow-md" title="Compartir este producto">
+        <i class="fa-solid fa-share-nodes text-sm"></i>
+      </button>
 
-      <button id="btnCerrarModalProducto" onclick="cerrarModalProducto()" class="absolute top-4 right-4 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition">
+      <button id="btnCerrarModalProducto" onclick="cerrarModalProducto()" class="absolute top-4 right-4 z-20 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition" title="Cerrar ventana">
 
         <i class="fa-solid fa-xmark text-base"></i>
 
@@ -973,6 +1066,11 @@ async function obtenerHistorialChat(clienteId) {
               <span>Chatear / Preguntar</span>
             </button>
           </div>
+
+          <button type="button" id="btnCompartirProductoModal" onclick="compartirProductoActual()" class="w-full mt-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold py-3 px-4 rounded-2xl border border-slate-700/70 hover:border-indigo-500/50 shadow-md transition flex items-center justify-center gap-2 text-xs sm:text-sm" title="Compartir este producto">
+            <i class="fa-solid fa-share-nodes text-indigo-400"></i>
+            <span>Compartir Producto</span>
+          </button>
 
         </div>
 
@@ -1160,7 +1258,71 @@ async function obtenerHistorialChat(clienteId) {
 
   </div>
 
+  <!-- MODAL DE COMPARTIR Y ENLACES PROFUNDOS -->
+  <div id="modalCompartir" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-100 modal-compartir-content animate-in fade-in zoom-in-95 duration-200">
+      <!-- Botón Cerrar -->
+      <button id="btnCerrarModalCompartir" onclick="cerrarModalCompartir()" class="absolute top-4 right-4 bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white w-9 h-9 rounded-full flex items-center justify-center transition" title="Cerrar ventana">
+        <i class="fa-solid fa-xmark text-base"></i>
+      </button>
 
+      <!-- Cabecera -->
+      <div class="flex items-center gap-3 mb-4 pr-8">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 flex items-center justify-center flex-shrink-0">
+          <i class="fa-solid fa-share-nodes text-lg"></i>
+        </div>
+        <div>
+          <h3 id="modalCompartirTitulo" class="text-lg font-bold text-white leading-tight">Compartir Producto</h3>
+          <p class="text-xs text-slate-400">Difunde este enlace con amigos o clientes</p>
+        </div>
+      </div>
+
+      <!-- Resumen visual del ítem a compartir -->
+      <div id="modalCompartirPreview" class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3.5 mb-5 flex items-center gap-3.5">
+        <img id="modalCompartirImg" src="" alt="Vista previa" class="w-14 h-14 object-contain rounded-xl bg-slate-900 border border-slate-800 p-1 flex-shrink-0">
+        <div class="overflow-hidden flex-1">
+          <h4 id="modalCompartirNombre" class="text-sm font-bold text-white truncate">Nombre del Producto</h4>
+          <p id="modalCompartirSubtitulo" class="text-xs text-emerald-400 font-semibold mt-0.5">$0.00 USD</p>
+        </div>
+      </div>
+
+      <!-- Input Enlace y Botón Copiar -->
+      <div class="mb-4">
+        <label class="block text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
+          <i class="fa-solid fa-link text-indigo-400"></i> Enlace directo:
+        </label>
+        <div class="flex items-center gap-2">
+          <input type="text" id="inputEnlaceCompartir" readonly class="w-full bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-indigo-500 select-all font-mono" />
+          <button id="btnCopiarEnlace" onclick="copiarEnlaceCompartir()" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-md shadow-indigo-600/30 transition flex items-center gap-1.5 flex-shrink-0" title="Copiar enlace al portapapeles">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copiar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Opciones de Compartir: WhatsApp y Web Share -->
+      <div class="space-y-2.5 pt-1">
+        <a id="btnCompartirWhatsApp" href="#" target="_blank" class="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-emerald-600/25 transition flex items-center justify-center gap-2 text-xs sm:text-sm">
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          <span>Compartir por WhatsApp</span>
+        </a>
+
+        <!-- Botón Web Share API (Nativo para móviles) -->
+        <button id="btnCompartirNativo" onclick="compartirNativoApps()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white font-semibold py-2.5 px-4 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2 text-xs hidden">
+          <i class="fa-solid fa-arrow-up-from-bracket text-indigo-400"></i>
+          <span>Compartir en tus Apps</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST DE NOTIFICACIÓN FLOTANTE -->
+  <div id="toastNotificacion" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] hidden bg-slate-900/95 text-white border border-emerald-500/50 shadow-2xl shadow-emerald-950/50 px-4 py-2.5 rounded-2xl flex items-center gap-2.5 text-xs font-semibold backdrop-blur-md transition-all duration-300">
+    <div class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+      <i class="fa-solid fa-check text-xs"></i>
+    </div>
+    <span id="toastNotificacionTexto">¡Enlace copiado al portapapeles!</span>
+  </div>
 
   <!-- LIGHTBOX / ZOOM A PANTALLA COMPLETA DE IMÁGENES -->
 
@@ -1869,10 +2031,12 @@ async function obtenerHistorialChat(clienteId) {
           }
 
           renderizarCatalogo(res.productos);
+          procesarParametrosURL();
 
         } else if (Array.isArray(res)) {
 
           renderizarCatalogo(res);
+          procesarParametrosURL();
 
         } else {
 
@@ -1972,7 +2136,13 @@ async function obtenerHistorialChat(clienteId) {
           '</button>';
       });
 
-
+      // Botón para compartir categoría activa cuando no es Todos
+      const esCatActiva = categoriaActiva && categoriaActiva !== 'Todos';
+      html += '<button id="btnCompartirCategoria" onclick="compartirCategoriaActual()" class="' +
+        (esCatActiva ? '' : 'hidden ') +
+        'whitespace-nowrap px-3.5 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-950/80 text-indigo-300 hover:bg-indigo-900 border border-indigo-700/60 flex items-center gap-1.5" title="Compartir enlace de esta categoría">' +
+        '<i class="fa-solid fa-share-nodes"></i> <span class="hidden sm:inline">Compartir Categoría</span><span class="sm:hidden">Compartir</span>' +
+        '</button>';
 
       cont.innerHTML = html;
 
@@ -1982,7 +2152,7 @@ async function obtenerHistorialChat(clienteId) {
 
     // 3. SELECCIÓN DE CATEGORÍA Y FILTRO (Opción B: Pestañas directas)
 
-    function seleccionarCategoria(cat) {
+    function seleccionarCategoria(cat, actualizarURL = true) {
 
       categoriaActiva = cat;
 
@@ -1992,17 +2162,35 @@ async function obtenerHistorialChat(clienteId) {
 
         if (b.dataset.cat === cat) {
 
-          b.className = 'btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30';
+          b.className = 'btn-categoria active whitespace-nowrap px-4 py-2 rounded-xl text-xs font-bold transition shadow-sm bg-indigo-600 text-white shadow-indigo-600/30 flex items-center gap-1.5';
 
         } else {
 
-          b.className = 'btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60';
+          b.className = 'btn-categoria whitespace-nowrap px-4 py-2 rounded-xl text-xs font-semibold transition bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white border border-slate-700/60 flex items-center gap-1.5';
 
         }
 
       });
 
+      // Actualizar visibilidad del botón compartir categoría
+      const btnCompCat = document.getElementById('btnCompartirCategoria');
+      if (btnCompCat) {
+        if (cat && cat !== 'Todos') {
+          btnCompCat.classList.remove('hidden');
+        } else {
+          btnCompCat.classList.add('hidden');
+        }
+      }
+
       filtrarProductos();
+
+      if (actualizarURL) {
+        if (cat && cat !== 'Todos') {
+          actualizarURLNavegador({ cat: cat });
+        } else {
+          actualizarURLNavegador({});
+        }
+      }
 
     }
 
@@ -2160,6 +2348,9 @@ async function obtenerHistorialChat(clienteId) {
           <div>
             <div class="relative h-56 bg-slate-950 overflow-hidden cursor-pointer" onclick="abrirModalProducto('${p.id}')">
               <img src="${foto}" alt="${p.nombre}" class="img-zoom w-full h-full object-contain p-3 transition duration-500 ease-out group-hover:scale-105">
+              <button type="button" onclick="event.stopPropagation(); compartirProductoPorId('${p.id}')" class="btn-compartir-card absolute top-3 right-20 w-7 h-7 rounded-full bg-slate-900/90 hover:bg-indigo-600 text-slate-300 hover:text-white flex items-center justify-center text-xs shadow-lg backdrop-blur-md border border-slate-700/60 transition z-10" title="Compartir ${p.nombre}">
+                <i class="fa-solid fa-share-nodes text-[11px]"></i>
+              </button>
               <div class="absolute top-3 right-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/60 text-white px-3 py-1 rounded-full text-xs font-black shadow-lg">
                 $${p.precio.toFixed(2)}
               </div>
@@ -2173,9 +2364,12 @@ async function obtenerHistorialChat(clienteId) {
               <p class="text-xs text-slate-400 line-clamp-2 mt-1 leading-relaxed">${p.descripcion || 'Sin descripción adicional.'}</p>
             </div>
           </div>
-          <div class="p-4 pt-0">
-            <button onclick="abrirModalProducto('${p.id}')" class="btn-motion btn-ver-detalle w-full bg-slate-800 hover:bg-indigo-600 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border border-slate-700 hover:border-indigo-500 shadow-md">
+          <div class="p-4 pt-0 flex items-center gap-2">
+            <button onclick="abrirModalProducto('${p.id}')" class="btn-motion btn-ver-detalle flex-1 bg-slate-800 hover:bg-indigo-600 active:scale-95 text-white text-xs font-semibold py-2.5 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 border border-slate-700 hover:border-indigo-500 shadow-md">
               <i class="fa-solid fa-eye"></i> Ver Detalles y Comprar
+            </button>
+            <button type="button" onclick="compartirProductoPorId('${p.id}')" class="btn-compartir-card px-3 py-2.5 bg-slate-800 hover:bg-indigo-600 active:scale-95 text-slate-300 hover:text-white rounded-xl transition-all duration-200 border border-slate-700 hover:border-indigo-500 shadow-md flex items-center justify-center flex-shrink-0" title="Compartir este producto">
+              <i class="fa-solid fa-share-nodes text-xs"></i>
             </button>
           </div>
         `;
@@ -2188,9 +2382,10 @@ async function obtenerHistorialChat(clienteId) {
 
     // 4. MODAL DE PRODUCTO Y CONTROL DE FOTOS
 
-    function abrirModalProducto(id) {
+    function abrirModalProducto(id, actualizarURL = true) {
 
-      productoActual = productos.find(p => p.id === id);
+      const targetId = (typeof id === 'object' && id !== null) ? id.id : id;
+      productoActual = productos.find(p => p.id === targetId);
 
       if (!productoActual) return;
 
@@ -2264,6 +2459,10 @@ async function obtenerHistorialChat(clienteId) {
 
       document.getElementById('modalProducto').classList.remove('hidden');
 
+      if (actualizarURL) {
+        actualizarURLNavegador({ p: productoActual.id });
+      }
+
     }
 
 
@@ -2286,7 +2485,281 @@ async function obtenerHistorialChat(clienteId) {
 
       document.getElementById('modalProducto').classList.add('hidden');
 
+      if (categoriaActiva && categoriaActiva !== 'Todos') {
+        actualizarURLNavegador({ cat: categoriaActiva });
+      } else {
+        actualizarURLNavegador({});
+      }
+
     }
+
+    // ==========================================
+    // SISTEMA DE ENLACES PROFUNDOS Y COMPARTIR
+    // ==========================================
+    let shareDataActual = null;
+    let toastTimeoutId = null;
+
+    function mostrarToastNotificacion(mensaje = '¡Enlace copiado al portapapeles!') {
+      const toast = document.getElementById('toastNotificacion');
+      const txt = document.getElementById('toastNotificacionTexto');
+      if (!toast) return;
+      if (txt) txt.textContent = mensaje;
+
+      if (toastTimeoutId) clearTimeout(toastTimeoutId);
+      toast.classList.remove('hidden');
+      toast.style.opacity = '1';
+      toast.style.transform = 'translate(-50%, 0)';
+
+      toastTimeoutId = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, 10px)';
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 300);
+      }, 2500);
+    }
+
+    function obtenerBaseURLCompartir() {
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        return window.location.origin + window.location.pathname;
+      }
+      return 'https://yolix-arch.github.io/';
+    }
+
+    function obtenerParametrosURL() {
+      const params = {};
+      try {
+        if (window.location.search) {
+          const sp = new URLSearchParams(window.location.search);
+          sp.forEach((val, key) => {
+            if (val) params[key.toLowerCase()] = val;
+          });
+        }
+        if (window.location.hash) {
+          let hash = window.location.hash.replace(/^#\/?/, '');
+          if (hash.includes('=')) {
+            const hp = new URLSearchParams(hash);
+            hp.forEach((val, key) => {
+              const k = key.toLowerCase();
+              if (!params[k] && val) params[k] = val;
+            });
+          }
+        }
+      } catch (e) {
+        console.warn('Error procesando parámetros de URL:', e);
+      }
+      return params;
+    }
+
+    function procesarParametrosURL() {
+      const params = obtenerParametrosURL();
+
+      // 1. Filtrar por Categoría (?cat=NOMBRE o #cat=NOMBRE)
+      if (params.cat) {
+        const catBuscada = decodeURIComponent(params.cat).trim();
+        const catNormal = catBuscada.toLowerCase();
+        const btns = document.querySelectorAll('.btn-categoria');
+        let encontrada = '';
+        btns.forEach(b => {
+          if ((b.dataset.cat || '').toLowerCase() === catNormal) {
+            encontrada = b.dataset.cat;
+          }
+        });
+        seleccionarCategoria(encontrada || catBuscada, false);
+      }
+
+      // 2. Abrir Producto (?p=ID o #p=ID)
+      if (params.p) {
+        const idProd = decodeURIComponent(params.p).trim().toLowerCase();
+        const prod = productos.find(p => String(p.id).toLowerCase() === idProd);
+        if (prod) {
+          abrirModalProducto(prod.id, false);
+        } else {
+          console.warn(`Producto con ID "${params.p}" no encontrado.`);
+          mostrarToastNotificacion('El producto solicitado no está disponible. Mostrando el catálogo completo.');
+        }
+      }
+    }
+
+    function actualizarURLNavegador(params = {}) {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('p');
+        url.searchParams.delete('cat');
+
+        if (url.hash && (url.hash.includes('p=') || url.hash.includes('cat='))) {
+          url.hash = '';
+        }
+
+        if (params.p) {
+          url.searchParams.set('p', params.p);
+        } else if (params.cat && params.cat !== 'Todos') {
+          url.searchParams.set('cat', params.cat);
+        }
+
+        let search = url.searchParams.toString();
+        let nuevaURL = url.pathname + (search ? '?' + search : '') + (url.hash || '');
+        if (window.location.protocol === 'file:') {
+          nuevaURL = url.href.split('?')[0].split('#')[0] + (search ? '?' + search : '');
+        }
+        window.history.replaceState(null, '', nuevaURL);
+      } catch (e) {
+        // Ignorar restricciones en entornos de prueba locales
+      }
+    }
+
+    function abrirModalCompartir(tipo, item) {
+      const modal = document.getElementById('modalCompartir');
+      if (!modal) return;
+
+      const base = obtenerBaseURLCompartir();
+      let url = base;
+      let titulo = 'Compartir';
+      let nombrePreview = '';
+      let subPreview = '';
+      let imgPreview = '';
+      let mensajeWA = '';
+
+      if (tipo === 'producto') {
+        const prod = item || productoActual;
+        if (!prod) return;
+        titulo = 'Compartir Producto';
+        url = `${base}?p=${encodeURIComponent(prod.id)}`;
+        nombrePreview = prod.nombre;
+        subPreview = `$${prod.precio.toFixed(2)} USD • ${prod.categoria}`;
+        imgPreview = (prod.fotos && prod.fotos.length > 0) ? prod.fotos[0] : 'https://via.placeholder.com/150';
+
+        mensajeWA = `¡Hola! Te recomiendo este producto en la tienda Yolix:\n🛍️ *${prod.nombre}*\n💵 Precio: *$${prod.precio.toFixed(2)} USD*\n🔗 Míralo aquí: ${url}`;
+      } else if (tipo === 'categoria') {
+        const cat = item || categoriaActiva;
+        titulo = 'Compartir Categoría';
+        url = `${base}?cat=${encodeURIComponent(cat)}`;
+        nombrePreview = `Categoría: ${cat}`;
+        subPreview = 'Catálogo seleccionado';
+        imgPreview = 'https://via.placeholder.com/150?text=' + encodeURIComponent(cat);
+        mensajeWA = `¡Hola! Mira los productos de la categoría *${cat}* en la tienda Yolix:\n🔗 Explora la categoría aquí: ${url}`;
+      } else {
+        titulo = 'Compartir Tienda';
+        url = base;
+        nombrePreview = 'Tienda Online Yolix';
+        subPreview = 'Catálogo completo y compras seguras';
+        imgPreview = 'https://via.placeholder.com/150?text=Yolix';
+        mensajeWA = `¡Hola! Te invito a visitar la tienda Yolix. Explora nuestro catálogo y novedades:\n🔗 Visítanos aquí: ${url}`;
+      }
+
+      shareDataActual = {
+        title: nombrePreview,
+        text: mensajeWA,
+        url: url
+      };
+
+      const tituloEl = document.getElementById('modalCompartirTitulo');
+      const nombreEl = document.getElementById('modalCompartirNombre');
+      const subEl = document.getElementById('modalCompartirSubtitulo');
+      const imgEl = document.getElementById('modalCompartirImg');
+      const inputEl = document.getElementById('inputEnlaceCompartir');
+      const btnWA = document.getElementById('btnCompartirWhatsApp');
+      const btnNativo = document.getElementById('btnCompartirNativo');
+
+      if (tituloEl) tituloEl.textContent = titulo;
+      if (nombreEl) nombreEl.textContent = nombrePreview;
+      if (subEl) subEl.textContent = subPreview;
+      if (imgEl) imgEl.src = imgPreview;
+      if (inputEl) inputEl.value = url;
+
+      if (btnWA) {
+        btnWA.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensajeWA)}`;
+      }
+
+      if (btnNativo) {
+        if (navigator.share) {
+          btnNativo.classList.remove('hidden');
+        } else {
+          btnNativo.classList.add('hidden');
+        }
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function cerrarModalCompartir() {
+      const modal = document.getElementById('modalCompartir');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function copiarEnlaceCompartir() {
+      const input = document.getElementById('inputEnlaceCompartir');
+      const url = input ? input.value : '';
+      let copiado = false;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(url);
+          copiado = true;
+        } catch (e) {}
+      }
+      if (!copiado && input) {
+        try {
+          input.select();
+          input.setSelectionRange(0, 99999);
+          document.execCommand('copy');
+          copiado = true;
+        } catch (e) {}
+      }
+      mostrarToastNotificacion('¡Enlace copiado al portapapeles!');
+    }
+
+    async function compartirNativoApps() {
+      if (navigator.share && shareDataActual) {
+        try {
+          await navigator.share(shareDataActual);
+        } catch (e) {}
+      }
+    }
+
+    function compartirProductoActual() {
+      if (productoActual) {
+        abrirModalCompartir('producto', productoActual);
+      }
+    }
+
+    function compartirProductoPorId(id) {
+      const prod = productos.find(p => p.id === id);
+      if (prod) {
+        abrirModalCompartir('producto', prod);
+      }
+    }
+
+    function compartirCategoriaActual() {
+      if (categoriaActiva && categoriaActiva !== 'Todos') {
+        abrirModalCompartir('categoria', categoriaActiva);
+      }
+    }
+
+    // Cerrar modal de compartir al hacer clic fuera del contenido
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('modalCompartir');
+      if (modal && e.target === modal) {
+        cerrarModalCompartir();
+      }
+    });
+
+    // Navegación con historial del navegador (atrás / adelante)
+    window.addEventListener('popstate', () => {
+      if (productos && productos.length > 0) {
+        const params = obtenerParametrosURL();
+        if (params.p) {
+          const prod = productos.find(p => String(p.id).toLowerCase() === params.p.toLowerCase());
+          if (prod) abrirModalProducto(prod.id, false);
+        } else {
+          document.getElementById('modalProducto')?.classList.add('hidden');
+          if (params.cat) {
+            seleccionarCategoria(params.cat, false);
+          } else {
+            seleccionarCategoria('Todos', false);
+          }
+        }
+      }
+    });
 
     // ==========================================
     // SISTEMA DINÁMICO DE TALLAS Y VARIANTES

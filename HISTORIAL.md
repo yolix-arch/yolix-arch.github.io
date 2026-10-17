@@ -680,3 +680,40 @@ Bitácora cronológica de todas las tareas, decisiones técnicas, configuracione
   - Más de 130 archivos locales de imágenes subidos y eliminados de forma atómica tras confirmación exitosa de Sheets.
   - La carpeta `./nuevos productos` quedó completamente limpia y drenada (0 imágenes residuales, conservando únicamente `INSTRUCCIONES_SUBIDA.md`).
 
+
+---
+
+### [2026-10-17] - Sistema Integral de Compartir y Enlaces Profundos (Deep Linking) con Calidad 7/7
+
+- **Motor de Enlaces Profundos (`tienda_gh_pages/index.html` y `tienda_gh_pages/404.html`)**:
+  - Implementación de `obtenerParametrosURL()` y `procesarParametrosURL()` con soporte dual de Query Strings (`?p=ID`, `?cat=NOMBRE`) y Hash Fragments (`#p=ID`, `#cat=NOMBRE`).
+  - Al abrir un enlace con parámetro `?p=ID`, la tienda carga el catálogo e inmediatamente abre la ficha modal del producto exacto (`#modalProducto`). Si el ID no existe o ha expirado, muestra una notificación amigable de resiliencia y mantiene el catálogo activo sin caídas.
+  - Al abrir un enlace con parámetro `?cat=NOMBRE`, la tienda activa la píldora de categoría correspondiente y filtra la cuadrícula de productos en tiempo real.
+  - Sincronización dinámica de la barra de direcciones con `window.history.replaceState`:
+    * Al abrir la ficha de un producto, la URL se actualiza a `?p=ID`.
+    * Al cerrar la ficha del producto, la URL se limpia automáticamente restaurando la categoría activa o la raíz.
+    * Al seleccionar una categoría, la URL se actualiza a `?cat=NOMBRE` (y se limpia a la raíz si es 'Todos').
+    * Soporte para eventos `popstate` para una navegación nativa y fluida con botones atrás/adelante del navegador.
+
+- **Componente Modal de Compartir (`#modalCompartir`) y Notificación Toast (`#toastNotificacion`)**:
+  - Modal responsivo con diseño premium y animación sutil, 100% compatible con **Modo Claro** y **Modo Oscuro** (WCAG AA).
+  - Resumen visual dinámico del ítem a compartir (foto en miniatura, título y precio para productos; icono y título para categorías; marca y eslogan para la tienda).
+  - Campo de texto de solo lectura con selección rápida y botón `[📋 Copiar Enlace]` que copia al portapapeles y despliega `#toastNotificacion` animado (*"¡Enlace copiado al portapapeles!"*).
+  - Botón transaccional `[📱 Compartir por WhatsApp]` apuntando a `https://api.whatsapp.com/send?text=...` con mensaje optimizado (nombre, precio formateado en negritas y deep link directo).
+  - Soporte integrado de `navigator.share` (`[🚀 Compartir en tus Apps]`) para dispositivos móviles compatibles.
+
+- **Integración de Acciones de Compartir en la Interfaz (UI/UX)**:
+  - *Ficha de Producto (`#modalProducto`)*: Botón circular de compartir en la cabecera superior (`#btnCompartirProductoCabecera`) junto al botón de cierre, y botón destacado en el panel de acciones (`#btnCompartirProductoModal`).
+  - *Barra de Categorías (`#contenedorCategorias`)*: Píldora interactiva `[🔗 Compartir Categoría]` (`#btnCompartirCategoria`) que aparece automáticamente al filtrar cualquier categoría distinta de 'Todos'.
+  - *Tarjetas del Catálogo (`.producto-card`)*: Botón de compartir rápido en la cabecera de la imagen y botón complementario de compartir en la fila de acciones junto a *"Ver Detalles y Comprar"*.
+
+- **Suite de Pruebas Automatizadas Playwright (`test_sistema_compartir_deeplinks.js`)**:
+  - 7 de 7 Checkpoints aprobados con **cero errores en consola (`console.error = 0`)**:
+    * **Check 1**: Apertura directa de producto por URL (`?p=P45` abre `#modalProducto` con "Cocodrilo Saca Muela", $14.00).
+    * **Check 2**: Filtrado directo de categoría por URL (`?cat=Hogar` activa categoría Hogar y filtra electrodomésticos).
+    * **Check 3**: Apertura de `#modalCompartir` desde ficha y catálogo con enlace y preview correctos.
+    * **Check 4**: Copiado al portapapeles y visualización de `#toastNotificacion`.
+    * **Check 5**: Estructura del enlace WhatsApp validada (`api.whatsapp.com`, mensaje estructurado y URI codificada).
+    * **Check 6**: Limpieza limpia de URL con `replaceState` al cerrar la ficha.
+    * **Check 7**: Cero errores de consola en Modo Claro y Modo Oscuro con capturas generadas.
+  - Evidencias visuales capturadas en `./capturas/` y reporte estructurado en `resultado_sistema_compartir_deeplinks.json`.
