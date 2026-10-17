@@ -814,45 +814,51 @@ async function obtenerHistorialChat(clienteId) {
       <form onsubmit="guardarRegistroCliente(event)" class="space-y-3">
 
         <div>
-
           <label class="block text-xs font-semibold text-slate-300 mb-1">Cédula o DNI *</label>
-
-          <input type="text" id="regCedula" required placeholder="Ej: V-12345678" 
-
-                 class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
+          <div class="flex gap-1.5">
+            <select id="regCedulaPrefijo" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
+              <option value="V-">V-</option>
+              <option value="E-">E-</option>
+              <option value="J-">J-</option>
+              <option value="G-">G-</option>
+              <option value="DNI-">DNI</option>
+            </select>
+            <input type="text" id="regCedulaNumero" inputmode="numeric" required placeholder="12.345.678" oninput="formatearCedulaInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <input type="hidden" id="regCedula">
+          </div>
         </div>
 
         <div>
-
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nombre Completo *</label>
-
           <input type="text" id="regNombre" required placeholder="Nombre y Apellido" 
-
                  class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
         </div>
 
         <div>
-
           <label class="block text-xs font-semibold text-slate-300 mb-1">
             <i class="fa-regular fa-envelope text-indigo-400 mr-1"></i> Correo Electr&oacute;nico *
           </label>
-
           <input type="email" id="regCorreo" required placeholder="ejemplo@correo.com" 
-
                  class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
         </div>
 
         <div>
-
           <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono WhatsApp *</label>
-
-          <input type="tel" id="regTelefono" required placeholder="Ej: 04141234567" 
-
-                 class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-
+          <div class="flex gap-1.5">
+            <select id="regTelPais" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-emerald-300 font-bold focus:outline-none focus:border-emerald-500">
+              <option value="+58">🇻🇪 +58</option>
+              <option value="+57">🇨🇴 +57</option>
+              <option value="+56">🇨🇱 +56</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+51">🇵🇪 +51</option>
+              <option value="+54">🇦🇷 +54</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+507">🇵🇦 +507</option>
+            </select>
+            <input type="tel" id="regTelNumero" inputmode="numeric" required placeholder="412 1234567" oninput="formatearTelefonoInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+            <input type="hidden" id="regTelefono">
+          </div>
         </div>
 
         <div class="grid grid-cols-2 gap-2">
@@ -941,19 +947,37 @@ async function obtenerHistorialChat(clienteId) {
         </div>
 
         <div>
-
           <label class="block text-xs font-semibold text-slate-300 mb-1">Teléfono WhatsApp *</label>
-
-          <input type="tel" id="pedTelefono" required class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-
+          <div class="flex gap-1.5">
+            <select id="pedTelPais" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-emerald-300 font-bold focus:outline-none focus:border-emerald-500">
+              <option value="+58">🇻🇪 +58</option>
+              <option value="+57">🇨🇴 +57</option>
+              <option value="+56">🇨🇱 +56</option>
+              <option value="+34">🇪🇸 +34</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+51">🇵🇪 +51</option>
+              <option value="+54">🇦🇷 +54</option>
+              <option value="+52">🇲🇽 +52</option>
+              <option value="+507">🇵🇦 +507</option>
+            </select>
+            <input type="tel" id="pedTelNumero" inputmode="numeric" required placeholder="412 1234567" oninput="formatearTelefonoInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+            <input type="hidden" id="pedTelefono">
+          </div>
         </div>
 
         <div>
-
           <label class="block text-xs font-semibold text-slate-300 mb-1">Cédula o DNI</label>
-
-          <input type="text" id="pedCedula" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
-
+          <div class="flex gap-1.5">
+            <select id="pedCedulaPrefijo" onchange="actualizarCamposOcultosDoc()" class="bg-slate-800 border border-slate-700 rounded-xl px-2 py-2.5 text-xs text-indigo-300 font-bold focus:outline-none focus:border-emerald-500">
+              <option value="V-">V-</option>
+              <option value="E-">E-</option>
+              <option value="J-">J-</option>
+              <option value="G-">G-</option>
+              <option value="DNI-">DNI</option>
+            </select>
+            <input type="text" id="pedCedulaNumero" inputmode="numeric" placeholder="12.345.678" oninput="formatearCedulaInput(this)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-emerald-500">
+            <input type="hidden" id="pedCedula">
+          </div>
         </div>
 
         <div>
@@ -1044,6 +1068,55 @@ async function obtenerHistorialChat(clienteId) {
       }
     }
 
+    function formatearCedulaInput(el) {
+      if (!el) return;
+      let val = el.value.replace(/\D/g, '');
+      if (val.length > 9) val = val.substring(0, 9);
+      el.value = val.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      actualizarCamposOcultosDoc();
+    }
+
+    function formatearTelefonoInput(el) {
+      if (!el) return;
+      let val = el.value.replace(/\D/g, '');
+      if (val.startsWith('0')) val = val.substring(1);
+      if (val.length > 11) val = val.substring(0, 11);
+      if (val.length > 3) {
+        el.value = val.substring(0, 3) + ' ' + val.substring(3);
+      } else {
+        el.value = val;
+      }
+      actualizarCamposOcultosDoc();
+    }
+
+    function actualizarCamposOcultosDoc() {
+      // Sincronizar Registro
+      const regPref = document.getElementById('regCedulaPrefijo')?.value || 'V-';
+      const regNum = (document.getElementById('regCedulaNumero')?.value || '').replace(/\D/g, '');
+      if (document.getElementById('regCedula')) {
+        document.getElementById('regCedula').value = regNum ? (regPref + regNum) : '';
+      }
+
+      const regPais = document.getElementById('regTelPais')?.value || '+58';
+      const regTel = (document.getElementById('regTelNumero')?.value || '').replace(/\D/g, '');
+      if (document.getElementById('regTelefono')) {
+        document.getElementById('regTelefono').value = regTel ? (regPais.replace('+', '') + regTel) : '';
+      }
+
+      // Sincronizar Pedido
+      const pedPref = document.getElementById('pedCedulaPrefijo')?.value || 'V-';
+      const pedNum = (document.getElementById('pedCedulaNumero')?.value || '').replace(/\D/g, '');
+      if (document.getElementById('pedCedula')) {
+        document.getElementById('pedCedula').value = pedNum ? (pedPref + pedNum) : '';
+      }
+
+      const pedPais = document.getElementById('pedTelPais')?.value || '+58';
+      const pedTel = (document.getElementById('pedTelNumero')?.value || '').replace(/\D/g, '');
+      if (document.getElementById('pedTelefono')) {
+        document.getElementById('pedTelefono').value = pedTel ? (pedPais.replace('+', '') + pedTel) : '';
+      }
+    }
+
     function actualizarUIClienteIdentificado(cli) {
       if (!cli) {
         document.getElementById('txtBtnRegistro').textContent = 'Registro Cliente';
@@ -1077,6 +1150,53 @@ async function obtenerHistorialChat(clienteId) {
       if (document.getElementById('pedTelefono')) document.getElementById('pedTelefono').value = cli.telefono || '';
       if (document.getElementById('pedCedula')) document.getElementById('pedCedula').value = cli.cedula || '';
       if (document.getElementById('pedDireccion')) document.getElementById('pedDireccion').value = cli.direccion || '';
+
+      // Desglosar en selects y campos formateados
+      if (cli.cedula) {
+        const matchCed = String(cli.cedula).match(/^([A-Z]+-?)?(\d+)$/i);
+        const pref = (matchCed && matchCed[1]) ? (matchCed[1].toUpperCase().replace('-', '') + '-') : 'V-';
+        const num = (matchCed && matchCed[2]) ? matchCed[2] : String(cli.cedula).replace(/\D/g, '');
+        if (document.getElementById('regCedulaPrefijo')) document.getElementById('regCedulaPrefijo').value = pref;
+        if (document.getElementById('regCedulaNumero')) {
+          document.getElementById('regCedulaNumero').value = num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+        if (document.getElementById('pedCedulaPrefijo')) document.getElementById('pedCedulaPrefijo').value = pref;
+        if (document.getElementById('pedCedulaNumero')) {
+          document.getElementById('pedCedulaNumero').value = num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
+      }
+
+      if (cli.telefono) {
+        let cleanTel = String(cli.telefono).replace(/\D/g, '');
+        let pais = '+58';
+        let numT = cleanTel;
+        if (cleanTel.startsWith('58')) {
+          pais = '+58';
+          numT = cleanTel.substring(2);
+        } else if (cleanTel.startsWith('57')) {
+          pais = '+57';
+          numT = cleanTel.substring(2);
+        } else if (cleanTel.startsWith('56')) {
+          pais = '+56';
+          numT = cleanTel.substring(2);
+        } else if (cleanTel.startsWith('34')) {
+          pais = '+34';
+          numT = cleanTel.substring(2);
+        } else if (cleanTel.startsWith('1') && cleanTel.length > 10) {
+          pais = '+1';
+          numT = cleanTel.substring(1);
+        }
+        if (document.getElementById('regTelPais')) document.getElementById('regTelPais').value = pais;
+        if (document.getElementById('regTelNumero')) {
+          document.getElementById('regTelNumero').value = (numT.length > 3) ? (numT.substring(0, 3) + ' ' + numT.substring(3)) : numT;
+        }
+        if (document.getElementById('pedTelPais')) document.getElementById('pedTelPais').value = pais;
+        if (document.getElementById('pedTelNumero')) {
+          document.getElementById('pedTelNumero').value = (numT.length > 3) ? (numT.substring(0, 3) + ' ' + numT.substring(3)) : numT;
+        }
+      }
+
+      actualizarCamposOcultosDoc();
     }
 
 
@@ -1998,11 +2118,10 @@ async function obtenerHistorialChat(clienteId) {
 
 
     async function guardarRegistroCliente(e) {
-
       e.preventDefault();
+      actualizarCamposOcultosDoc();
 
       const datos = {
-
         cedula: document.getElementById('regCedula').value.trim(),
 
         nombre: document.getElementById('regNombre').value.trim(),
@@ -2133,8 +2252,8 @@ async function obtenerHistorialChat(clienteId) {
 
 
     async function enviarPedido(e) {
-
       e.preventDefault();
+      actualizarCamposOcultosDoc();
 
       const infoTallaDetalle = (tallaSeleccionada && tallaSeleccionada !== 'Talla Única') ? ` (Talla: ${tallaSeleccionada})` : '';
 
