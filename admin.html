@@ -3955,6 +3955,26 @@ async function eliminarClienteCascadaAPI(claveAdmin, idCliente, cedula) {
       }
     }
 
+    async function guardarTelefonosAdminAPI(claveAdmin, tel1, tel2) {
+      const tel1Limpio = String(tel1 || '').replace(/\D/g, '').trim();
+      const tel2Limpio = String(tel2 || '').replace(/\D/g, '').trim();
+      const datos = { tel1: tel1Limpio, tel2: tel2Limpio };
+      try {
+        localStorage.setItem(CLAVE_STORAGE_TELEFONOS_WA, JSON.stringify(datos));
+      } catch (e) {}
+
+      try {
+        return await apiPost({
+          accion: 'guardarTelefonosAdmin',
+          clave: claveAdmin,
+          tel1: tel1Limpio,
+          tel2: tel2Limpio
+        });
+      } catch (e) {
+        return { exito: true, mensaje: 'Teléfonos guardados localmente en catálogo.' };
+      }
+    }
+
     async function guardarTelefonosAdmin() {
       var tel1Raw = (document.getElementById('inputTel1WA').value || '').trim();
       var tel2Raw = (document.getElementById('inputTel2WA').value || '').trim();
